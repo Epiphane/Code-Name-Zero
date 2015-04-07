@@ -1,0 +1,29 @@
+# List all .h files here
+set(HEADERS
+   GLIncludes.h
+)
+
+# List all .c / .cpp files here
+set(SOURCES
+   main.cpp
+   bend.cpp
+   camera.cpp
+   coaster_car.cpp
+   entity.cpp
+   GLSL.cpp
+   renderer.cpp
+   tiny_obj_loader.cc
+   track.cpp
+   world.cpp
+
+   shaders/3DFragment.glsl
+   shaders/3DVertex.glsl
+)
+
+# List resources to copy to build directory
+set(RESOURCES
+   "shaders"
+   "models"
+   "textures"
+   "tracks"
+)
