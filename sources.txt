@@ -16,6 +16,8 @@ set(SOURCES
    track.cpp
    world.cpp
 
+   graphics_component.cpp
+
    shaders/3DFragment.glsl
    shaders/3DVertex.glsl
 )
