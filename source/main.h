@@ -11,17 +11,35 @@
 
 #include <vector>
 #include <glm/glm.hpp>
-#include "tiny_obj_loader.h"
 
+#include "GLSL.h"
+#include "tiny_obj_loader.h"
 #define MATH_PI 3.1415926535897932384626433832795
 #define RADIANS_TO_DEG float(180.0f / MATH_PI)
 #define DEG_TO_RADIANS float(MATH_PI / 180.0f)
 
-#define NUM_CARS 3
-#define TRACK "tracks/track1.trk"
+#define CAMERA_SPEED 0.005
+#define CAMERA_MOVE 0.1
 
+#define FRAMES_PER_SEC 120.0f
+#define SEC_PER_FRAME 1 / FRAMES_PER_SEC
+
+#define GROUND_WIDTH 40
+#define MAX_TARGET 50
+
+#define FIRST_STATE InGameState
+
+extern bool DEBUG;
 const extern int w_width;
 const extern int w_height;
+
+class State;
+
+// Important game functions
+void setState(State *state);
+extern bool keysDown[GLFW_KEY_LAST];
+extern float randFloat(float l, float h);
+extern glm::vec3 randPoint(float r);
 
 void resize_obj(std::vector<tinyobj::shape_t> &shapes);
 

@@ -40,9 +40,12 @@ glm::vec3 camera_getLookAt() {
 void camera_lookAt(glm::vec3 dest) {
     glm::vec3 dir = glm::normalize(dest - position);
     
-    pitch = asin(dir.y);
+    ;
+    camera_setPitch(asin(dir.y));
     yaw = acos(dir.x / cos(pitch));
-    if (dir.z < 0) yaw *= -1;
+    if (dir.z > 0) yaw *= -1;
+
+    // camera_setYaw(yaw);
 }
 
 void camera_setPitch(double _pitch) {
@@ -76,5 +79,5 @@ glm::mat4 camera_getMatrix() {
     glm::vec4 dir = transform * glm::vec4(camera_getLookAt(), 0);
     glm::vec4 up = transform * glm::vec4(0, 1, 0, 0);
     
-    return glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
+    return glm::translate(glm::vec3(0, 0, -3)) * glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
 }

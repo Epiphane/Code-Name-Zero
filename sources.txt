@@ -1,31 +1,43 @@
 # List all .h files here
 set(HEADERS
    GLIncludes.h
+   GLSL.h
+   tiny_obj_loader.h
+   
+   main.h
+   camera.h
+   renderer.h
+
+   state.h
+   in_game_state.h
+
+   bounds.h
+   game_object.h
+   graphics_component.h
+   physics_component.h
+   input_component.h
+   collision_component.h
 )
 
 # List all .c / .cpp files here
 set(SOURCES
-   main.cpp
-   bend.cpp
-   camera.cpp
-   coaster_car.cpp
-   entity.cpp
    GLSL.cpp
-   renderer.cpp
    tiny_obj_loader.cc
-   track.cpp
-   world.cpp
+   
+   main.cpp
+   camera.cpp
+   renderer.cpp
 
+   state.cpp
+   in_game_state.cpp
+
+   bounds.cpp
+   game_object.cpp
    graphics_component.cpp
+   physics_component.cpp
+   input_component.cpp
+   collision_component.cpp
 
    shaders/3DFragment.glsl
    shaders/3DVertex.glsl
-)
-
-# List resources to copy to build directory
-set(RESOURCES
-   "shaders"
-   "models"
-   "textures"
-   "tracks"
 )

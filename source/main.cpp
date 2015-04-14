@@ -18,148 +18,156 @@
 #include <stdio.h>
 
 #include "main.h"
-#include "world.h"
+#include "in_game_state.h"
 #include "camera.h"
 #include "GLSL.h"
 #include "tiny_obj_loader.h"
 using namespace std;
 
-#define FRAMES_PER_SEC 60
-#define SEC_PER_FRAME 1 / FRAMES_PER_SEC
+bool DEBUG = true;
 
-World *world = NULL;
+State *currentState = NULL;
+void setState(State *state) {
+   if (currentState != NULL) {
+      currentState->pause();
+   }
+   
+   currentState = state;
+   currentState->start();
+}
+
 GLFWwindow* window;
 
 const int w_width = 1024;
 const int w_height = 768;
-const char *w_title = "Roller Coaster Funtime";
+const char *w_title = "Lab 1";
 
 bool keysDown[GLFW_KEY_LAST] = {0};
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int modes) {
-    if (action == GLFW_PRESS) {
+    if (action == GLFW_PRESS)
         keysDown[key] = 1;
-    
-        if (key == GLFW_KEY_SPACE && world != NULL)
-            world->switchCamera();
-    }
-    if (action == GLFW_RELEASE)
+    else if (action == GLFW_RELEASE)
         keysDown[key] = 0;
 }
 
-int track_num = 1;
+/*
+ * Generates a pseudo random float
+ *
+ * float l : lower bound
+ * float h : upper bound
+ */
+float randFloat(float l, float h) {
+   float r = rand() / (float)RAND_MAX;
+      return (1.0f - r) * l + r * h;
+}
 
-#define CAMERA_SPEED 0.005
-#define CAMERA_MOVE 0.25
+/*
+ * Generates a random vec3 within a circle along the XZ plane 
+ *
+ * float r - radius of the circle
+ */
+glm::vec3 randPoint(float r) {
+   float randA = randFloat(0, 1);
+   float randB = randFloat(0, 1);
+
+   if (randB < randA) {
+      float temp = randA;
+      randA = randB;
+      randB = temp;
+   }
+
+   float angle = M_PI * 2 * randA / randB;
+   return glm::vec3(randB * r * cos(angle), 0, randB * r * sin(angle));
+}
+
 int main(int argc, char **argv) {
-    // Initialise GLFW
-    if(!glfwInit()) {
-        fprintf( stderr, "Failed to initialize GLFW\n" );
-        return -1;
-    }
+   // Initialise GLFW
+   if(!glfwInit()) {
+      fprintf( stderr, "Failed to initialize GLFW\n" );
+      return -1;
+   }
+
+   glfwWindowHint(GLFW_SAMPLES, 4);
+   glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+   // Open a window and create its OpenGL context
+   window = glfwCreateWindow(w_width, w_height, w_title, NULL, NULL);
+   if(window == NULL) {
+      std::cerr << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n" << std::endl;
+      glfwTerminate();
+      return -1;
+   }
+
+   glfwMakeContextCurrent(window);
+
+   // Initialize GLEW
+   if (glewInit() != GLEW_OK) {
+      fprintf(stderr, "Failed to initialize GLEW\n");
+      return -1;
+   }
+
+   // Ensure we can capture the escape key being pressed below
+   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+   glfwSetCursorPos(window, w_width / 2, w_height / 2);
+   glfwSetKeyCallback(window, key_callback);
+
+   glEnable (GL_BLEND);
+   glEnable(GL_DEPTH_TEST);
+   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   
+   glClearColor(0.30f, 0.5f, 0.78f, 1.0f);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   
+   shaders_init();
+   
+   setState(new FIRST_STATE());
     
-    glfwWindowHint(GLFW_SAMPLES, 4);
-    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    
-    // Open a window and create its OpenGL context
-    window = glfwCreateWindow(w_width, w_height, w_title, NULL, NULL);
-    if(window == NULL) {
-        std::cerr << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    
-    glfwMakeContextCurrent(window);
-    
-    // Initialize GLEW
-    if (glewInit() != GLEW_OK) {
-        fprintf(stderr, "Failed to initialize GLEW\n");
-        return -1;
-    }
-    
-    // Ensure we can capture the escape key being pressed below
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPos(window, w_width / 2, w_height / 2);
-    glfwSetKeyCallback(window, key_callback);
-    
-    glEnable (GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    glClearColor(0.30f, 0.5f, 0.78f, 1.0f);
-    
-    shaders_init();
-    
-    world = new World(TRACK);
-    
-    double clock = glfwGetTime();
-    do{
-        if (keysDown[GLFW_KEY_P]) {
-            track_num = (track_num + 1) % 3;
-            world->~World();
-            if (track_num == 0)
-                world = new World("tracks/track1.trk");
-            if (track_num == 1)
-                world = new World("tracks/track2.trk");
-            if (track_num == 2)
-                world = new World("tracks/track3.trk");
-        }
-        
-        // Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
-        double nextTime = glfwGetTime();
-        if (nextTime - clock > SEC_PER_FRAME) {
-            // Update camera
-            double xpos, ypos;
-            glfwGetCursorPos(window, &xpos, &ypos);
-            double dx = (double) w_width / 2 - xpos;
-            double dy = (double) w_height / 2 - ypos;
-            // Edge case: window initialization
-            if (xpos != 0 || ypos != 0) {
-                camera_movePitch(dy * CAMERA_SPEED);
-                camera_moveYaw(dx * CAMERA_SPEED);
-            }
-            glfwSetCursorPos(window, w_width / 2, w_height / 2);
-            
-            // Update camera position
-            glm::vec3 cam_d(0, 0, 0);
-            if (keysDown[GLFW_KEY_D])
-                cam_d.x += CAMERA_MOVE;
-            if (keysDown[GLFW_KEY_A])
-                cam_d.x -= CAMERA_MOVE;
-            if (keysDown[GLFW_KEY_W])
-                cam_d.z += CAMERA_MOVE;
-            if (keysDown[GLFW_KEY_S])
-                cam_d.z -= CAMERA_MOVE;
-            if (keysDown[GLFW_KEY_E])
-                cam_d.y += CAMERA_MOVE;
-            if (keysDown[GLFW_KEY_Q])
-                cam_d.y -= CAMERA_MOVE;
-            camera_move(cam_d.x, cam_d.y, cam_d.z);
-            
-            // Update and render the game
-            world->update();
-            
-            clock = nextTime;
-        }
-        world->render();
-        assert(glGetError() == GL_NO_ERROR);
-        
-        // Swap buffers
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-        
-    } // Check if the ESC key was pressed or the window was closed
-    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-          glfwWindowShouldClose(window) == 0 );
-    
-    // Close OpenGL window and terminate GLFW
-    glfwTerminate();
-    
-    return 0;
+   double clock = glfwGetTime();
+   do {
+      assert(currentState != NULL);
+      
+      double nextTime = glfwGetTime();
+      if (nextTime - clock > SEC_PER_FRAME) {
+         // Update camera
+         double xpos, ypos;
+         glfwGetCursorPos(window, &xpos, &ypos);
+         // std::cout << xpos << std::endl;
+         double dx = (double) w_width / 2 - xpos;
+         double dy = (double) w_height / 2 - ypos;
+         // Edge case: window initialization
+         if (abs(dx) < 100 && abs(dy) < 100 && (xpos > 0 || ypos > 0)) {
+            camera_movePitch(dy * CAMERA_SPEED);
+            camera_moveYaw(dx * CAMERA_SPEED);
+         }
+         glfwSetCursorPos(window, w_width / 2, w_height / 2);
+
+         // Update and render the game
+         // Use fixed time updating
+         currentState->update(SEC_PER_FRAME);
+
+         // Clear the screen
+         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         currentState->render(glfwGetTime() - clock);
+
+         glLoadIdentity(); // Reset current matrix (Modelview)
+
+         clock = nextTime;
+      }
+      assert(GLSL::printError() == 0);
+
+      // Swap buffers
+      glfwSwapBuffers(window);
+      glfwPollEvents();
+   } // Check if the ESC key was pressed or the window was closed
+   while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 );
+
+   // Close OpenGL window and terminate GLFW
+   glfwTerminate();
+
+   return 0;
 }
 
 std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec) {
@@ -188,7 +196,7 @@ std::ostream &operator<< (std::ostream &out, const glm::mat4 &mat) {
     return out;
 }
 
-//Given a vector of shapes which has already been read from an obj file
+// Given a vector of shapes which has already been read from an obj file
 // resize all vertices to the range [-1, 1]
 void resize_obj(std::vector<tinyobj::shape_t> &shapes){
     float minX, minY, minZ;
@@ -227,11 +235,11 @@ void resize_obj(std::vector<tinyobj::shape_t> &shapes){
     if (zExtent >= xExtent && zExtent >= yExtent) {
         maxExtent = zExtent;
     }
-    scaleX = 1.0 / maxExtent;
+    scaleX = 2.0 / maxExtent;
     shiftX = minX + (xExtent/ 2.0);
-    scaleY = 1.0 / maxExtent;
+    scaleY = 2.0 / maxExtent;
     shiftY = minY + (yExtent / 2.0);
-    scaleZ = 1.0/ maxExtent;
+    scaleZ = 2.0/ maxExtent;
     shiftZ = minZ + (zExtent)/2.0;
     
     //Go through all verticies shift and scale them
@@ -243,7 +251,7 @@ void resize_obj(std::vector<tinyobj::shape_t> &shapes){
             shapes[i].mesh.positions[3*v+1] = (shapes[i].mesh.positions[3*v+1] - shiftY) * scaleY;
             assert(shapes[i].mesh.positions[3*v+1] >= -1.0 - epsilon);
             assert(shapes[i].mesh.positions[3*v+1] <= 1.0 + epsilon);
-            shapes[i].mesh.positions[3*v+2] = (shapes[i].mesh.positions[3*v+2] - shiftZ) * scaleZ + 0.5;
+            shapes[i].mesh.positions[3*v+2] = (shapes[i].mesh.positions[3*v+2] - shiftZ) * scaleZ;
             assert(shapes[i].mesh.positions[3*v+2] >= -1.0 - epsilon);
             assert(shapes[i].mesh.positions[3*v+2] <= 1.0 + epsilon);
         }
