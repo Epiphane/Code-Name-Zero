@@ -263,6 +263,7 @@ void Program3Drender(Renderer *p, glm::mat4 Model) {
 // ----------------- PROGRAM TEXT -----------------------------
 TexRenderer *TextRenderer = NULL;
 void renderText(const char *text, float x, float y) {
+    return;
    if (TextRenderer == NULL) {
       TextRenderer = (TexRenderer *) ProgramTextcreate();
       TextRenderer->loadTexture("text.bmp");
