@@ -28,13 +28,15 @@ InGameState::InGameState() {
    
    target_number = 0;
    
+   MovementComponent *movement = new PlayerMovementComponent();
+   InputComponent *i = new PlayerInputComponent();
    player = new PlayerCollisionComponent();
    GameObject *p = new GameObject(new ModelRenderer("models/car.obj"),
-                                  new PlayerMovementComponent(), new PlayerInputComponent(), player);
-   p->type = OBJECT_PLAYER;
-   p->collidesWith = OBJECT_TARGET;
-   p->setY(1);
-   p->setDirection(glm::vec3(camera_getLookAt()));
+                                  movement, i, player);
+   p->setType(OBJECT_PLAYER);
+   p->addCollision(OBJECT_TARGET);
+   p->setPosition(glm::vec3(0, 1, 0));
+   movement->setDirection(glm::vec3(camera_getLookAt()));
    addObject(p);
    
    GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
@@ -52,17 +54,17 @@ void InGameState::update(float dt) {
    t += dt;
    if (t >= time_per_spawn && target_number < MAX_TARGET) {
       // Create a new object
+      MovementComponent *movement = new MovementComponent();
       GameObject *newObject = new GameObject(new ModelRenderer("models/disk_g.obj"),
-                                             new MovementComponent(), new WheelInputComponent(), new TargetCollisionComponent());
+                                             movement, new WheelInputComponent(), new TargetCollisionComponent());
       newObject->getGraphics()->getRenderer(0)->mat = MATERIAL_RUBBER;
-      newObject->type = OBJECT_TARGET;
-      newObject->collidesWith = OBJECT_TARGET;
-      newObject->setY(1);
-      newObject->setX(randPoint(GROUND_WIDTH/3).x);
-      newObject->setZ(randPoint(GROUND_WIDTH/3).z);
-      newObject->setSpeed(randFloat(5.0f, 10.0f));
-      newObject->rotation.y = 90;
-      newObject->setDirection(glm::vec3(randFloat(-1.0, 1.0), 0, randFloat(-1.0, 1.0)));
+      newObject->setType(OBJECT_TARGET);
+      newObject->addCollision(OBJECT_TARGET);
+      newObject->setPosition(randPoint(GROUND_WIDTH / 3) + glm::vec3(0, 1, 0));
+      newObject->transform(glm::rotate(90.0f, 0.0f, 1.0f, 0.0f));
+      
+      movement->setSpeed(randFloat(5.0f, 10.0f));
+      movement->setDirection(glm::vec3(randFloat(-1.0, 1.0), 0, randFloat(-1.0, 1.0)));
       
       addObject(newObject);
       target_number++;

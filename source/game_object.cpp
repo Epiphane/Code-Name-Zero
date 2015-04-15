@@ -14,10 +14,10 @@
 GameObject::GameObject(GraphicsComponent *g) : GameObject(g, NULL, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p) : GameObject(g, p, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i) : GameObject(g, p, i, NULL) {};
-GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : x(0), y(0), z(0), speed(0), latSpeed(0), graphics(g), physics(p), direction(glm::vec3(0, 0, 0)), input(i), collision(c), type(OBJECT_OBSTACLE), collidesWith(0), rotation(glm::vec3(0, 0, 0)), remove(false) {
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : remove(false), position(glm::vec3(0, 0, 0)), scale(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c) {
    children.clear();
 
-   g->setBounds(this);
+   setBounds(g->getBounds());
 }
 
 float GameObject::getRadius() {
@@ -41,45 +41,42 @@ float GameObject::getRadius() {
 }
 
 glm::mat4 GameObject::getModel() {
-   glm::mat4 MV = glm::mat4(1.0f);
-   float angle = MATH_PI / 2;
-   if (direction.z != 0) {
-      angle = atan(direction.x / direction.z);
-      if (direction.z <= 0)
-         angle += MATH_PI;
+   glm::mat4 model = glm::translate(position);
+   
+   MovementComponent *movement = dynamic_cast<MovementComponent *>(physics);
+   if (movement != NULL) {
+      glm::vec3 direction = movement->getDirection();
+      
+      float angle = MATH_PI / 2;
+      if (direction.z != 0) {
+         angle = atan(direction.x / direction.z);
+         if (direction.z <= 0)
+            angle += MATH_PI;
+      }
+      
+      model *= glm::rotate(angle * RADIANS_TO_DEG, glm::vec3(0, 1, 0));
    }
-
-   MV *= glm::translate(this->getX(), this->getY(), this->getZ());
-   MV *= glm::rotate(angle * RADIANS_TO_DEG, glm::vec3(0, 1, 0));
-   MV *= glm::rotate(rotation.y, glm::vec3(0, 1, 0));
-   MV *= glm::rotate(rotation.x, glm::vec3(1, 0, 0));
-   MV *= glm::rotate(rotation.z, glm::vec3(0, 0, 1));
-   return MV;
+   
+   model *= this->Model;
+   return model;
 }
 
 void GameObject::collide(GameObject *other) {
-   if (!collision || !other->collision) {
+   if ((collidesWith & other->type) == 0)
       return;
-   }
+   
+   if (!collision || !other->collision)
+      return;
 
    float max_dist = getRadius() + other->getRadius();
-   float dx = x - other->x;
-   float dy = y - other->y;
-   float dz = z - other->z;
+   float dx = position.x - other->position.x;
+   float dy = position.y - other->position.y;
+   float dz = position.z - other->position.z;
 
    // Within each other's sphere
    if (max_dist * max_dist >= dx * dx + dy * dy + dz * dz) {
-      // Check bounding boxes
-      if (x + bounds.max_x >= other->x + other->bounds.min_x &&
-          x + bounds.min_x <= other->x + other->bounds.max_x &&
-          y + bounds.max_y >= other->y + other->bounds.min_y &&
-          y + bounds.min_y <= other->y + other->bounds.max_y &&
-          z + bounds.max_z >= other->z + other->bounds.min_z &&
-          z + bounds.min_z <= other->z + other->bounds.max_z) {
-
-         // Collided
-         collision->collide(this, other);
-      }
+      // Collided
+      collision->collide(this, other);
    }
 }
 

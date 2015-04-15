@@ -20,10 +20,6 @@ GraphicsComponent::GraphicsComponent() {
    bounds.min_z = bounds.max_z = 0;
 }
 
-void GraphicsComponent::setBounds(GameObject *obj)  {
-   memcpy(&obj->bounds, &bounds, sizeof(Bounds));
-}
-
 void GraphicsComponent::render(GameObject *obj) {
    glm::mat4 Model = obj->getModel();
    

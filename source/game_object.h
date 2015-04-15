@@ -23,12 +23,16 @@ class World;
 
 class GameObject {
 private:
-   float x, y, z;
-   float speed, latSpeed;
-   glm::vec3 direction;
+   bool remove;
+   
+   glm::vec3 position, scale, rotation;
+   glm::mat4 Model;
+   
+   unsigned int type, collidesWith;
+   
+   Bounds bounds;
 
    std::vector<GameObject *> children;
-   
 
    GraphicsComponent  *graphics;
    PhysicsComponent   *physics;
@@ -36,13 +40,6 @@ private:
    CollisionComponent *collision;
 
 public:
-   Bounds bounds;
-   unsigned int type;
-   unsigned int collidesWith;
-   glm::vec3 rotation;
-
-   bool remove;
-
    GameObject(GraphicsComponent  *graphics, 
               PhysicsComponent   *physics,
               InputComponent     *input,
@@ -53,34 +50,38 @@ public:
    GameObject(GraphicsComponent  *graphics, 
               PhysicsComponent   *physics);
    GameObject(GraphicsComponent  *graphics);
-
-   glm::mat4 getModel();
-
-   float getX() { return x; }
-   float getY() { return y; }
-   float getZ() { return z; }
+   
+   bool isDead() { return remove; }
+   void die()    { remove = true; }
+   
    float getRadius();
-   float getSpeed() { return speed; }
-   float getLatSpeed() { return latSpeed; }
-   glm::vec3 getDirection() { return direction; }
-   // glm::vec3 getRotation() { return rotation; } 
+   glm::mat4 getModel();
+   glm::vec3 getPosition() { return position; }
+   glm::vec3 getScale()    { return scale;    }
+   glm::vec3 getRotation() { return rotation; }
+   unsigned int getType()  { return type; }
+   
    GraphicsComponent  *getGraphics()  { return graphics; }
    PhysicsComponent   *getPhysics()   { return physics; }
    InputComponent     *getInput()     { return input; }
    CollisionComponent *getCollision() { return collision; }
-
-   void setX(float _x) { x = _x; }
-   void setY(float _y) { y = _y; }
-   void setZ(float _z) { z = _z; }
-   void setSpeed(float _s) { speed = _s; }
-   void setLatSpeed(float _s) { latSpeed = _s; }
-   void setDirection(glm::vec3 _d) { direction = glm::normalize(_d); }
-   // void setRotation(glm::vec3 _r) { rotation = glm::normalize(_r); }
+   
+   void setType      (unsigned int _t) { type = _t; }
+   void addCollision (unsigned int _t) { collidesWith |= _t; }
+   void remCollision (unsigned int _t) { collidesWith &= ~_t; }
+   
+   void transform   (glm::mat4 _t) { Model = _t * Model; }
+   void setPosition (glm::vec3 _p) { position = _p; }
+   void setScale    (glm::vec3 _s) { scale    = _s; }
+   void setRotation (glm::vec3 _r) { rotation = _r; }
    void setGraphics (GraphicsComponent *g)  { graphics  = g; }
    void setPhysics  (PhysicsComponent *p)   { physics   = p; }
    void setInput    (InputComponent *i)     { input     = i; }
    void setCollision(CollisionComponent *c) { collision = c; }
-
+   void setBounds   (Bounds *_b) {
+      memcpy(&bounds, _b, sizeof(Bounds));
+   }
+   
    void collide(GameObject *other);
    void update(State *world, float dt);
    void render();

@@ -17,7 +17,7 @@ void State::update(float dt) {
    while(iterator < objects.end()) {
       (*iterator)->update(this, dt);
       this->collide(*iterator);
-      if ((*iterator)->remove)
+      if ((*iterator)->isDead())
          iterator = objects.erase(iterator);
       else
          iterator ++;
@@ -54,7 +54,7 @@ void State::removeObject(GameObject *obj) {
 void State::collide(GameObject *obj) {
    std::vector<GameObject *>::iterator iterator;
    for(iterator = objects.begin(); iterator < objects.end(); iterator ++) {
-      if (*iterator != obj && obj->collidesWith & (*iterator)->type) {
+      if (*iterator != obj) {
          obj->collide(*iterator);
       }
    }

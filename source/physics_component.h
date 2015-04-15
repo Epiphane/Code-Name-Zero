@@ -26,11 +26,14 @@ private:
 public:
    virtual void update(GameObject *obj, State *world, float dt);
    
-//   float getSpeed() { return speed; }
-//   float getLatSpeed() { return latSpeed; }
-//   glm::vec3 getDirection() { return direction; }
+   float getSpeed() { return speed; }
+   float getLatSpeed() { return latSpeed; }
+   glm::vec3 getDirection() { return direction; }
    
-   void setDirection(glm::vec3 _d) { direction = _d; }
+   void setDirection(glm::vec3 _d) {
+      _d.y = 0;
+      direction = glm::normalize(_d);
+   }
    void setSpeed(float _s) { speed = _s; }
    void setLatSpeed(float _s) { latSpeed = _s; }
 };

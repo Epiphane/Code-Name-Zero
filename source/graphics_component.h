@@ -24,9 +24,9 @@ protected:
 public:
    GraphicsComponent();
    
+   Bounds *getBounds() { return &bounds; }
    Renderer *getRenderer(int i) { return renderers[i]; }
    virtual void render(GameObject *obj);
-   virtual void setBounds(GameObject *obj);
 };
 
 class ModelRenderer : public GraphicsComponent {

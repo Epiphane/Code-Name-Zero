@@ -6,6 +6,8 @@
 //
 //
 
+#include <glm/ext.hpp>
+
 #include "main.h"
 #include "camera.h"
 #include "input_component.h"
@@ -15,29 +17,35 @@
 const float PLAYER_SPEED = 20;
 
 void WheelInputComponent::update(GameObject *obj) {
-   obj->rotation.z += obj->getSpeed() / 5;
+   MovementComponent *movement = dynamic_cast<MovementComponent *>(obj->getPhysics());
+   if (movement != NULL) {
+      obj->transform(glm::rotate(movement->getSpeed() / 5, 1.0f, 0.0f, 0.0f));
+   }
 }
 
 void PlayerInputComponent::update(GameObject *obj) {
-   obj->setDirection(camera_getLookAt());
-   float speed = 0;
-   float latSpeed = 0;
-   
-   if (keysDown[GLFW_KEY_A]) {
-      latSpeed -= PLAYER_SPEED;
+   MovementComponent *movement = dynamic_cast<MovementComponent *>(obj->getPhysics());
+   if (movement != NULL) {
+      movement->setDirection(camera_getLookAt());
+      float speed = 0;
+      float latSpeed = 0;
+      
+      if (keysDown[GLFW_KEY_A]) {
+         latSpeed -= PLAYER_SPEED;
+      }
+      if (keysDown[GLFW_KEY_S]) {
+         speed -= PLAYER_SPEED;
+      }
+      if (keysDown[GLFW_KEY_D]) {
+         latSpeed += PLAYER_SPEED;
+      }
+      if (keysDown[GLFW_KEY_W]) {
+         speed += PLAYER_SPEED;
+      }
+      
+      movement->setSpeed(speed);
+      movement->setLatSpeed(latSpeed);
+      
+      camera_setPosition(obj->getPosition() + glm::vec3(0, 2, 0));
    }
-   if (keysDown[GLFW_KEY_S]) {
-      speed -= PLAYER_SPEED;
-   }
-   if (keysDown[GLFW_KEY_D]) {
-      latSpeed += PLAYER_SPEED;
-   }
-   if (keysDown[GLFW_KEY_W]) {
-      speed += PLAYER_SPEED;
-   }
-   
-   obj->setSpeed(speed);
-   obj->setLatSpeed(latSpeed);
-   
-   camera_setPosition(glm::vec3(obj->getX(), obj->getY() + 2, obj->getZ()));
 }
