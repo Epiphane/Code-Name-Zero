@@ -46,6 +46,56 @@ list(APPEND INCLUDES
    ${DEP_DIR}
 )
 
+# FMOD
+set(FMOD_DIR "${DEP_DIR}/FMOD")
+set(FMOD_INCLUDE_DIR "${FMOD_DIR}/include")
+list(APPEND INCLUDES
+   ${FMOD_INCLUDE_DIR}
+)
+
+if (APPLE)
+   set(FMOD_LIBRARY_RELEASE "${FMOD_DIR}/lib/osx/release/libfmod.dylib")
+   set(FMOD_LIBRARY_DEBUG "${FMOD_DIR}/lib/osx/debug/libfmodL.dylib")
+   list(APPEND LIBS
+      ${FMOD_LIBRARY_RELEASE}
+      ${FMOD_LIBRARY_DEBUG}
+   )
+endif (APPLE)
+
+if (WIN32)
+   if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(FMOD_WIN_ARCHITECTURE "x86_64")
+   else (CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(FMOD_WIN_ARCHITECTURE "x86")
+   endif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+   set(FMOD_LIBRARY_RELEASE "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod_vc.lib")
+   set(FMOD_LIBRARY_DEBUG "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/fmodL_vc.lib")
+   list(APPEND LIBS
+      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod.dll
+      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/fmodL.dll
+   )
+endif (WIN32)
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+   if (CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(FMOD_LINUX_ARCHITECTURE "x86_64")
+   else (CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(FMOD_LINUX_ARCHITECTURE "x86")
+   endif (CMAKE_SIZEOF_VOID_P EQUAL 8)
+
+   set(FMOD_LIBRARY_RELEASE "${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/release/libfmod.so.5.10")
+   set(FMOD_LIBRARY_DEBUG "${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/debug/libfmodL.so.5.10")
+   list(APPEND LIBS
+      ${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/release/libfmod.so.5.10
+      ${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/release/libfmod.so.5
+      ${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/release/libfmod.so
+      ${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/debug/libfmodL.so.5.10
+      ${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/debug/libfmodL.so.5
+      ${FMOD_DIR}/lib/linux/${FMOD_LINUX_ARCHITECTURE}/debug/libfmodL.so
+   )
+endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
 # dl libs
 list(APPEND LIBS
    ${CMAKE_DL_LIBS}
