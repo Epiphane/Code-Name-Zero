@@ -5,36 +5,39 @@
 #include <unordered_map>
 
 namespace FMOD {
-
-class ChannelGroup;
-class Sound;
-class System;
-
+   class Channel;
+   class ChannelGroup;
+   class Sound;
+   class System;
 } // namespace FMOD
 
-typedef std::unordered_map<std::string, FMOD::Sound*> SoundMap;
-
-class AudioManager {
-protected:
-   FMOD::System *system;
-   FMOD::ChannelGroup *musicGroup;
-
-   SoundMap soundMap;
-
-   void release();
-
-   bool load(const std::string &sound);
-
+class Music {
+private:
+   FMOD::Channel *channel;
+   FMOD::Sound *sound;
+   unsigned int beat;
+   
 public:
-   AudioManager();
-
-   virtual ~AudioManager();
-
-   void init();
-
+   Music(FMOD::Sound *s) : channel(nullptr), sound(s), beat(0) {};
+   
    void update();
-
-   void play(const std::string &sound);
+   void play();
+   
+   FMOD::Channel *getChannel() { return channel; }
+   FMOD::Sound *getSound() { return sound; }
+   unsigned int getBeat()  { return beat; }
+   
+   void setChannel(FMOD::Channel *c) { channel = c; }
 };
+
+void audio_init();
+void audio_update();
+void audio_release();
+
+FMOD::Sound *audio_load_sound(const char *filename);
+void audio_play_sound(const char *filename);
+
+Music *audio_load_music(const char *fileName);
+void audio_play_music(Music *music);
 
 #endif

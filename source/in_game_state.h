@@ -15,6 +15,7 @@ class InGameState : public State {
 private:
    PlayerCollisionComponent *player;
    int target_number;
+   Music *soundtrack;
    
 public:
    InGameState();

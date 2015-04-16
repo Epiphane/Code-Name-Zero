@@ -57,7 +57,7 @@ if (APPLE)
    set(FMOD_LIBRARY_RELEASE "${FMOD_DIR}/lib/osx/release/libfmod.dylib")
    set(FMOD_LIBRARY_DEBUG "${FMOD_DIR}/lib/osx/debug/libfmodL.dylib")
    list(APPEND LIBS
-      ${FMOD_LIBRARY_RELEASE}
+   ${FMOD_LIBRARY_RELEASE}
       ${FMOD_LIBRARY_DEBUG}
    )
 endif (APPLE)

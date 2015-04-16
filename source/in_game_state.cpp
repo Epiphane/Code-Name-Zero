@@ -24,10 +24,6 @@ float t = 0;
 InGameState::InGameState() {
    State::State();
    
-   AudioManager *audio = new AudioManager();
-   audio->init();
-   audio->play("audio/RGB_MuteCity_HQ.wav");
-   
    // Move camera
    camera_init();
    camera_setPosition(glm::vec3(0, 2, 0));
@@ -48,6 +44,9 @@ InGameState::InGameState() {
    
    GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
    addObject(ground);
+   
+   soundtrack = audio_load_music("./audio/RGB_MuteCity_HQ.wav");
+   soundtrack->play();
 }
 
 void InGameState::update(float dt) {

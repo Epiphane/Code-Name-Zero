@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 #include "main.h"
+#include "audio_manager.h"
 #include "input_manager.h"
 #include "in_game_state.h"
 #include "camera.h"
@@ -120,12 +121,15 @@ int main(int argc, char **argv) {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    shaders_init();
+   audio_init();
    
    setState(new FIRST_STATE());
     
    double clock = glfwGetTime();
    do {
       assert(currentState != NULL);
+      
+      audio_update();
       
       double nextTime = glfwGetTime();
       if (nextTime - clock > SEC_PER_FRAME) {

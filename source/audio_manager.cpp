@@ -1,138 +1,143 @@
-#include "audio_manager.h"
-
+#include <iostream>
+#include <cassert>
 #include <FMOD/fmod.hpp>
 #include <FMOD/fmod_errors.h>
 
+#include "audio_manager.h"
+
 namespace {
-
-const int MAX_CHANNELS = 64;
-
-enum class ErrorLevel {
-   Warning,
-   Error,
-   Fatal
-};
-
-bool check(FMOD_RESULT result, const std::string &message, ErrorLevel errorLevel = ErrorLevel::Warning) {
-   if (result != FMOD_OK) {
-      std::string level;
-      switch (errorLevel) {
-         case ErrorLevel::Warning:
-            level = "warning";
-            break;
-         case ErrorLevel::Error:
-            level = "error";
-            break;
-         case ErrorLevel::Fatal:
-            level = "fatal";
-            break;
-         default:
-            level = "invalid";
+   const int MAX_CHANNELS = 64;
+   
+   enum class ErrorLevel {
+      Warning,
+      Error,
+      Fatal
+   };
+   
+   bool check(FMOD_RESULT result, const std::string &message, ErrorLevel errorLevel = ErrorLevel::Warning) {
+      if (result != FMOD_OK) {
+         std::string level;
+         switch (errorLevel) {
+            case ErrorLevel::Warning:
+               level = "warning";
+               break;
+            case ErrorLevel::Error:
+               level = "error";
+               break;
+            case ErrorLevel::Fatal:
+               level = "fatal";
+               break;
+            default:
+               level = "invalid";
+         }
+         
+         std::cerr << "FMOD " << level << " while doing " << message << ": " <<FMOD_ErrorString(result) << std::endl;
       }
-
-      fprintf(stderr, "FMOD %s while doing %s: %s\n", level.c_str(), message.c_str(), FMOD_ErrorString(result));
+      
+      return result == FMOD_OK;
    }
-
-   return result == FMOD_OK;
-}
-
 } // namespace
 
-AudioManager::AudioManager()
-   : system(nullptr), musicGroup(nullptr) {
+FMOD::System *audio_system = nullptr;
+FMOD::ChannelGroup *sounds = nullptr;
+std::unordered_map<std::string, FMOD::Sound*> soundMap;
+
+void audio_init() {
+   soundMap.clear();
+   
+   assert(audio_system == nullptr);
+   
+   if (!check(FMOD::System_Create(&audio_system), "system creation", ErrorLevel::Fatal)) {
+      audio_release();
+      return;
+   }
+   
+   unsigned int version;
+   if (!check(audio_system->getVersion(&version), "version check", ErrorLevel::Fatal)) {
+      return;
+   }
+   
+   if (version != FMOD_VERSION) {
+      std::cerr << "FMOD lib version " << version << " doesn't match header version " << FMOD_VERSION << std::endl;
+      return;
+   }
+   
+   if (!check(audio_system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, nullptr), "audio system initialization", ErrorLevel::Fatal)) {
+      audio_release();
+      return;
+   }
+   
+   check(audio_system->createChannelGroup("music", &sounds), "channel group creation");
 }
 
-AudioManager::~AudioManager() {
-   release();
+void audio_update() {
+   assert(audio_system != nullptr);
+   check(audio_system->update(), "audio system update");
 }
 
-void AudioManager::release() {
-   if (system) {
-      FMOD_RESULT result = system->release();
-      system = nullptr;
+void audio_release() {
+   assert(audio_system == nullptr);
+   
+   sounds->stop();
+   sounds->release();
+}
 
-      if (result != FMOD_OK) {
-         fprintf(stderr, "Unable to release FMOD system\n");
+FMOD::Sound *audio_load_sound(const char *fileName) {
+   assert(audio_system != nullptr);
+   
+   if (soundMap[fileName])
+      return soundMap[fileName];
+   
+   FMOD::Sound *sound;
+   if (!check(audio_system->createStream(fileName, FMOD_DEFAULT, nullptr, &sound), "loading sound", ErrorLevel::Error)) {
+      return nullptr;
+   }
+   
+   return sound;
+}
+
+Music *audio_load_music(const char *fileName) {
+   FMOD::Sound *sound = audio_load_sound(fileName);
+   check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_NORMAL), "sound looping", ErrorLevel::Error);
+   check(sound->setLoopCount(-1), "sound->setLoopCount(-1)", ErrorLevel::Error);
+   
+   return new Music(sound);
+}
+
+void audio_play_music(Music *music) {
+   assert(audio_system != nullptr);
+
+   if (!music->getSound()) {
+      std::cerr << "No sound registered to this music" << std::endl;
+      return;
+   }
+   
+   // Start music if it exists already
+   FMOD::Channel *channel = music->getChannel();
+   if (!channel) {
+      check(audio_system->playSound(music->getSound(), sounds, true, &channel), "music play");
+      
+      if (!channel) {
+         std::cerr << "Unable to play music" << std::endl;
+         return;
       }
    }
-}
-
-bool AudioManager::load(const std::string &fileName) {
-   if (!system) {
-      fprintf(stderr, "Audio system not initialized\n");
-      return false;
-   }
-
-   FMOD_MODE mode = FMOD_DEFAULT | FMOD_LOOP_NORMAL;
-   FMOD::Sound *sound;
-   if (!check(system->createStream(fileName.c_str(), mode, nullptr, &sound), "loading sound", ErrorLevel::Error)) {
-      return false;
-   }
-
-   soundMap[fileName] = sound;
-   return true;
-}
-
-void AudioManager::init() {
-   if (system) {
-      fprintf(stderr, "Audio system not initialized\n");
-      return;
-   }
-
-   if (!check(FMOD::System_Create(&system), "audio system creation", ErrorLevel::Fatal)) {
-      release();
-      return;
-   }
-
-   unsigned int version;
-   if (!check(system->getVersion(&version), "version check", ErrorLevel::Fatal)) {
-      return;
-   }
-
-   if (version != FMOD_VERSION) {
-      fprintf(stderr, "FMOD lib version %u doesn't match header version %u\n", version, FMOD_VERSION);
-      return;
-   }
-
-   //check(FMOD::Debug_Initialize(FMOD_DEBUG_LEVEL_WARNING, FMOD_DEBUG_MODE_CALLBACK, nullptr));
-
-   if (!check(system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, nullptr), "audio system initialization", ErrorLevel::Fatal)) {
-      release();
-      return;
-   }
-
-   system->createChannelGroup("music", &musicGroup);
-}
-
-void AudioManager::update() {
-   if (system) {
-      fprintf(stderr, "Audio system not initialized\n");
-      return;
-   }
-
-   check(system->update(), "audio system update");
-}
-
-void AudioManager::play(const std::string &fileName) {
-   if (system) {
-      fprintf(stderr, "Audio system not initialized\n");
-      return;
-   }
-
-   if (!soundMap.count(fileName)) {
-      fprintf(stderr, "No sound effect with file name: %s\n", fileName.c_str());
-      return;
-   }
-
-   FMOD::Channel *channel = nullptr;
-   check(system->playSound(soundMap.at(fileName), musicGroup, true, &channel), "sound play");
-
-   if (!channel) {
-      fprintf(stderr, "Unable to play sound: %s\n", fileName.c_str());
-      return;
-   }
-
-   check(channel->setLoopCount(-1), "set infinite loop");
-
+   
    check(channel->setPaused(false), "sound unpause");
+}
+
+void audio_play_sound(const char *fileName) {
+   assert(audio_system != nullptr);
+   
+   FMOD::Sound *sound = audio_load_sound(fileName);
+   assert(sound != nullptr); // Sound file may not exist
+   
+   FMOD::Channel *channel;
+   check(audio_system->playSound(sound, sounds, true, &channel), "sound play");
+   
+   channel->setPaused(false);
+}
+
+void Music::play() {
+   audio_play_music(this);
 }

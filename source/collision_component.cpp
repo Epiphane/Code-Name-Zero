@@ -9,6 +9,7 @@
 #include <glm/ext.hpp>
 
 #include "main.h"
+#include "audio_manager.h"
 #include "collision_component.h"
 #include "game_object.h"
 
@@ -40,6 +41,8 @@ void PlayerCollisionComponent::collide(GameObject *obj, GameObject *other) {
    other->setPhysics(NULL);
    other->setInput(NULL);
    other->getGraphics()->getRenderer(0)->mat = MATERIAL_GRASS;
+   
+   audio_play_sound("./audio/goal.mp3");
    
    score ++;
 }
