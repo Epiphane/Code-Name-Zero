@@ -2,6 +2,9 @@ CPE 476 - RGB Zero
 
 -------------
 
+Pieces of this Readme:
+- [Debugging Info](#debugging)
+
 # Debugging!
 
 ## Geometric Primitives
@@ -50,5 +53,3 @@ glBegin(GL_LINES);
 glEnd();
 ```
 That draws a line across the middle of the model.
-
-# Core
