@@ -21,6 +21,7 @@ void camera_setYaw(double yaw);
 void camera_moveYaw(double dy);
 void camera_move(float dx, float dy, float dz);
 
+void camera_saveState();
 void camera_init();
 void camera_update();
 

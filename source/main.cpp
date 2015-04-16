@@ -16,7 +16,7 @@
 #include <cassert>
 #include <cmath>
 #include <stdio.h>
-
+ 
 #include "main.h"
 #include "input_manager.h"
 #include "in_game_state.h"
@@ -27,7 +27,11 @@ using namespace std;
 
 bool DEBUG = true;
 void toggleDebug() {
-   DEBUG = !DEBUG;
+    DEBUG = !DEBUG;
+    
+    if (DEBUG) {
+        camera_saveState();
+    }
 }
 
 State *currentState = NULL;
@@ -144,7 +148,12 @@ int main(int argc, char **argv) {
 
          // Update and render the game
          // Use fixed time updating
-         currentState->update(SEC_PER_FRAME);
+          if (!DEBUG) {
+              currentState->update(SEC_PER_FRAME);
+          }
+          else {
+              currentState->update(0);
+          }
 
          // Clear the screen
          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

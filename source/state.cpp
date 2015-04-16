@@ -12,6 +12,7 @@
 
 void State::start() {}
 void State::pause() {}
+
 void State::update(float dt) {
    std::vector<GameObject *>::iterator iterator = objects.begin();
    while(iterator < objects.end()) {

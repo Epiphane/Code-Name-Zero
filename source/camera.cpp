@@ -15,7 +15,17 @@ glm::mat4 transform(1.0f);
 bool inCar = false;
 double pitch, yaw;
 
+glm::vec3 saved_position;
+glm::vec3 saved_lookAt;
+glm::mat4 saved_transform;
+
 void camera_init() {
+}
+
+void camera_saveState() {
+    saved_position = position;
+    saved_lookAt = camera_getLookAt();
+    saved_transform = transform;
 }
 
 void camera_setPosition(glm::vec3 _position) {
@@ -40,12 +50,9 @@ glm::vec3 camera_getLookAt() {
 void camera_lookAt(glm::vec3 dest) {
     glm::vec3 dir = glm::normalize(dest - position);
     
-    ;
     camera_setPitch(asin(dir.y));
     yaw = acos(dir.x / cos(pitch));
     if (dir.z > 0) yaw *= -1;
-
-    // camera_setYaw(yaw);
 }
 
 void camera_setPitch(double _pitch) {

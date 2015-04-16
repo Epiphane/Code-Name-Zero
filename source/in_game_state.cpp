@@ -58,7 +58,7 @@ void InGameState::update(float dt) {
       // Create a new object
       MovementComponent *movement = new MovementComponent();
       GameObject *newObject = new GameObject(new ModelRenderer("models/disk_g.obj"),
-                                             movement, new WheelInputComponent(), new TargetCollisionComponent());
+                                             movement, NULL, new TargetCollisionComponent());
       newObject->getGraphics()->getRenderer(0)->mat = MATERIAL_RUBBER;
       newObject->setType(OBJECT_TARGET);
       newObject->addCollision(OBJECT_TARGET);

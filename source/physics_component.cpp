@@ -6,6 +6,8 @@
 //
 //
 
+#include <glm/ext.hpp>
+
 #include "main.h"
 #include "camera.h"
 #include "physics_component.h"
@@ -13,8 +15,8 @@
 #include "state.h"
 
 void MovementComponent::update(GameObject *obj, State *world, float dt) {
-   float lat_speed = latSpeed / FRAMES_PER_SEC;
-   float world_speed = speed / FRAMES_PER_SEC;
+   float lat_speed = latSpeed * dt;
+   float world_speed = speed * dt;
    
    //Check for the edge of the platforms
    glm::vec3 pos = obj->getPosition();
@@ -28,7 +30,8 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
    }
    
    glm::vec3 crossed = glm::cross(direction, glm::vec3(0, 1, 0));
-   
+   if (obj->getType() != OBJECT_PLAYER)
+       obj->transform(glm::rotate(this->getSpeed() * dt * FRAMES_PER_SEC / 5, 1.0f, 0.0f, 0.0f));
    pos += world_speed * direction + lat_speed * crossed;
    obj->setPosition(pos);
 }
@@ -36,5 +39,6 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
 void PlayerMovementComponent::update(GameObject *obj, State *world, float dt) {
    MovementComponent::update(obj, world, dt);
    
-   camera_setPosition(obj->getPosition() + glm::vec3(0, 1, 0));
+   if (!DEBUG)
+       camera_setPosition(obj->getPosition() + glm::vec3(0, 1, 0));
 }
