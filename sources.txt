@@ -9,6 +9,7 @@ set(HEADERS
    renderer.h
 
    audio_manager.h
+   input_manager.h
 
    state.h
    in_game_state.h
@@ -31,6 +32,7 @@ set(SOURCES
    renderer.cpp
 
    audio_manager.cpp
+   input_manager.cpp
 
    state.cpp
    in_game_state.cpp
