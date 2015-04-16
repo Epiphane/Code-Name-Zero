@@ -10,6 +10,9 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+
+#include "input_manager.h"
+#include "audio_manager.h"
 #include "in_game_state.h"
 #include "camera.h"
 #include "renderer.h"
@@ -20,6 +23,10 @@ float t = 0;
 
 InGameState::InGameState() {
    State::State();
+   
+   AudioManager *audio = new AudioManager();
+   audio->init();
+   audio->play("audio/RGB_MuteCity_HQ.wav");
    
    // Move camera
    camera_init();
@@ -45,11 +52,6 @@ InGameState::InGameState() {
 
 void InGameState::update(float dt) {
    camera_update();
-   
-   if (keysDown[GLFW_KEY_SPACE]) {
-      keysDown[GLFW_KEY_SPACE] = 0;
-      DEBUG = !DEBUG;
-   }
    
    t += dt;
    if (t >= time_per_spawn && target_number < MAX_TARGET) {

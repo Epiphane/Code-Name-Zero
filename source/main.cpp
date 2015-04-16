@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 #include "main.h"
+#include "input_manager.h"
 #include "in_game_state.h"
 #include "camera.h"
 #include "GLSL.h"
@@ -25,6 +26,9 @@
 using namespace std;
 
 bool DEBUG = true;
+void toggleDebug() {
+   DEBUG = !DEBUG;
+}
 
 State *currentState = NULL;
 void setState(State *state) {
@@ -41,14 +45,6 @@ GLFWwindow* window;
 const int w_width = 1024;
 const int w_height = 768;
 const char *w_title = "Lab 1";
-
-bool keysDown[GLFW_KEY_LAST] = {0};
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int modes) {
-    if (action == GLFW_PRESS)
-        keysDown[key] = 1;
-    else if (action == GLFW_RELEASE)
-        keysDown[key] = 0;
-}
 
 /*
  * Generates a pseudo random float
@@ -112,7 +108,9 @@ int main(int argc, char **argv) {
    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
    glfwSetCursorPos(window, w_width / 2, w_height / 2);
-   glfwSetKeyCallback(window, key_callback);
+   
+   input_init(window);
+   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
 
    glEnable (GL_BLEND);
    glEnable(GL_DEPTH_TEST);

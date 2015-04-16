@@ -9,6 +9,7 @@
 #ifndef __Project__input_component__
 #define __Project__input_component__
 
+#include "input_manager.h"
 class GameObject;
 
 /* Input Components change pieces of the Game Object's state */

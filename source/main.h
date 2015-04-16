@@ -37,7 +37,7 @@ class State;
 
 // Important game functions
 void setState(State *state);
-extern bool keysDown[GLFW_KEY_LAST];
+
 extern float randFloat(float l, float h);
 extern glm::vec3 randPoint(float r);
 

@@ -30,16 +30,16 @@ void PlayerInputComponent::update(GameObject *obj) {
       float speed = 0;
       float latSpeed = 0;
       
-      if (keysDown[GLFW_KEY_A]) {
+      if (input_keyDown(GLFW_KEY_A)) {
          latSpeed -= PLAYER_SPEED;
       }
-      if (keysDown[GLFW_KEY_S]) {
+      if (input_keyDown(GLFW_KEY_S)) {
          speed -= PLAYER_SPEED;
       }
-      if (keysDown[GLFW_KEY_D]) {
+      if (input_keyDown(GLFW_KEY_D)) {
          latSpeed += PLAYER_SPEED;
       }
-      if (keysDown[GLFW_KEY_W]) {
+      if (input_keyDown(GLFW_KEY_W)) {
          speed += PLAYER_SPEED;
       }
       
