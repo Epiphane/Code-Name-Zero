@@ -45,8 +45,14 @@ InGameState::InGameState() {
    GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
    addObject(ground);
    
-   soundtrack = audio_load_music("./audio/RGB_MuteCity_HQ.wav");
+   soundtrack = audio_load_music("./audio/RGB_MuteCity_HQ.wav", 200);
    soundtrack->play();
+}
+
+void InGameState::send(std::string message, void *data) {
+   if (message == "beat") {
+//      std::cout << "beat " << *(Beat *)data << std::endl;
+   }
 }
 
 void InGameState::update(float dt) {

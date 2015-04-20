@@ -11,14 +11,18 @@ namespace FMOD {
    class System;
 } // namespace FMOD
 
+typedef unsigned int Beat;
+typedef void(* beat_callback)(Beat);
+
 class Music {
 private:
    FMOD::Channel *channel;
    FMOD::Sound *sound;
-   unsigned int beat;
+   Beat beat;
+   Beat bpm;
    
 public:
-   Music(FMOD::Sound *s) : channel(nullptr), sound(s), beat(0) {};
+   Music(FMOD::Sound *s, Beat _bpm) : channel(nullptr), sound(s), beat(0), bpm(_bpm) {};
    
    void update();
    void play();
@@ -31,13 +35,14 @@ public:
 };
 
 void audio_init();
+void audio_setPaused(bool paused);
 void audio_update();
 void audio_release();
 
 FMOD::Sound *audio_load_sound(const char *filename);
 void audio_play_sound(const char *filename);
 
-Music *audio_load_music(const char *fileName);
+Music *audio_load_music(const char *fileName, Beat bpm);
 void audio_play_music(Music *music);
 
 #endif

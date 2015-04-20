@@ -28,14 +28,16 @@ using namespace std;
 
 bool DEBUG = true;
 void toggleDebug() {
-    DEBUG = !DEBUG;
-    
-    if (DEBUG) {
-        camera_saveState();
-    }
+   DEBUG = !DEBUG;
+   
+   audio_setPaused(DEBUG);
+   if (DEBUG) {
+      camera_saveState();
+   }
 }
 
 State *currentState = NULL;
+State *getCurrentState() { return currentState; }
 void setState(State *state) {
    if (currentState != NULL) {
       currentState->pause();
