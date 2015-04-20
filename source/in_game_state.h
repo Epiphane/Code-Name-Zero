@@ -9,6 +9,7 @@
 #ifndef __Project__in_game_state__
 #define __Project__in_game_state__
 
+#include "audio_manager.h"
 #include "state.h"
 
 class InGameState : public State {
@@ -24,6 +25,10 @@ public:
    void collide(GameObject *obj);
    void update(float dt);
    void render(float dt);
+   
+   void send(std::string message, void *data);
+   
+   void beat(Beat *beat);
 };
 
 #endif /* defined(__Project__in_game_state__) */

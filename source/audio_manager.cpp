@@ -1,8 +1,11 @@
 #include <iostream>
 #include <cassert>
+#include <vector>
 #include <FMOD/fmod.hpp>
 #include <FMOD/fmod_errors.h>
 
+#include "main.h"
+#include "state.h"
 #include "audio_manager.h"
 
 namespace {
@@ -40,6 +43,7 @@ namespace {
 
 FMOD::System *audio_system = nullptr;
 FMOD::ChannelGroup *sounds = nullptr;
+std::vector<Music *> musics;
 std::unordered_map<std::string, FMOD::Sound*> soundMap;
 
 void audio_init() {
@@ -68,11 +72,24 @@ void audio_init() {
    }
    
    check(audio_system->createChannelGroup("music", &sounds), "channel group creation");
+   check(sounds->setPaused(DEBUG), "sound pause setup");
+}
+
+void audio_setPaused(bool paused) {
+   assert(audio_system != nullptr);
+   assert(sounds != nullptr);
+   
+   sounds->setPaused(paused);
 }
 
 void audio_update() {
    assert(audio_system != nullptr);
    check(audio_system->update(), "audio system update");
+   
+   std::vector<Music *>::iterator it;
+   for(it = musics.begin(); it < musics.end(); it ++) {
+      (*it)->update();
+   }
 }
 
 void audio_release() {
@@ -96,12 +113,14 @@ FMOD::Sound *audio_load_sound(const char *fileName) {
    return sound;
 }
 
-Music *audio_load_music(const char *fileName) {
+Music *audio_load_music(const char *fileName, Beat bpm) {
    FMOD::Sound *sound = audio_load_sound(fileName);
    check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_NORMAL), "sound looping", ErrorLevel::Error);
    check(sound->setLoopCount(-1), "sound->setLoopCount(-1)", ErrorLevel::Error);
    
-   return new Music(sound);
+   Music *music = new Music(sound, bpm);
+   musics.push_back(music);
+   return music;
 }
 
 void audio_play_music(Music *music) {
@@ -124,6 +143,7 @@ void audio_play_music(Music *music) {
    }
    
    check(channel->setPaused(false), "sound unpause");
+   music->setChannel(channel);
 }
 
 void audio_play_sound(const char *fileName) {
@@ -136,6 +156,18 @@ void audio_play_sound(const char *fileName) {
    check(audio_system->playSound(sound, sounds, true, &channel), "sound play");
    
    channel->setPaused(false);
+}
+
+void Music::update() {
+   Beat position;
+   channel->getPosition(&position, FMOD_TIMEUNIT_MS);
+   
+   Beat currentBeat = position * bpm / 60000 + 1;
+   if (currentBeat != beat) {
+      beat = currentBeat;
+      
+      getCurrentState()->send("beat", &beat);
+   }
 }
 
 void Music::play() {

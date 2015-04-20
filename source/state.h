@@ -25,6 +25,8 @@ public:
    virtual void update(float dt);
    virtual void render(float dt);
    
+   virtual void send(std::string message, void *data);
+   
    void addObject(GameObject *obj);
    void removeObject(GameObject *obj);
    void collide(GameObject *obj);

@@ -44,12 +44,16 @@ void State::render(float dt) {
    }
 }
 
+void State::send(std::string message, void *data) {
+   // Do nothing...
+}
+
 void State::addObject(GameObject *obj) {
    objects.push_back(obj);
 }
 
 void State::removeObject(GameObject *obj) {
-//   obj->dead = true;
+   obj->die();
 }
 
 void State::collide(GameObject *obj) {

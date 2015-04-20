@@ -37,6 +37,7 @@ class State;
 
 // Important game functions
 void setState(State *state);
+State *getCurrentState();
 
 extern float randFloat(float l, float h);
 extern glm::vec3 randPoint(float r);
