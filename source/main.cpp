@@ -24,6 +24,9 @@
 #include "camera.h"
 #include "GLSL.h"
 #include "tiny_obj_loader.h"
+
+#define M_PI 3.1415926535897932384626433832795
+
 using namespace std;
 
 bool DEBUG = true;

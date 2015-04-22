@@ -72,9 +72,10 @@ if (WIN32)
    set(FMOD_LIBRARY_RELEASE "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod_vc.lib")
    set(FMOD_LIBRARY_DEBUG "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/fmodL_vc.lib")
    list(APPEND LIBS
-      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod.dll
-      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/fmodL.dll
+      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod_vc.lib
+      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/fmodL_vc.lib
    )
+      file(COPY ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod.dll DESTINATION ${PROJECT_BINARY_DIR})
 endif (WIN32)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
@@ -112,6 +113,16 @@ foreach(SOURCE ${SOURCES})
       "${SRC_DIR}/${SOURCE}"
    )
 endforeach(SOURCE)
+
+if (WIN32)
+   foreach(RESOURCE ${RESOURCES})
+      list(APPEND ABS_RESOURCES
+         "${SRC_DIR}/${RESOURCE}"
+      )
+   endforeach(RESOURCE)
+
+   file(COPY ${ABS_RESOURCES} DESTINATION ${PROJECT_BINARY_DIR})
+endif (WIN32)
 
 include_directories(${INCLUDES})
 add_executable(${PROJECT_NAME} ${ABS_SOURCES} ${ABS_HEADERS} ${LIB_SOURCES})

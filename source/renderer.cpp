@@ -431,12 +431,15 @@ GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const cha
     // Check the program
     glGetProgramiv(programID, GL_LINK_STATUS, &result);
     glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if(infoLogLength > 0){
-        vector<char> errorMessage(infoLogLength+1);
-        glGetProgramInfoLog(programID, infoLogLength, NULL, &errorMessage[0]);
-        printf("%s\n", &errorMessage[0]);
-        
-        exit(1);
+	if (infoLogLength > 0){
+		vector<char> errorMessage(infoLogLength + 1);
+		glGetProgramInfoLog(programID, infoLogLength, NULL, &errorMessage[0]);
+
+        // Windows returns empty error messages, check if error message is null first before quitting
+        if (errorMessage[0] != '\0') {
+            printf("%s\n", &errorMessage[0]);
+            exit(1);
+        }
     }
     
     glDeleteShader(vertexShader);

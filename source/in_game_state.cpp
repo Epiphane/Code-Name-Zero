@@ -34,7 +34,7 @@ InGameState::InGameState() {
    MovementComponent *movement = new PlayerMovementComponent();
    InputComponent *i = new PlayerInputComponent();
    player = new PlayerCollisionComponent();
-   GameObject *p = new GameObject(new ModelRenderer("models/car.obj"),
+   GameObject *p = new GameObject(new ModelRenderer("./models/car.obj"),
                                   movement, i, player);
    p->setType(OBJECT_PLAYER);
    p->addCollision(OBJECT_TARGET);
@@ -87,7 +87,7 @@ int pos = 0;
 void InGameState::render(float dt) {
    State::render(dt);
    
-   char score[16];
+   char score[32];
    sprintf(score, "Score: %d out of %d", player->score, target_number);
    renderText(score, 50, 700);
    
