@@ -1,277 +1,124 @@
-//
-// seriously modified ZJ Wood January 2015 - conversion to glfw
-// inclusion of matrix stack Feb. 2015
-// original from Shinjiro Sueda
-// October, 2014
-//
-// Base code for program 3 - does not compile as is, needs other files
-//and shaders but has skeleton for much of the data transfer for shading
-//and traversal of the mesh for computing normals - you must compute normals
-
+// Include standard headers
 #include <stdio.h>
 #include <stdlib.h>
+
+// Include GLEW
 #include <GL/glew.h>
+
+// Include GLFW
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <cassert>
-#include <cmath>
-#include <stdio.h>
- 
-#include "main.h"
-#include "audio_manager.h"
-#include "input_manager.h"
-#include "in_game_state.h"
-#include "camera.h"
-#include "GLSL.h"
-#include "tiny_obj_loader.h"
-
-#define M_PI 3.1415926535897932384626433832795
-
-using namespace std;
-
-bool DEBUG = false;
-void toggleDebug() {
-   DEBUG = !DEBUG;
-   
-   audio_setPaused(DEBUG);
-   if (DEBUG) {
-      camera_saveState();
-   }
-}
-
-State *currentState = NULL;
-State *getCurrentState() { return currentState; }
-void setState(State *state) {
-   if (currentState != NULL) {
-      currentState->pause();
-   }
-   
-   currentState = state;
-   currentState->start();
-}
-
 GLFWwindow* window;
+
+// Include GLM
+#include <glm/glm.hpp>
+using namespace glm;
+
+#include "main.h"
+#include "shader.hpp"
+#include "audio_manager.h"
+
 
 const int w_width = 1024;
 const int w_height = 768;
 const char *w_title = "Lab 1";
 
-/*
- * Generates a pseudo random float
- *
- * float l : lower bound
- * float h : upper bound
- */
-float randFloat(float l, float h) {
-   float r = rand() / (float)RAND_MAX;
-      return (1.0f - r) * l + r * h;
-}
+int main( void )
+{
+	// Initialise GLFW
+	if( !glfwInit() )
+	{
+		fprintf( stderr, "Failed to initialize GLFW\n" );
+		return -1;
+	}
 
-/*
- * Generates a random vec3 within a circle along the XZ plane 
- *
- * float r - radius of the circle
- */
-glm::vec3 randPoint(float r) {
-   float randA = randFloat(0, 1);
-   float randB = randFloat(0, 1);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-   if (randB < randA) {
-      float temp = randA;
-      randA = randB;
-      randB = temp;
-   }
+	// Open a window and create its OpenGL context
+	window = glfwCreateWindow( 1024, 768, "Tutorial 02 - Red triangle", NULL, NULL);
+	if( window == NULL ){
+		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
 
-   float angle = M_PI * 2 * randA / randB;
-   return glm::vec3(randB * r * cos(angle), 0, randB * r * sin(angle));
-}
+	// Initialize GLEW
+	glewExperimental = true; // Needed for core profile
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+		return -1;
+	}
 
-int main(int argc, char **argv) {
-   // Initialise GLFW
-   if(!glfwInit()) {
-      fprintf( stderr, "Failed to initialize GLFW\n" );
-      return -1;
-   }
+	// Ensure we can capture the escape key being pressed below
+	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-   glfwWindowHint(GLFW_SAMPLES, 4);
-   glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+	// Dark blue background
+	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
 
-   // Open a window and create its OpenGL context
-   window = glfwCreateWindow(w_width, w_height, w_title, NULL, NULL);
-   if(window == NULL) {
-      std::cerr << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n" << std::endl;
-      glfwTerminate();
-      return -1;
-   }
+	GLuint VertexArrayID;
+	glGenVertexArrays(1, &VertexArrayID);
+	glBindVertexArray(VertexArrayID);
 
-   glfwMakeContextCurrent(window);
+	// Create and compile our GLSL program from the shaders
+	GLuint programID = LoadShaders( "shaders/SimpleVertex.glsl", "shaders/SimpleFragment.glsl" );
 
-   // Initialize GLEW
-   if (glewInit() != GLEW_OK) {
-      fprintf(stderr, "Failed to initialize GLEW\n");
-      return -1;
-   }
+   audio_stuff();
 
-   // Ensure we can capture the escape key being pressed below
-   glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-   glfwSetCursorPos(window, w_width / 2, w_height / 2);
-   
-   input_init(window);
-   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
+	static const GLfloat g_vertex_buffer_data[] = { 
+		-1.0f, -1.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,
+		 0.0f,  1.0f, 0.0f,
+	};
 
-   glEnable (GL_BLEND);
-   glEnable(GL_DEPTH_TEST);
-   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   
-   glClearColor(0.10f, 0.05f, 0.3f, 1.0f);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   
-   shaders_init();
-   audio_init();
-   
-   setState(new FIRST_STATE());
-    
-   double clock = glfwGetTime();
-   do {
-      assert(currentState != NULL);
-      
-      audio_update();
-      
-      double nextTime = glfwGetTime();
-      if (nextTime - clock > SEC_PER_FRAME) {
-         // Update camera
-         double xpos, ypos;
-         glfwGetCursorPos(window, &xpos, &ypos);
-         // std::cout << xpos << std::endl;
-         double dx = (double) w_width / 2 - xpos;
-         double dy = (double) w_height / 2 - ypos;
-         // Edge case: window initialization
-         if (abs(dx) < 100 && abs(dy) < 100 && (xpos > 0 || ypos > 0) && DEBUG) {
-            camera_movePitch(dy * CAMERA_SPEED);
-            camera_moveYaw(dx * CAMERA_SPEED);
-         }
-         glfwSetCursorPos(window, w_width / 2, w_height / 2);
+	GLuint vertexbuffer;
+	glGenBuffers(1, &vertexbuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
-         // Update and render the game
-         // Use fixed time updating
-          if (!DEBUG) {
-              currentState->update(SEC_PER_FRAME);
-          }
-          else {
-              currentState->update(0);
-          }
+	do{
 
-         // Clear the screen
-         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// Clear the screen
+		glClear( GL_COLOR_BUFFER_BIT );
 
-         currentState->render(glfwGetTime() - clock);
+		// Use our shader
+		glUseProgram(programID);
 
+		// 1rst attribute buffer : vertices
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+		glVertexAttribPointer(
+			0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+		);
 
-         glLoadIdentity(); // Reset current matrix (Modelview)
+		// Draw the triangle !
+		glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
 
-         clock = nextTime;
-      }
-      assert(GLSL::printError() == 0);
+		glDisableVertexAttribArray(0);
 
-      // Swap buffers
-      glfwSwapBuffers(window);
-      glfwPollEvents();
-   } // Check if the ESC key was pressed or the window was closed
-   while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 );
+		// Swap buffers
+		glfwSwapBuffers(window);
+		glfwPollEvents();
 
-   // Close OpenGL window and terminate GLFW
-   glfwTerminate();
+	} // Check if the ESC key was pressed or the window was closed
+	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+		   glfwWindowShouldClose(window) == 0 );
 
-   return 0;
-}
+	// Cleanup VBO
+	glDeleteBuffers(1, &vertexbuffer);
+	glDeleteVertexArrays(1, &VertexArrayID);
+	glDeleteProgram(programID);
 
-std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec) {
-    out << "{" << vec.x << ", " << vec.y << ", " << vec.z << "}";
-    return out;
-}
+	// Close OpenGL window and terminate GLFW
+	glfwTerminate();
 
-std::ostream &operator<< (std::ostream &out, const glm::vec4 &vec) {
-    out << "{" << vec.x << ", " << vec.y << ", " << vec.z << ", " << vec.w << "}";
-    return out;
-}
-
-std::ostream &operator<< (std::ostream &out, const glm::mat4 &mat) {
-    out << "\n{\t";
-    for(int i = 0; i < 4; i ++) {
-        for(int j = 0; j < 4; j ++) {
-            if (mat[j][i] == 0)
-                out << "0\t";
-            else
-                out << mat[j][i] << "\t";
-        }
-        if(i < 3)
-            out << std::endl << "\t";
-    }
-    out << "}";
-    return out;
-}
-
-// Given a vector of shapes which has already been read from an obj file
-// resize all vertices to the range [-1, 1]
-void resize_obj(std::vector<tinyobj::shape_t> &shapes){
-    float minX, minY, minZ;
-    float maxX, maxY, maxZ;
-    float scaleX, scaleY, scaleZ;
-    float shiftX, shiftY, shiftZ;
-    float epsilon = 0.001;
-    
-    minX = minY = minZ = 1.1754E+38F;
-    maxX = maxY = maxZ = -1.1754E+38F;
-    
-    //Go through all vertices to determine min and max of each dimension
-    for (size_t i = 0; i < shapes.size(); i++) {
-        for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-            if(shapes[i].mesh.positions[3*v+0] < minX) minX = shapes[i].mesh.positions[3*v+0];
-            if(shapes[i].mesh.positions[3*v+0] > maxX) maxX = shapes[i].mesh.positions[3*v+0];
-            
-            if(shapes[i].mesh.positions[3*v+1] < minY) minY = shapes[i].mesh.positions[3*v+1];
-            if(shapes[i].mesh.positions[3*v+1] > maxY) maxY = shapes[i].mesh.positions[3*v+1];
-            
-            if(shapes[i].mesh.positions[3*v+2] < minZ) minZ = shapes[i].mesh.positions[3*v+2];
-            if(shapes[i].mesh.positions[3*v+2] > maxZ) maxZ = shapes[i].mesh.positions[3*v+2];
-        }
-    }
-    //From min and max compute necessary scale and shift for each dimension
-    float maxExtent, xExtent, yExtent, zExtent;
-    xExtent = maxX-minX;
-    yExtent = maxY-minY;
-    zExtent = maxZ-minZ;
-    if (xExtent >= yExtent && xExtent >= zExtent) {
-        maxExtent = xExtent;
-    }
-    if (yExtent >= xExtent && yExtent >= zExtent) {
-        maxExtent = yExtent;
-    }
-    if (zExtent >= xExtent && zExtent >= yExtent) {
-        maxExtent = zExtent;
-    }
-    scaleX = 2.0 / maxExtent;
-    shiftX = minX + (xExtent/ 2.0);
-    scaleY = 2.0 / maxExtent;
-    shiftY = minY + (yExtent / 2.0);
-    scaleZ = 2.0/ maxExtent;
-    shiftZ = minZ + (zExtent)/2.0;
-    
-    //Go through all verticies shift and scale them
-    for (size_t i = 0; i < shapes.size(); i++) {
-        for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-            shapes[i].mesh.positions[3*v+0] = (shapes[i].mesh.positions[3*v+0] - shiftX) * scaleX;
-            assert(shapes[i].mesh.positions[3*v+0] >= -1.0 - epsilon);
-            assert(shapes[i].mesh.positions[3*v+0] <= 1.0 + epsilon);
-            shapes[i].mesh.positions[3*v+1] = (shapes[i].mesh.positions[3*v+1] - shiftY) * scaleY;
-            assert(shapes[i].mesh.positions[3*v+1] >= -1.0 - epsilon);
-            assert(shapes[i].mesh.positions[3*v+1] <= 1.0 + epsilon);
-            shapes[i].mesh.positions[3*v+2] = (shapes[i].mesh.positions[3*v+2] - shiftZ) * scaleZ;
-            assert(shapes[i].mesh.positions[3*v+2] >= -1.0 - epsilon);
-            assert(shapes[i].mesh.positions[3*v+2] <= 1.0 + epsilon);
-        }
-    }
+	return 0;
 }

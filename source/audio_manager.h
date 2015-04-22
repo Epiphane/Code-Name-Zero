@@ -1,8 +1,15 @@
-#ifndef AUDIO_MANAGER_H
-#define AUDIO_MANAGER_H
+//
+//  audio_manager.h
+//  RGBZero
+//
+//  Created by Thomas Steinke on 4/21/15.
+//
+//
+
+#ifndef __RGBZero__audio_manager__
+#define __RGBZero__audio_manager__
 
 #include <string>
-#include <unordered_map>
 
 namespace FMOD {
    class Channel;
@@ -45,4 +52,6 @@ void audio_play_sound(const char *filename);
 Music *audio_load_music(const char *fileName, Beat bpm);
 void audio_play_music(Music *music);
 
-#endif
+void audio_stuff();
+
+#endif /* defined(__RGBZero__audio_manager__) */

@@ -3,31 +3,30 @@
 #include <vector>
 #include <FMOD/fmod.hpp>
 #include <FMOD/fmod_errors.h>
+#include <unordered_map>
 
-#include "main.h"
-#include "state.h"
 #include "audio_manager.h"
+
+typedef enum {
+   Warning,
+   Error,
+   Fatal
+} ErrorLevel;
 
 namespace {
    const int MAX_CHANNELS = 64;
    
-   enum class ErrorLevel {
-      Warning,
-      Error,
-      Fatal
-   };
-   
-   bool check(FMOD_RESULT result, const std::string &message, ErrorLevel errorLevel = ErrorLevel::Warning) {
+   bool check(FMOD_RESULT result, const std::string &message, ErrorLevel errorLevel = Warning) {
       if (result != FMOD_OK) {
          std::string level;
          switch (errorLevel) {
-            case ErrorLevel::Warning:
+            case Warning:
                level = "warning";
                break;
-            case ErrorLevel::Error:
+            case Error:
                level = "error";
                break;
-            case ErrorLevel::Fatal:
+            case Fatal:
                level = "fatal";
                break;
             default:
@@ -51,13 +50,13 @@ void audio_init() {
    
    assert(audio_system == nullptr);
    
-   if (!check(FMOD::System_Create(&audio_system), "system creation", ErrorLevel::Fatal)) {
+   if (!check(FMOD::System_Create(&audio_system), "system creation", Fatal)) {
       audio_release();
       return;
    }
    
    unsigned int version;
-   if (!check(audio_system->getVersion(&version), "version check", ErrorLevel::Fatal)) {
+   if (!check(audio_system->getVersion(&version), "version check", Fatal)) {
       return;
    }
    
@@ -66,13 +65,13 @@ void audio_init() {
       return;
    }
    
-   if (!check(audio_system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, nullptr), "audio system initialization", ErrorLevel::Fatal)) {
+   if (!check(audio_system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, nullptr), "audio system initialization", Fatal)) {
       audio_release();
       return;
    }
    
    check(audio_system->createChannelGroup("music", &sounds), "channel group creation");
-   check(sounds->setPaused(DEBUG), "sound pause setup");
+   check(sounds->setPaused(false), "sound pause setup");
 }
 
 void audio_setPaused(bool paused) {
@@ -106,7 +105,7 @@ FMOD::Sound *audio_load_sound(const char *fileName) {
       return soundMap[fileName];
    
    FMOD::Sound *sound;
-   if (!check(audio_system->createStream(fileName, FMOD_DEFAULT, nullptr, &sound), "loading sound", ErrorLevel::Error)) {
+   if (!check(audio_system->createStream(fileName, FMOD_DEFAULT, nullptr, &sound), "loading sound", Error)) {
       return nullptr;
    }
    
@@ -115,8 +114,8 @@ FMOD::Sound *audio_load_sound(const char *fileName) {
 
 Music *audio_load_music(const char *fileName, Beat bpm) {
    FMOD::Sound *sound = audio_load_sound(fileName);
-   check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_NORMAL), "sound looping", ErrorLevel::Error);
-   check(sound->setLoopCount(-1), "sound->setLoopCount(-1)", ErrorLevel::Error);
+   check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_NORMAL), "sound looping", Error);
+   check(sound->setLoopCount(-1), "sound->setLoopCount(-1)", Error);
    
    Music *music = new Music(sound, bpm);
    musics.push_back(music);
@@ -125,7 +124,7 @@ Music *audio_load_music(const char *fileName, Beat bpm) {
 
 void audio_play_music(Music *music) {
    assert(audio_system != nullptr);
-
+   
    if (!music->getSound()) {
       std::cerr << "No sound registered to this music" << std::endl;
       return;
@@ -166,10 +165,17 @@ void Music::update() {
    if (currentBeat != beat) {
       beat = currentBeat;
       
-      getCurrentState()->send("beat", &beat);
+//      getCurrentState()->send("beat", &beat);
    }
 }
 
 void Music::play() {
    audio_play_music(this);
+}
+
+void audio_stuff() {
+   audio_init();
+   
+   audio_play_sound("audio/RGB_MuteCity_HQ.wav");
+   audio_update();
 }
