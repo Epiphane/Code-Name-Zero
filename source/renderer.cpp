@@ -11,6 +11,7 @@ using namespace std;
 
 #include "camera.h"
 #include "bounds.h"
+#include "shader.hpp"
 #include "renderer.h"
 #include "main.h"
 
@@ -425,81 +426,6 @@ void ProgramTextrender(Renderer *p, glm::mat4 Model) {
 void TexRenderer::loadTexture(char *filename) {
     LoadTexture(filename, texID);
 }
-
-// ----------------- LOAD SHADERS -----------------------------
-
-GLuint compileShader(const char *filePath, GLenum shaderType) {
-    GLuint shaderID = glCreateShader(shaderType);
-    
-    // Read the Shader code from the file
-    string shaderCode;
-    ifstream shaderStream(filePath, ios::in);
-    if(shaderStream.is_open()){
-        string line = "";
-        while(getline(shaderStream, line))
-            shaderCode += "\n" + line;
-        shaderStream.close();
-    }
-    
-    GLint result = GL_FALSE;
-    int infoLogLength;
-    
-    // Compile Shader
-    printf("Compiling shader : %s\n", filePath);
-    const char *sourcePointer = shaderCode.c_str();
-    glShaderSource(shaderID, 1, &sourcePointer , NULL);
-    glCompileShader(shaderID);
-    
-    // Check Shader
-    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &result);
-    glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if(infoLogLength > 0){
-        vector<char> errorMessage(infoLogLength+1);
-        glGetShaderInfoLog(shaderID, infoLogLength, NULL, &errorMessage[0]);
-        printf("%s\n", &errorMessage[0]);
-    }
-    
-    return shaderID;
-}
-
-GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const char *fragFilePath) {
-    GLint result = GL_FALSE;
-    int infoLogLength;
-    
-    // Create shaders
-    GLuint vertexShader = compileShader(vertFilePath, GL_VERTEX_SHADER);
-//    GLuint geomShader = compileShader(geomFilePath, GL_GEOMETRY_SHADER);
-    GLuint fragShader = compileShader(fragFilePath, GL_FRAGMENT_SHADER);
-    
-    // Link the program
-    printf("Linking program\n");
-    GLuint programID = glCreateProgram();
-    glAttachShader(programID, vertexShader);
-    //    glAttachShader(programID, geomShader);
-    glAttachShader(programID, fragShader);
-    glLinkProgram(programID);
-    
-    // Check the program
-    glGetProgramiv(programID, GL_LINK_STATUS, &result);
-    glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
-	if (infoLogLength > 0){
-		vector<char> errorMessage(infoLogLength + 1);
-		glGetProgramInfoLog(programID, infoLogLength, NULL, &errorMessage[0]);
-
-        // Windows returns empty error messages, check if error message is null first before quitting
-        if (errorMessage[0] != '\0') {
-            printf("%s\n", &errorMessage[0]);
-            exit(1);
-        }
-    }
-    
-    glDeleteShader(vertexShader);
-    //    glDeleteShader(geomShader);
-    glDeleteShader(fragShader);
-    
-    return programID;
-}
-
 
 // ------------------- TEXTURE LOADING ------------------------
 //routines to load in a bmp files - must be 2^nx2^m and a 24bit bmp

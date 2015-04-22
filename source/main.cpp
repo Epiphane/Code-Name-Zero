@@ -162,18 +162,16 @@ int main(int argc, char **argv) {
 
          // Update and render the game
          // Use fixed time updating
-          if (!DEBUG) {
-              currentState->update(SEC_PER_FRAME);
-          }
-          else {
-              currentState->update(0);
-          }
+         if (!DEBUG) {
+            currentState->update(SEC_PER_FRAME);
+         }
+         else {
+            currentState->update(0);
+         }
 
          // Clear the screen
          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          currentState->render(glfwGetTime() - clock);
-
-//         glLoadIdentity(); // Reset current matrix (Modelview)
 
          clock = nextTime;
       }

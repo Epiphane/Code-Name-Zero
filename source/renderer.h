@@ -24,8 +24,6 @@ const Material MATERIAL_GREEN = 8;
 void shaders_init();
 void renderText(const char *text, float x, float y);
 
-unsigned int LoadShaders(const char *vertFilePath, const char *geomFilePath, const char *fragFilePath);
-
 class Renderer;
 
 // Shader programs
