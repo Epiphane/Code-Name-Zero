@@ -7,6 +7,7 @@ set(HEADERS
    main.h
    camera.h
    renderer.h
+   shader.hpp
 
    audio_manager.h
    input_manager.h
@@ -30,6 +31,7 @@ set(SOURCES
    main.cpp
    camera.cpp
    renderer.cpp
+   shader.cpp
 
    audio_manager.cpp
    input_manager.cpp

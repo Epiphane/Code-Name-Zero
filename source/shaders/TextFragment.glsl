@@ -1,14 +1,17 @@
+#version 330 core
+
 uniform sampler2D uTexUnit;
 
-varying vec2 UV;
+in vec2 UV;
+out vec4 fragColor;
 
 void main() {
-   gl_FragColor = texture2D( uTexUnit, UV );
+   fragColor = texture( uTexUnit, UV );
 
-   float d = abs(gl_FragColor.r - gl_FragColor.b);
+   float d = abs(fragColor.r - fragColor.b);
    if (d > 0.6)
       discard;
-   d = abs(gl_FragColor.r - gl_FragColor.g);
+   d = abs(fragColor.r - fragColor.g);
    if (d > 0.6)
       discard;
 

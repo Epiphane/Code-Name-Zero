@@ -174,36 +174,42 @@ void setUniforms(GLuint uWinScale, GLuint uPerspective, GLuint uView, GLuint uMo
 }
 
 void shaders_init() {
+   GLuint VertexArrayID;
+   glGenVertexArrays(1, &VertexArrayID);
+   glBindVertexArray(VertexArrayID);
+   
     Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 400.0f);
     currentMVP = glm::mat4(1.0f);
     MatrixStack.empty();
+   
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadMatrixf(&Projection[0][0]);
+//   
+//   error = glGetError();
+//   std::cout << error << std::endl;
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+   
+   // ----------------- 3D MODEL SHADER -------------------------
+   Program3D = (Program *) malloc(sizeof(Program));
+   
+   Program3D->programID = LoadShaders("./shaders/3DVertex.glsl", "", "./shaders/3DFragment.glsl");
+   Program3D_uWinScale = glGetUniformLocation(Program3D->programID, "windowScale");
+   Program3D_uProj = glGetUniformLocation(Program3D->programID, "uProjMatrix");
+   Program3D_uModel = glGetUniformLocation(Program3D->programID, "uModelMatrix");
+   Program3D_uView = glGetUniformLocation(Program3D->programID, "uViewMatrix");
+   Program3D_uAColor = glGetUniformLocation(Program3D->programID, "UaColor");
+   Program3D_uDColor = glGetUniformLocation(Program3D->programID, "UdColor");
+   Program3D_uSColor = glGetUniformLocation(Program3D->programID, "UsColor");
+   Program3D_uLightPos = glGetUniformLocation(Program3D->programID, "uLightPos");
+   Program3D_uShine = glGetUniformLocation(Program3D->programID, "uShine");
+   Program3D_uBend = glGetUniformLocation(Program3D->programID, "uBend");
+   Program3D_aNormal = glGetAttribLocation(Program3D->programID, "aNormal");
+   Program3D_aPosition = glGetAttribLocation(Program3D->programID, "aPosition");
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixf(&Projection[0][0]);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-        
-    // ----------------- 3D MODEL SHADER -------------------------
-    Program3D = (Program *) malloc(sizeof(Program));
-    
-    Program3D->programID = LoadShaders("./shaders/3DVertex.glsl", "", "./shaders/3DFragment.glsl");
-    Program3D_uWinScale = glGetUniformLocation(Program3D->programID, "windowScale");
-    Program3D_uProj = glGetUniformLocation(Program3D->programID, "uProjMatrix");
-    Program3D_uModel = glGetUniformLocation(Program3D->programID, "uModelMatrix");
-    Program3D_uView = glGetUniformLocation(Program3D->programID, "uViewMatrix");
-    Program3D_uAColor = glGetUniformLocation(Program3D->programID, "UaColor");
-    Program3D_uDColor = glGetUniformLocation(Program3D->programID, "UdColor");
-    Program3D_uSColor = glGetUniformLocation(Program3D->programID, "UsColor");
-    Program3D_uLightPos = glGetUniformLocation(Program3D->programID, "uLightPos");
-    Program3D_uShine = glGetUniformLocation(Program3D->programID, "uShine");
-    Program3D_uBend = glGetUniformLocation(Program3D->programID, "uBend");
-    Program3D_aNormal = glGetAttribLocation(Program3D->programID, "aNormal");
-    Program3D_aPosition = glGetAttribLocation(Program3D->programID, "aPosition");
-    
-    Program3D->create = &Program3Dcreate;
-    Program3D->bufferData = &Program3DbufferData;
-    Program3D->render = &Program3Drender;
+   Program3D->create = &Program3Dcreate;
+   Program3D->bufferData = &Program3DbufferData;
+   Program3D->render = &Program3Drender;
 
     // ---------------- TEXT SHADER ---------------------------
     ProgramText = (Program *) malloc(sizeof(Program));
@@ -216,7 +222,6 @@ void shaders_init() {
     ProgramText->create = &ProgramTextcreate;
     ProgramText->bufferData = &ProgramTextbufferData;
     ProgramText->render = &ProgramTextrender;
-
 
 	// ---------------- POST-PROCESSOR SHADER ---------------------------
 

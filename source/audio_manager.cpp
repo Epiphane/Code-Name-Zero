@@ -5,6 +5,8 @@
 #include <FMOD/fmod_errors.h>
 #include <unordered_map>
 
+#include "state.h"
+#include "main.h"
 #include "audio_manager.h"
 
 typedef enum {
@@ -71,7 +73,7 @@ void audio_init() {
    }
    
    check(audio_system->createChannelGroup("music", &sounds), "channel group creation");
-   check(sounds->setPaused(false), "sound pause setup");
+   check(sounds->setPaused(DEBUG), "sound pause setup");
 }
 
 void audio_setPaused(bool paused) {
@@ -165,17 +167,10 @@ void Music::update() {
    if (currentBeat != beat) {
       beat = currentBeat;
       
-//      getCurrentState()->send("beat", &beat);
+      getCurrentState()->send("beat", &beat);
    }
 }
 
 void Music::play() {
    audio_play_music(this);
-}
-
-void audio_stuff() {
-   audio_init();
-   
-   audio_play_sound("audio/RGB_MuteCity_HQ.wav");
-   audio_update();
 }
