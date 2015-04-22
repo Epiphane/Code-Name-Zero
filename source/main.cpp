@@ -146,7 +146,7 @@ int main(int argc, char **argv) {
       audio_update();
       
       double nextTime = glfwGetTime();
-      if (nextTime - clock > SEC_PER_FRAME && false) {
+      if (nextTime - clock > SEC_PER_FRAME) {
          // Update camera
          double xpos, ypos;
          glfwGetCursorPos(window, &xpos, &ypos);
@@ -169,9 +169,9 @@ int main(int argc, char **argv) {
               currentState->update(0);
           }
 
-//         // Clear the screen
-//         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//         currentState->render(glfwGetTime() - clock);
+         // Clear the screen
+         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         currentState->render(glfwGetTime() - clock);
 
 //         glLoadIdentity(); // Reset current matrix (Modelview)
 
@@ -179,9 +179,6 @@ int main(int argc, char **argv) {
       }
       GLenum error = glGetError();
       assert(error == 0);
-      
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      currentState->render(glfwGetTime() - clock);
       
       // Swap buffers
       glfwSwapBuffers(window);
