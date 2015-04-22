@@ -124,6 +124,18 @@ if (WIN32)
    file(COPY ${ABS_RESOURCES} DESTINATION ${PROJECT_BINARY_DIR})
 endif (WIN32)
 
+foreach(SHADER ${SHADERS})
+   list(APPEND ABS_SHADERS
+      "${SRC_DIR}/shaders/${SHADER}"
+   )
+endforeach(SHADER)
+
 include_directories(${INCLUDES})
-add_executable(${PROJECT_NAME} ${ABS_SOURCES} ${ABS_HEADERS} ${LIB_SOURCES})
+add_executable(${PROJECT_NAME} ${ABS_SOURCES} ${ABS_HEADERS} ${LIB_SOURCES} ${ABS_SHADERS})
 target_link_libraries(${PROJECT_NAME} ${LIBS})
+
+set_target_properties(RGBZero PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source/")
+# create_target_launcher(RGBZero WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/source/")
+# create_default_target_launcher(RGBZero WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/source/")
+
+SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*/.*shader$" )
