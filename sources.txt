@@ -49,6 +49,13 @@ set(SOURCES
 
 # List resources to copy to build directory
 # Needed for visual studio
+set(RESOURCES
+   "shaders"
+   "models"
+   "textures"
+   "audio"
+)
+
 set(SHADERS
    3DFragment.glsl
    3DVertex.glsl

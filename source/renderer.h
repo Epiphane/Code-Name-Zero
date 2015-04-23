@@ -78,6 +78,6 @@ public:
 };
 
 void ProgramPostProcrender(Renderer *p, glm::mat4 Model);
-GLuint get_fbo();
+unsigned int get_fbo();
 
 #endif

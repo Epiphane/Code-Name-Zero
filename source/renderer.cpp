@@ -609,7 +609,7 @@ void ProgramPostProcbufferData(Renderer *p, int type, long num, void *data) {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-GLuint get_fbo() {
+unsigned int get_fbo() {
 	return fbo;
 }
 
