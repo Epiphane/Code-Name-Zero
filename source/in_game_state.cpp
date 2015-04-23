@@ -35,7 +35,7 @@ InGameState::InGameState() {
    PlayerPhysicsComponent *movement = new PlayerPhysicsComponent();
    InputComponent *i = new PlayerInputComponent();
    
-   player = new GameObject(new ModelRenderer("models/bluefalcon.obj"),
+   player = new GameObject(new ModelRenderer("models/bunny.obj"),
                                   movement, i, new PlayerCollisionComponent);
    player->setType(OBJECT_PLAYER);
    player->addCollision(OBJECT_TARGET);

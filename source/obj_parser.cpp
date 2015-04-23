@@ -26,7 +26,6 @@ std::unique_ptr<Obj::Face> Obj::ParseFace(std::string line, int mat) {
    std::unique_ptr<Face> face((Face *)malloc(sizeof(Face)));
    face->vertex_count = 0;
    face->material_index = mat;
-   std::cout << line << ": ";
    
    do {
       assert(face->vertex_count < MAX_VERTEX_COUNT);
@@ -59,8 +58,11 @@ std::unique_ptr<Obj::Face> Obj::ParseFace(std::string line, int mat) {
       }
       
       face->vertex_count ++;
-      line = line.substr(line.find(" ") + 1);
-   } while(line.find(" ") != std::string::npos);
+      if (line.find(" ") == std::string::npos)
+         break;
+      else
+         line = line.substr(line.find(" ") + 1);
+   } while(line.length() > 0);
    
    // Convert to 0-based arrays
    for(int i = 0; i < face->vertex_count; i ++) {
@@ -68,8 +70,6 @@ std::unique_ptr<Obj::Face> Obj::ParseFace(std::string line, int mat) {
       face->normal_index [i] --;
       face->texture_index[i] --;
    }
-   
-   std::cout << glm::vec3(face->vertex_index[0], face->vertex_index[1], face->vertex_index[2]) << std::endl;
    
    return std::move(face);
 }
@@ -187,13 +187,23 @@ Obj::ObjData *Obj::ParseObjFile(std::string filename) {
          }
          else if (word == "f") {
             std::unique_ptr<Face> face = ParseFace(line, current_mat);
-            for (int i = 0; i < 3; i ++)
+            
+            std::cout << line << ": ";
+            
+            for (int i = 0; i < 3; i ++) {
                data->indices.push_back(face->vertex_index[i]);
+               std::cout << data->indices[data->indices.size() - 1] << " ";
+            }
             if (face->vertex_count == 4) {
                data->indices.push_back(face->vertex_index[2]);
+               std::cout << data->indices[data->indices.size() - 1] << " ";
                data->indices.push_back(face->vertex_index[1]);
+               std::cout << data->indices[data->indices.size() - 1] << " ";
                data->indices.push_back(face->vertex_index[3]);
+               std::cout << data->indices[data->indices.size() - 1] << " ";
             }
+            
+            std::cout << std::endl;
          }
          else if (word == "usemtl") {
             current_mat = 0;
@@ -213,8 +223,6 @@ Obj::ObjData *Obj::ParseObjFile(std::string filename) {
          }
       }
    }
-   
-   std::cout << data->indices[0] << data->indices[1] << data->indices[2] << std::endl;
    
    objects[filename] = data;
    obj_stream.close();

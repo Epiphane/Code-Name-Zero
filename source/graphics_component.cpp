@@ -131,6 +131,8 @@ ModelRenderer::ModelRenderer(const char *filename) {
       renderer->bufferData(VERTEX_BUFFER, posBuf.size(), (void *)&posBuf[0]);
       renderer->bufferData(NORMAL_BUFFER, norBuf.size(), (void *)&norBuf[0]);
       
+      std::cout << indBuf.size() << " - " << posBuf.size() << std::endl;
+      std::cout << data->indices.size() << " - " << data->vertices.size() << std::endl;
       renderer->setNumElements(data->indices.size());
       renderer->bufferData(INDICES_BUFFER, data->indices.size(), &data->indices[0]);
       renderer->bufferData(VERTEX_BUFFER, data->vertices.size(), &data->vertices[0]);

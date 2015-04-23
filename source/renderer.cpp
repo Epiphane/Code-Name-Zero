@@ -249,33 +249,33 @@ Renderer *Program3Dcreate() {
 }
 
 void Program3DbufferData(Renderer *p, int type, long num, void *data) {
-    size_t scalar;
-    GLuint bufType;
+   size_t scalar;
+   GLuint bufType;
     
-    if(type == VERTEX_BUFFER) {
-        bufType = GL_ARRAY_BUFFER;
-       scalar = sizeof(glm::vec3);
+   if(type == VERTEX_BUFFER) {
+      bufType = GL_ARRAY_BUFFER;
+      scalar = sizeof(glm::vec3);
+      
+      glBindBuffer(bufType, p->getBuffer(0));
+   }
+   else if(type == NORMAL_BUFFER) {
+      bufType = GL_ARRAY_BUFFER;
+      scalar = sizeof(glm::vec3);
+
+      glBindBuffer(bufType, p->getBuffer(1));
+   }
+   else if(type == INDICES_BUFFER) {
+      bufType = GL_ELEMENT_ARRAY_BUFFER;
+      scalar = sizeof(unsigned int);
         
-        glBindBuffer(bufType, p->getBuffer(0));
-    }
-    else if(type == NORMAL_BUFFER) {
-        bufType = GL_ARRAY_BUFFER;
-        scalar = sizeof(glm::vec3);
-        
-        glBindBuffer(bufType, p->getBuffer(1));
-    }
-    else if(type == INDICES_BUFFER) {
-        bufType = GL_ELEMENT_ARRAY_BUFFER;
-        scalar = sizeof(unsigned int);
-        
-        glBindBuffer(bufType, p->getBuffer(2));
-    }
-    else {
-        std::cerr << "Buffer type " << type << " not recognized" << std::endl;
-        exit(1);
-    }
+      glBindBuffer(bufType, p->getBuffer(2));
+   }
+   else {
+      std::cerr << "Buffer type " << type << " not recognized" << std::endl;
+      exit(1);
+   }
     
-    glBufferData(bufType, scalar * num, data, GL_STATIC_DRAW);
+   glBufferData(bufType, scalar * num, data, GL_STATIC_DRAW);
 }
 
 void Program3Drender(Renderer *p, glm::mat4 Model) {
