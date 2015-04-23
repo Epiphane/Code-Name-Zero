@@ -17,11 +17,6 @@ public:
    virtual void collide(GameObject *obj, GameObject *other) {};
 };
 
-class TargetCollisionComponent : public CollisionComponent {
-public:
-   void collide(GameObject *obj, GameObject *other);
-};
-
 class PlayerCollisionComponent : public CollisionComponent {
 public:
    PlayerCollisionComponent() : score(0) {};

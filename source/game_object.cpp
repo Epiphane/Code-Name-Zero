@@ -43,20 +43,6 @@ float GameObject::getRadius() {
 glm::mat4 GameObject::getModel() {
    glm::mat4 model = glm::translate(position);
    
-   MovementComponent *movement = dynamic_cast<MovementComponent *>(physics);
-   if (movement != NULL) {
-      glm::vec3 direction = movement->getDirection();
-      
-      float angle = MATH_PI / 2;
-      if (direction.z != 0) {
-         angle = atan(direction.x / direction.z);
-         if (direction.z <= 0)
-            angle += MATH_PI;
-      }
-      
-      model *= glm::rotate(angle * RADIANS_TO_DEG, glm::vec3(0, 1, 0));
-   }
-   
    model *= this->Model;
    return model;
 }

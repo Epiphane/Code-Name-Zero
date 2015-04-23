@@ -21,27 +21,18 @@ void WheelInputComponent::update(GameObject *obj) {
 }
 
 void PlayerInputComponent::update(GameObject *obj) {
-   MovementComponent *movement = dynamic_cast<MovementComponent *>(obj->getPhysics());
+   PlayerPhysicsComponent *movement = dynamic_cast<PlayerPhysicsComponent *>(obj->getPhysics());
    if (movement != NULL) {
-      float speed = 0;
-      float latSpeed = 0;
-
+      glm::vec3 speed = movement->getSpeed();
+      speed.x = 0.0f;
        if (!DEBUG) {
-           movement->setDirection(camera_getLookAt());
+          
            if (input_keyDown(GLFW_KEY_A)) {
-               latSpeed -= PLAYER_SPEED;
+              speed.x -= PLAYER_SPEED;
            }
-          // Removing Forward/Back speed
-           /*if (input_keyDown(GLFW_KEY_S)) {
-               speed -= PLAYER_SPEED;
-           }*/
            if (input_keyDown(GLFW_KEY_D)) {
-               latSpeed += PLAYER_SPEED;
+               speed.x += PLAYER_SPEED;
            }
-          // Removing Forward/Back speed
-           /*if (input_keyDown(GLFW_KEY_W)) {
-               speed += PLAYER_SPEED;
-           }*/
        } else {
            if (input_keyDown(GLFW_KEY_A)) {
                camera_move(-CAMERA_MOVE, 0, 0);
@@ -64,6 +55,5 @@ void PlayerInputComponent::update(GameObject *obj) {
       }
       
       movement->setSpeed(speed);
-      movement->setLatSpeed(latSpeed);
    }
 }

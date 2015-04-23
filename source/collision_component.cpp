@@ -13,16 +13,8 @@
 #include "collision_component.h"
 #include "game_object.h"
 
-void TargetCollisionComponent::collide(GameObject *obj, GameObject *other) {
-   glm::vec3 diff = obj->getPosition() - other->getPosition();
-   MovementComponent *movement = dynamic_cast<MovementComponent *>(obj->getPhysics());
-   
-   assert(movement != NULL);
-   
-   movement->setDirection(glm::vec3(diff.x, 0, diff.z));
-}
-
 void PlayerCollisionComponent::collide(GameObject *obj, GameObject *other) {
+   /*
    MovementComponent *movement = dynamic_cast<MovementComponent *>(other->getPhysics());
    if (movement != NULL) {
       glm::vec3 direction = movement->getDirection();
@@ -45,4 +37,5 @@ void PlayerCollisionComponent::collide(GameObject *obj, GameObject *other) {
    audio_play_sound("./audio/goal.mp3");
    
    score ++;
+   */
 }

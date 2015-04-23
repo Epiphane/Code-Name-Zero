@@ -18,29 +18,19 @@ public:
    virtual void update(GameObject *obj, State *world, float dt) {};
 };
 
-class MovementComponent : public PhysicsComponent {
+class PlayerPhysicsComponent : public PhysicsComponent {
 private:
-   float speed, latSpeed;
-   glm::vec3 direction;
+   glm::vec3 speed;
    
 public:
    virtual void update(GameObject *obj, State *world, float dt);
-   
-   float getSpeed() { return speed; }
-   float getLatSpeed() { return latSpeed; }
-   glm::vec3 getDirection() { return direction; }
-   
-   void setDirection(glm::vec3 _d) {
-      _d.y = 0;
-      direction = glm::normalize(_d);
-   }
-   void setSpeed(float _s) { speed = _s; }
-   void setLatSpeed(float _s) { latSpeed = _s; }
+   glm::vec3 getSpeed(){return speed;}
+   void setSpeed(glm::vec3 s){speed = s;}
 };
 
-class PlayerMovementComponent : public MovementComponent {
+class TrackPhysicsComponent : public PhysicsComponent {
 public:
-   virtual void update(GameObject *obj, State *world, float dt);
+   virtual void update(GameObject *obj, State *world, float dt) {};
 };
 
 #endif /* defined(__Project__physics_component__) */

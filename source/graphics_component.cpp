@@ -76,7 +76,7 @@ ModelRenderer::ModelRenderer(const char *filename) {
       std::cerr << err << std::endl;
    }
    // resize_obj(shapes);
-   
+   printf("Shapes Size: %lu\n", shapes.size());
    for(int s = 0; s < shapes.size(); s ++) {
       const std::vector<float> &posBuf = shapes[s].mesh.positions;
       

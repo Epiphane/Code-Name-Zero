@@ -14,9 +14,10 @@
 
 class InGameState : public State {
 private:
-   PlayerCollisionComponent *player;
+   GameObject *player;
    int target_number;
    Music *soundtrack;
+   std::vector<GameObject*> track_segments;
    
 public:
    InGameState();
