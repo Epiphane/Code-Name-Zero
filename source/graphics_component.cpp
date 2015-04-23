@@ -10,6 +10,7 @@
 
 #include "main.h"
 #include "tiny_obj_loader.h"
+#include "obj_parser.h"
 #include "graphics_component.h"
 #include "game_object.h"
 
@@ -68,6 +69,8 @@ GroundRenderer::GroundRenderer(float size) {
 ModelRenderer::ModelRenderer(const char *filename) {
    GraphicsComponent::GraphicsComponent();
    
+   Obj::ObjData *data = Obj::ParseObjFile(filename);
+   
    std::vector<tinyobj::shape_t> shapes;
    std::vector<tinyobj::material_t> materials;
    
@@ -76,7 +79,6 @@ ModelRenderer::ModelRenderer(const char *filename) {
       std::cerr << err << std::endl;
    }
    // resize_obj(shapes);
-   printf("Shapes Size: %lu\n", shapes.size());
    for(int s = 0; s < shapes.size(); s ++) {
       const std::vector<float> &posBuf = shapes[s].mesh.positions;
       
@@ -129,20 +131,25 @@ ModelRenderer::ModelRenderer(const char *filename) {
       renderer->bufferData(VERTEX_BUFFER, posBuf.size(), (void *)&posBuf[0]);
       renderer->bufferData(NORMAL_BUFFER, norBuf.size(), (void *)&norBuf[0]);
       
+      renderer->setNumElements(data->indices.size());
+      renderer->bufferData(INDICES_BUFFER, data->indices.size(), &data->indices[0]);
+      renderer->bufferData(VERTEX_BUFFER, data->vertices.size(), &data->vertices[0]);
+      renderer->bufferData(NORMAL_BUFFER, data->normals.size(), &data->normals[0]);
+      
       renderers.push_back(renderer);
    }
    
    // Compute bounds
-   for (size_t i = 0; i < shapes.size(); i++) {
-      for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-         if(shapes[i].mesh.positions[3*v+0] < bounds.min_x) bounds.min_x = shapes[i].mesh.positions[3*v+0];
-         if(shapes[i].mesh.positions[3*v+0] > bounds.max_x) bounds.max_x = shapes[i].mesh.positions[3*v+0];
-         
-         if(shapes[i].mesh.positions[3*v+1] < bounds.min_y) bounds.min_y = shapes[i].mesh.positions[3*v+1];
-         if(shapes[i].mesh.positions[3*v+1] > bounds.max_y) bounds.max_y = shapes[i].mesh.positions[3*v+1];
-         
-         if(shapes[i].mesh.positions[3*v+2] < bounds.min_z) bounds.min_z = shapes[i].mesh.positions[3*v+2];
-         if(shapes[i].mesh.positions[3*v+2] > bounds.max_z) bounds.max_z = shapes[i].mesh.positions[3*v+2];
-      }
-   }
+//   for (size_t i = 0; i < shapes.size(); i++) {
+//      for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
+//         if(shapes[i].mesh.positions[3*v+0] < bounds.min_x) bounds.min_x = shapes[i].mesh.positions[3*v+0];
+//         if(shapes[i].mesh.positions[3*v+0] > bounds.max_x) bounds.max_x = shapes[i].mesh.positions[3*v+0];
+//         
+//         if(shapes[i].mesh.positions[3*v+1] < bounds.min_y) bounds.min_y = shapes[i].mesh.positions[3*v+1];
+//         if(shapes[i].mesh.positions[3*v+1] > bounds.max_y) bounds.max_y = shapes[i].mesh.positions[3*v+1];
+//         
+//         if(shapes[i].mesh.positions[3*v+2] < bounds.min_z) bounds.min_z = shapes[i].mesh.positions[3*v+2];
+//         if(shapes[i].mesh.positions[3*v+2] > bounds.max_z) bounds.max_z = shapes[i].mesh.positions[3*v+2];
+//      }
+//   }
 }

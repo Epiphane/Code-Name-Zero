@@ -254,13 +254,13 @@ void Program3DbufferData(Renderer *p, int type, long num, void *data) {
     
     if(type == VERTEX_BUFFER) {
         bufType = GL_ARRAY_BUFFER;
-        scalar = sizeof(float);
+       scalar = sizeof(glm::vec3);
         
         glBindBuffer(bufType, p->getBuffer(0));
     }
     else if(type == NORMAL_BUFFER) {
         bufType = GL_ARRAY_BUFFER;
-        scalar = sizeof(float);
+        scalar = sizeof(glm::vec3);
         
         glBindBuffer(bufType, p->getBuffer(1));
     }
