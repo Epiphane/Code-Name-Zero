@@ -16,6 +16,10 @@ const Material MATERIAL_METAL = 1;
 const Material MATERIAL_GRASS = 2;
 const Material MATERIAL_RED_METAL = 3;
 const Material MATERIAL_CHAIR = 4;
+const Material MATERIAL_RED = 5;
+const Material MATERIAL_BLUE = 6;
+const Material MATERIAL_YELLOW = 7;
+const Material MATERIAL_GREEN = 8;
 
 void shaders_init();
 void renderText(const char *text, float x, float y);

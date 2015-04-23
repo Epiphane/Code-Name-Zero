@@ -121,6 +121,30 @@ void setMaterial(Material mat, GLuint uDColor, GLuint uSColor, GLuint uAColor, G
             glUniform3f(Program3D_uSColor, 0, 0, 0);
             glUniform1f(Program3D_uShine, -100.0);
             break;
+       case MATERIAL_GREEN:
+          glUniform3f(Program3D_uAColor, 0.316,0.925, 0.148);
+          glUniform3f(Program3D_uDColor, 0, 1.0, 0);
+          glUniform3f(Program3D_uSColor, 0.2,0.9,0.2);
+          glUniform1f(Program3D_uShine, 60);
+          break;
+       case MATERIAL_RED: // Lane 2 (Red)
+          glUniform3f(Program3D_uAColor, 0.925, 0.148, 0.316);
+          glUniform3f(Program3D_uDColor, 1.0, 0, 0);
+          glUniform3f(Program3D_uSColor, 0.9,0.2,0.2);
+          glUniform1f(Program3D_uShine, 60);
+          break;
+       case MATERIAL_YELLOW: // Lane 3 (Yellow)
+          glUniform3f(Program3D_uAColor, 0.925, 0.925, 0.02);
+          glUniform3f(Program3D_uDColor, 0.9, 0.9, 0);
+          glUniform3f(Program3D_uSColor, 0.8,0.8,0.2);
+          glUniform1f(Program3D_uShine, 60);
+          break;
+       case MATERIAL_BLUE: // Lane 3 (Blue)
+          glUniform3f(Program3D_uAColor, 0.148, 0.316, 0.925);
+          glUniform3f(Program3D_uDColor, 0.2, 0.2, 0.8);
+          glUniform3f(Program3D_uSColor, 0.2,0.2,0.9);
+          glUniform1f(Program3D_uShine, 60);
+          break;
         default:
             std::cerr << "Error: Material " << mat << " not found" << std::endl;
     }

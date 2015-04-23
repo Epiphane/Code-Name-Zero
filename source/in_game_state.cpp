@@ -40,22 +40,21 @@ InGameState::InGameState() {
    p->setType(OBJECT_PLAYER);
    p->addCollision(OBJECT_TARGET);
    p->setPosition(glm::vec3(0, 0, 0));
+   p->getGraphics()->getRenderer(0)->mat = MATERIAL_BLUE;
    movement->setDirection(glm::vec3(camera_getLookAt()));
    addObject(p);
    
    //GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
    //addObject(ground);
    
+   // NOTE:
+   // 10 Segments of track seems to be the magic number
    GameObject *track = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"));
    track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
+   track->getGraphics()->getRenderer(0)->mat = MATERIAL_CHAIR;
    addObject(track);
    
-   GameObject *track2 = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"));
-   track2->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
-   track2->setPosition(track2->getPosition()+glm::vec3(0.0f,0.0f,-27.5f));
-   addObject(track2);
-   
-   soundtrack = audio_load_music("./audio/RGB_Happy_Electro_End.wav", 120);
+   soundtrack = audio_load_music("./audio/RGB_Happy_Electro.wav", 120);
    soundtrack->play();
 }
 

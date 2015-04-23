@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
    glEnable(GL_DEPTH_TEST);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    
-   glClearColor(0.30f, 0.5f, 0.78f, 1.0f);
+   glClearColor(0.10f, 0.05f, 0.3f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    shaders_init();
