@@ -27,25 +27,35 @@ InGameState::InGameState() {
    // Move camera
    camera_init();
    camera_setPosition(glm::vec3(0, 2, 0));
-   camera_lookAt(glm::vec3(10, 2, 0));
+   camera_lookAt(glm::vec3(0, 2, -10));
    
    target_number = 0;
    
    MovementComponent *movement = new PlayerMovementComponent();
    InputComponent *i = new PlayerInputComponent();
    player = new PlayerCollisionComponent();
-   GameObject *p = new GameObject(new ModelRenderer("./models/car.obj"),
+   
+   GameObject *p = new GameObject(new ModelRenderer("models/bluefalcon.obj"),
                                   movement, i, player);
    p->setType(OBJECT_PLAYER);
    p->addCollision(OBJECT_TARGET);
-   p->setPosition(glm::vec3(0, 1, 0));
+   p->setPosition(glm::vec3(0, 0, 0));
    movement->setDirection(glm::vec3(camera_getLookAt()));
    addObject(p);
    
-   GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
-   addObject(ground);
+   //GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
+   //addObject(ground);
    
-   soundtrack = audio_load_music("./audio/RGB_MuteCity_HQ.wav", 200);
+   GameObject *track = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"));
+   track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
+   addObject(track);
+   
+   GameObject *track2 = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"));
+   track2->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
+   track2->setPosition(track2->getPosition()+glm::vec3(0.0f,0.0f,-27.5f));
+   addObject(track2);
+   
+   soundtrack = audio_load_music("./audio/RGB_Happy_Electro_End.wav", 120);
    soundtrack->play();
 }
 
@@ -61,7 +71,7 @@ void InGameState::update(float dt) {
    t += dt;
    if (t >= time_per_spawn && target_number < MAX_TARGET) {
       // Create a new object
-      MovementComponent *movement = new MovementComponent();
+      /*MovementComponent *movement = new MovementComponent();
       GameObject *newObject = new GameObject(new ModelRenderer("models/disk_g.obj"),
                                              movement, NULL, new TargetCollisionComponent());
       newObject->getGraphics()->getRenderer(0)->mat = MATERIAL_RUBBER;
@@ -74,7 +84,7 @@ void InGameState::update(float dt) {
       movement->setDirection(glm::vec3(randFloat(-1.0, 1.0), 0, randFloat(-1.0, 1.0)));
       
       addObject(newObject);
-      target_number++;
+      target_number++;*/
       
       t -= time_per_spawn;
    }

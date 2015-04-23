@@ -29,7 +29,7 @@
 
 using namespace std;
 
-bool DEBUG = true;
+bool DEBUG = false;
 void toggleDebug() {
    DEBUG = !DEBUG;
    
@@ -149,7 +149,7 @@ int main(int argc, char **argv) {
          double dx = (double) w_width / 2 - xpos;
          double dy = (double) w_height / 2 - ypos;
          // Edge case: window initialization
-         if (abs(dx) < 100 && abs(dy) < 100 && (xpos > 0 || ypos > 0)) {
+         if (abs(dx) < 100 && abs(dy) < 100 && (xpos > 0 || ypos > 0) && DEBUG) {
             camera_movePitch(dy * CAMERA_SPEED);
             camera_moveYaw(dx * CAMERA_SPEED);
          }

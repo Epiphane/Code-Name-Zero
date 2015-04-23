@@ -25,15 +25,25 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
       //Find a new direction for the object
       direction = glm::normalize(randPoint(GROUND_WIDTH/3) - glm::vec3(pos.x, 0, pos.z));
    } else if (fabs(pos.x) > GROUND_WIDTH/2 || fabs(pos.z) > GROUND_WIDTH/2) {
-      pos.x = 0;
-      pos.z = 0;
+      //pos.x = 0;
+      //pos.z = 0;
    }
    
    glm::vec3 crossed = glm::cross(direction, glm::vec3(0, 1, 0));
    if (obj->getType() != OBJECT_PLAYER)
        obj->transform(glm::rotate(this->getSpeed() * dt * FRAMES_PER_SEC / 5, 1.0f, 0.0f, 0.0f));
    pos += world_speed * direction + lat_speed * crossed;
-   obj->setPosition(pos);
+   if (pos.x > 3.0f){
+      pos.x = 3.0f;
+      obj->setPosition(pos);
+   }
+   else if(pos.x < -3.0f) {
+      pos.x = -3.0f;
+      obj->setPosition(pos);
+   }
+   else {
+      obj->setPosition(pos);
+   }
 }
 
 void PlayerMovementComponent::update(GameObject *obj, State *world, float dt) {

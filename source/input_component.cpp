@@ -31,15 +31,17 @@ void PlayerInputComponent::update(GameObject *obj) {
            if (input_keyDown(GLFW_KEY_A)) {
                latSpeed -= PLAYER_SPEED;
            }
-           if (input_keyDown(GLFW_KEY_S)) {
+          // Removing Forward/Back speed
+           /*if (input_keyDown(GLFW_KEY_S)) {
                speed -= PLAYER_SPEED;
-           }
+           }*/
            if (input_keyDown(GLFW_KEY_D)) {
                latSpeed += PLAYER_SPEED;
            }
-           if (input_keyDown(GLFW_KEY_W)) {
+          // Removing Forward/Back speed
+           /*if (input_keyDown(GLFW_KEY_W)) {
                speed += PLAYER_SPEED;
-           }
+           }*/
        } else {
            if (input_keyDown(GLFW_KEY_A)) {
                camera_move(-CAMERA_MOVE, 0, 0);
