@@ -43,4 +43,9 @@ public:
    virtual void update(GameObject *obj, State *world, float dt);
 };
 
+class TrackPhysicsComponent : public PhysicsComponent {
+public:
+   virtual void update(GameObject *obj, State *world, float dt);
+};
+
 #endif /* defined(__Project__physics_component__) */
