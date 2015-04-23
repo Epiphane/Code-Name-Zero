@@ -49,13 +49,10 @@ InGameState::InGameState() {
    
    // NOTE:
    // 10 Segments of track seems to be the magic number
-   for(int i = 0; i < 10; i ++) {
-      GameObject *track = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"), new TrackPhysicsComponent());
-      track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
-      track->setPosition(track->getPosition() + glm::vec3(0, 0, i * -27.5f));
-      track->getGraphics()->getRenderer(0)->mat = MATERIAL_CHAIR;
-      addObject(track);
-   }
+   GameObject *track = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"));
+   track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
+   track->getGraphics()->getRenderer(0)->mat = MATERIAL_CHAIR;
+   addObject(track);
    
    soundtrack = audio_load_music("./audio/RGB_Happy_Electro.wav", 120);
    soundtrack->play();

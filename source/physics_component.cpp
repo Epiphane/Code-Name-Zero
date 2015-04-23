@@ -52,11 +52,3 @@ void PlayerMovementComponent::update(GameObject *obj, State *world, float dt) {
    if (!DEBUG)
        camera_setPosition(obj->getPosition() + glm::vec3(0, 1, 0));
 }
-
-void TrackPhysicsComponent::update(GameObject *obj, State *world, float dt) {
-   obj->setPosition(obj->getPosition() + glm::vec3(0, 0, 100 * dt));
-   
-   if (obj->getPosition().z > 30.0f) {
-      obj->die();
-   }
-}
