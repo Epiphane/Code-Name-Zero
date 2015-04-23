@@ -96,7 +96,12 @@ void InGameState::update(float dt) {
 float elapsed[25] = {1};
 int pos = 0;
 void InGameState::render(float dt) {
+
+//	glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
+
    State::render(dt);
+//   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//   ProgramPostProcrender((Renderer *)getWindow(), glm::mat4());
    
    char score[16];
    //sprintf(score, "Score: %d out of %d", player->score, target_number);

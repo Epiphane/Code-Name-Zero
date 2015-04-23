@@ -39,6 +39,7 @@ typedef struct Program {
 
 extern Program *Program3D;
 extern Program *ProgramText;
+extern Program *ProgramPostProc;
 
 // Renderers
 
@@ -77,5 +78,8 @@ public:
     
     void loadTexture(char *filename);
 };
+
+void ProgramPostProcrender(Renderer *p, glm::mat4 Model);
+GLuint get_fbo();
 
 #endif

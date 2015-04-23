@@ -13,6 +13,8 @@
 
 typedef void (*input_key_callback)(void);
 
+GLFWwindow *getWindow();
+
 void input_init(GLFWwindow *window);
 void input_set_callback(int key, input_key_callback cb);
 bool input_keyDown(int key);

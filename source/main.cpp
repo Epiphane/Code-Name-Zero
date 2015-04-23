@@ -166,7 +166,9 @@ int main(int argc, char **argv) {
 
          // Clear the screen
          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
          currentState->render(glfwGetTime() - clock);
+
 
          glLoadIdentity(); // Reset current matrix (Modelview)
 

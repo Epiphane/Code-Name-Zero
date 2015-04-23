@@ -15,6 +15,10 @@ GLFWwindow *input_window = NULL;
 
 input_key_callback keyCallbacks[GLFW_KEY_LAST] = {0};
 
+GLFWwindow *getWindow() {
+	return input_window;
+}
+
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int modes) {
    if (action == GLFW_PRESS && keyCallbacks[key])
       keyCallbacks[key]();

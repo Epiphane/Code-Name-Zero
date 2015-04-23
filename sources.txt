@@ -52,4 +52,6 @@ set(SHADERS
    3DVertex.glsl
    TextFragment.glsl
    TextVertex.glsl
+   PostProcFragment.glsl
+   PostProcVertex.glsl
 )

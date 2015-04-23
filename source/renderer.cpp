@@ -59,6 +59,13 @@ Renderer *ProgramTextcreate();
 void ProgramTextbufferData(Renderer *p, int type, long num, void *data);
 void ProgramTextrender(Renderer *p, glm::mat4 Model);
 
+Program *ProgramPostProc = NULL;
+GLuint ProgramPostProc_v_coord, ProgramPostProc_fbo_texture;
+Renderer *ProgramPostProccreate();
+void ProgramPostProcbufferData(Renderer *p, int type, long num, void *data);
+GLuint fbo, fbo_texture, rbo_depth;
+
+
 GLuint *createBuffers(int num) {
     GLuint *buffers = (GLuint *) malloc(sizeof(GLuint) * num);
     
@@ -209,6 +216,21 @@ void shaders_init() {
     ProgramText->create = &ProgramTextcreate;
     ProgramText->bufferData = &ProgramTextbufferData;
     ProgramText->render = &ProgramTextrender;
+
+
+	// ---------------- POST-PROCESSOR SHADER ---------------------------
+
+	ProgramPostProc = (Program *)malloc(sizeof(Program));
+
+	ProgramPostProc->programID = LoadShaders("./shaders/PostProcVertex.glsl", "", "./shaders/PostProcFragment.glsl");
+	ProgramPostProc_v_coord = glGetAttribLocation(ProgramPostProc->programID, "v_coord");
+	ProgramPostProc_fbo_texture = glGetUniformLocation(ProgramPostProc->programID, "fbo_texture");
+
+	ProgramPostProc->create = &ProgramPostProccreate;
+	ProgramPostProc->bufferData = &ProgramPostProcbufferData;
+	ProgramPostProc->render = &ProgramPostProcrender;
+	ProgramPostProccreate();
+	ProgramPostProcbufferData(NULL, 0, 0, NULL);
 }
 
 // ----------------- PROGRAM 3D -------------------------------
@@ -600,3 +622,89 @@ int ImageLoad(char *filename, Image *image) {
     return 1;
 }
 
+GLuint vbo_fbo_vertices;
+GLfloat fbo_vertices[] = {
+	-1, -1,
+	1, -1,
+	-1, 1,
+	1, 1,
+};
+
+Renderer *ProgramPostProccreate() {
+	TexRenderer *prog = new TexRenderer();
+	prog->program = ProgramPostProc;
+
+	glGenBuffers(1, &vbo_fbo_vertices);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(fbo_vertices), fbo_vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	return (Renderer *)prog;
+}
+
+void ProgramPostProcbufferData(Renderer *p, int type, long num, void *data) {
+	printf("Nothing done in PostProcBufferData\n");
+
+	/* init_resources */
+	/* Create back-buffer, used for post-processing */
+
+	/* Texture */
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &fbo_texture);
+	glBindTexture(GL_TEXTURE_2D, fbo_texture);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1024, 768, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	/* Depth buffer */
+	glGenRenderbuffers(1, &rbo_depth);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo_depth);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 1024, 768);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	/* Framebuffer to link everything together */
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbo_texture, 0);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo_depth);
+	GLenum status;
+	if ((status = glCheckFramebufferStatus(GL_FRAMEBUFFER)) != GL_FRAMEBUFFER_COMPLETE) {
+		fprintf(stderr, "glCheckFramebufferStatus: error %p", status);
+		return;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+GLuint get_fbo() {
+	return fbo;
+}
+
+
+void ProgramPostProcrender(Renderer *p, glm::mat4 Model) {
+//	glClearColor(0.0, 0.0, 0.0, 1.0);
+//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(ProgramPostProc->programID);
+	glBindTexture(GL_TEXTURE_2D, fbo_texture);
+	glUniform1i(ProgramPostProc_fbo_texture, /*GL_TEXTURE*/0);
+	glEnableVertexAttribArray(ProgramPostProc_v_coord);
+
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
+	glVertexAttribPointer(
+		ProgramPostProc_v_coord,  // attribute
+		2,                  // number of elements per vertex, here (x,y)
+		GL_FLOAT,           // the type of each element
+		GL_FALSE,           // take our values as-is
+		0,                  // no extra data between each position
+		0                   // offset of first element
+		);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glDisableVertexAttribArray(ProgramPostProc_v_coord);
+
+	glUseProgram(0);
+
+//	glfwSwapBuffers((GLFWwindow *)p);
+}
