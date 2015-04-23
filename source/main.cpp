@@ -22,14 +22,13 @@
 #include "input_manager.h"
 #include "in_game_state.h"
 #include "camera.h"
-#include "GLSL.h"
 #include "tiny_obj_loader.h"
 
 #define M_PI 3.1415926535897932384626433832795
 
 using namespace std;
 
-bool DEBUG = false;
+bool DEBUG = true;
 void toggleDebug() {
    DEBUG = !DEBUG;
    
@@ -95,8 +94,12 @@ int main(int argc, char **argv) {
 
    glfwWindowHint(GLFW_SAMPLES, 4);
    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+//   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+   //   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
    // Open a window and create its OpenGL context
    window = glfwCreateWindow(w_width, w_height, w_title, NULL, NULL);
@@ -109,10 +112,12 @@ int main(int argc, char **argv) {
    glfwMakeContextCurrent(window);
 
    // Initialize GLEW
+   glewExperimental = true;
    if (glewInit() != GLEW_OK) {
       fprintf(stderr, "Failed to initialize GLEW\n");
       return -1;
    }
+   glGetError();
 
    // Ensure we can capture the escape key being pressed below
    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -149,7 +154,7 @@ int main(int argc, char **argv) {
          double dx = (double) w_width / 2 - xpos;
          double dy = (double) w_height / 2 - ypos;
          // Edge case: window initialization
-         if (abs(dx) < 100 && abs(dy) < 100 && (xpos > 0 || ypos > 0) && DEBUG) {
+         if (abs(dx) < 100 && abs(dy) < 100 && (xpos > 0 || ypos > 0)) {
             camera_movePitch(dy * CAMERA_SPEED);
             camera_moveYaw(dx * CAMERA_SPEED);
          }
@@ -157,25 +162,22 @@ int main(int argc, char **argv) {
 
          // Update and render the game
          // Use fixed time updating
-          if (!DEBUG) {
-              currentState->update(SEC_PER_FRAME);
-          }
-          else {
-              currentState->update(0);
-          }
+         if (!DEBUG) {
+            currentState->update(SEC_PER_FRAME);
+         }
+         else {
+            currentState->update(0);
+         }
 
          // Clear the screen
          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
          currentState->render(glfwGetTime() - clock);
-
-
-         glLoadIdentity(); // Reset current matrix (Modelview)
 
          clock = nextTime;
       }
-      assert(GLSL::printError() == 0);
-
+      GLenum error = glGetError();
+      assert(error == 0);
+      
       // Swap buffers
       glfwSwapBuffers(window);
       glfwPollEvents();

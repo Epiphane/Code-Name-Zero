@@ -32,6 +32,7 @@ void State::render(float dt) {
    }
    
    if (DEBUG) {
+      return;
       glm::mat4 View = camera_getMatrix();
       
       glMatrixMode(GL_MODELVIEW);
