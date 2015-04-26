@@ -11,6 +11,10 @@ const int NORMAL_BUFFER = 2;
 const int INDICES_BUFFER = 3;
 const int MATERIAL_BUFFER = 4;
 
+typedef enum {
+   Vertices, Colors, UVs, Normals, Indices, Materials
+} DataType;
+
 // Location for shader attributes
 const int LOCATION_POSITION = 0;
 const int LOCATION_NORMAL = 1;
@@ -18,19 +22,20 @@ const int LOCATION_UV = 2;
 const int LOCATION_COLOR = 2;
 const int LOCATION_MATERIAL = 3;
 
-typedef unsigned int Material;
-const Material MATERIAL_RUBBER = 0;
-const Material MATERIAL_METAL = 1;
-const Material MATERIAL_GRASS = 2;
-const Material MATERIAL_RED_METAL = 3;
-const Material MATERIAL_CHAIR = 4;
-const Material MATERIAL_RED = 5;
-const Material MATERIAL_BLUE = 6;
-const Material MATERIAL_YELLOW = 7;
-const Material MATERIAL_GREEN = 8;
+const unsigned int MATERIAL_RUBBER = 0;
+const unsigned int MATERIAL_METAL = 1;
+const unsigned int MATERIAL_GRASS = 2;
+const unsigned int MATERIAL_RED_METAL = 3;
+const unsigned int MATERIAL_CHAIR = 4;
+const unsigned int MATERIAL_RED = 5;
+const unsigned int MATERIAL_BLUE = 6;
+const unsigned int MATERIAL_YELLOW = 7;
+const unsigned int MATERIAL_GREEN = 8;
 
 void shaders_init();
 void renderText(const char *text, float x, float y);
+glm::mat4 renderer_getCurrentModel();
+glm::mat4 renderer_getProjection();
 
 class Renderer;
 
@@ -43,7 +48,6 @@ typedef struct Program {
     void(* render)(Renderer *p, glm::mat4 Model);
 } Program;
 
-extern Program *Program3D;
 extern Program *ProgramText;
 extern Program *ProgramPostProc;
 
@@ -68,12 +72,12 @@ public:
     /* Rendering functions */
     Program *program;
     void bufferData(int type, long num, void *data) { program->bufferData(this, type, num, data); }
-    void render(glm::mat4 Model) { program->render(this, Model); }
+    virtual void render(glm::mat4 Model) { program->render(this, Model); }
     
     static void pushMatrix(glm::mat4 matrix);
     static void popMatrix();
     
-    Material mat;
+    unsigned int mat;
     glm::vec3 bend;
 };
 
