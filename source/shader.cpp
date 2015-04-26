@@ -52,7 +52,7 @@ GLuint compileShader(const char *filePath, GLenum shaderType) {
 
 
 GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path){
-   return LoadShaders(vertex_file_path, "", fragment_file_path);
+   return LoadShaders(vertex_file_path, NULL, fragment_file_path);
 }
 
 GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const char *fragFilePath) {
@@ -61,14 +61,19 @@ GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const cha
    
    // Create shaders
    GLuint vertexShader = compileShader(vertFilePath, GL_VERTEX_SHADER);
-   //    GLuint geomShader = compileShader(geomFilePath, GL_GEOMETRY_SHADER);
+   GLuint geomShader;
+   if (geomFilePath != NULL)
+       geomShader = compileShader(geomFilePath, GL_GEOMETRY_SHADER);
    GLuint fragShader = compileShader(fragFilePath, GL_FRAGMENT_SHADER);
    
    // Link the program
    printf("Linking program\n");
    GLuint programID = glCreateProgram();
    glAttachShader(programID, vertexShader);
-   //    glAttachShader(programID, geomShader);
+   if (geomFilePath != NULL) {
+       glAttachShader(programID, geomShader);
+      std::cout << geomFilePath << std::endl;
+   }
    glAttachShader(programID, fragShader);
    glLinkProgram(programID);
    

@@ -31,6 +31,7 @@ public:
 
 class ModelRenderer : public GraphicsComponent {
 public:
+   ModelRenderer(const char *filename, const char *baseDir);
    ModelRenderer(const char *filename);
 };
 

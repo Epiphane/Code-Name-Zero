@@ -66,23 +66,31 @@ GroundRenderer::GroundRenderer(float size) {
    renderers.push_back(renderer);
 }
 
-ModelRenderer::ModelRenderer(const char *filename) {
+ModelRenderer::ModelRenderer(const char *filename) : ModelRenderer(filename, "") {};
+
+ModelRenderer::ModelRenderer(const char *filename, const char *baseDir) {
    GraphicsComponent::GraphicsComponent();
-   
-   Obj::ObjData *data = Obj::ParseObjFile(filename);
    
    std::vector<tinyobj::shape_t> shapes;
    std::vector<tinyobj::material_t> materials;
    
-   std::string err = tinyobj::LoadObj(shapes, materials, filename);
+   std::string err = tinyobj::LoadObj(shapes, materials, filename, baseDir);
    if(!err.empty()) {
       std::cerr << err << std::endl;
    }
+   
+   if (materials.size())
+      std::cout << ":" << materials.size() << ":" << std::endl;
+   
    // resize_obj(shapes);
    for(int s = 0; s < shapes.size(); s ++) {
       const std::vector<float> &posBuf = shapes[s].mesh.positions;
+      const std::vector<float> &norBuf = shapes[s].mesh.normals;
+      const std::vector<float> &uvBuf = shapes[s].mesh.texcoords;
+      const std::vector<int> &matBuf = shapes[s].mesh.material_ids;
+      const std::vector<unsigned int> &indBuf = shapes[s].mesh.indices;
       
-      std::vector<float> norBuf;
+      /*std::vector<float> norBuf;
       int idx1, idx2, idx3;
       glm::vec3 v1, v2, v3;
       // For every vertex initialize a normal to 0
@@ -120,38 +128,32 @@ ModelRenderer::ModelRenderer(const char *filename) {
          norBuf[3*idx3+0] += u.y * v.z - u.z * v.y;
          norBuf[3*idx3+1] += u.z * v.x - u.x * v.z;
          norBuf[3*idx3+2] += u.x * v.y - u.y * v.x;
-      }
+      }*/
       
       Renderer *renderer = Program3D->create();
       
-      const std::vector<unsigned int> &indBuf = shapes[s].mesh.indices;
       renderer->setNumElements(indBuf.size());
       renderer->bufferData(INDICES_BUFFER, indBuf.size(), (void *)&indBuf[0]);
       
       renderer->bufferData(VERTEX_BUFFER, posBuf.size(), (void *)&posBuf[0]);
+      renderer->bufferData(UV_BUFFER, uvBuf.size(), (void *)&uvBuf[0]);
       renderer->bufferData(NORMAL_BUFFER, norBuf.size(), (void *)&norBuf[0]);
-      
-      std::cout << indBuf.size() << " - " << posBuf.size() << std::endl;
-      std::cout << data->indices.size() << " - " << data->vertices.size() << std::endl;
-      renderer->setNumElements(data->indices.size());
-      renderer->bufferData(INDICES_BUFFER, data->indices.size(), &data->indices[0]);
-      renderer->bufferData(VERTEX_BUFFER, data->vertices.size(), &data->vertices[0]);
-      renderer->bufferData(NORMAL_BUFFER, data->normals.size(), &data->normals[0]);
+      renderer->bufferData(MATERIAL_BUFFER, matBuf.size(), (void *)&matBuf[0]);
       
       renderers.push_back(renderer);
    }
    
    // Compute bounds
-//   for (size_t i = 0; i < shapes.size(); i++) {
-//      for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
-//         if(shapes[i].mesh.positions[3*v+0] < bounds.min_x) bounds.min_x = shapes[i].mesh.positions[3*v+0];
-//         if(shapes[i].mesh.positions[3*v+0] > bounds.max_x) bounds.max_x = shapes[i].mesh.positions[3*v+0];
-//         
-//         if(shapes[i].mesh.positions[3*v+1] < bounds.min_y) bounds.min_y = shapes[i].mesh.positions[3*v+1];
-//         if(shapes[i].mesh.positions[3*v+1] > bounds.max_y) bounds.max_y = shapes[i].mesh.positions[3*v+1];
-//         
-//         if(shapes[i].mesh.positions[3*v+2] < bounds.min_z) bounds.min_z = shapes[i].mesh.positions[3*v+2];
-//         if(shapes[i].mesh.positions[3*v+2] > bounds.max_z) bounds.max_z = shapes[i].mesh.positions[3*v+2];
-//      }
-//   }
+   for (size_t i = 0; i < shapes.size(); i++) {
+      for (size_t v = 0; v < shapes[i].mesh.positions.size() / 3; v++) {
+         if(shapes[i].mesh.positions[3*v+0] < bounds.min_x) bounds.min_x = shapes[i].mesh.positions[3*v+0];
+         if(shapes[i].mesh.positions[3*v+0] > bounds.max_x) bounds.max_x = shapes[i].mesh.positions[3*v+0];
+         
+         if(shapes[i].mesh.positions[3*v+1] < bounds.min_y) bounds.min_y = shapes[i].mesh.positions[3*v+1];
+         if(shapes[i].mesh.positions[3*v+1] > bounds.max_y) bounds.max_y = shapes[i].mesh.positions[3*v+1];
+         
+         if(shapes[i].mesh.positions[3*v+2] < bounds.min_z) bounds.min_z = shapes[i].mesh.positions[3*v+2];
+         if(shapes[i].mesh.positions[3*v+2] > bounds.max_z) bounds.max_z = shapes[i].mesh.positions[3*v+2];
+      }
+   }
 }

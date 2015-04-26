@@ -9,6 +9,14 @@ const int COLOR_BUFFER = 1;
 const int UV_BUFFER = 1;
 const int NORMAL_BUFFER = 2;
 const int INDICES_BUFFER = 3;
+const int MATERIAL_BUFFER = 4;
+
+// Location for shader attributes
+const int LOCATION_POSITION = 0;
+const int LOCATION_NORMAL = 1;
+const int LOCATION_UV = 2;
+const int LOCATION_COLOR = 2;
+const int LOCATION_MATERIAL = 3;
 
 typedef unsigned int Material;
 const Material MATERIAL_RUBBER = 0;
