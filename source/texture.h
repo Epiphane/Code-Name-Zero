@@ -13,7 +13,7 @@
 
 #define MAX_TEXTURE_SIZE 512
 
-GLvoid LoadTexture(std::string image_file, int tex_id);
+GLvoid texture_load(std::string filename, int texture);
 GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *width, int *height);
 
 #endif /* defined(__RGBZero__texture__) */

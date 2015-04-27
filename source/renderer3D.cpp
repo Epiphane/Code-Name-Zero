@@ -129,11 +129,13 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniformMatrix4fv(Program3D_uView,  1, GL_FALSE, &View [0][0]);
    glUniformMatrix4fv(Program3D_uProj,  1, GL_FALSE, &Proj [0][0]);
    
-   glUniform3fv(Program3D_uAColor,  MAX_MATERIALS, (float *)ambient);
-   glUniform3fv(Program3D_uDColor,  MAX_MATERIALS, (float *)diffuse);
-   glUniform3fv(Program3D_uSColor,  MAX_MATERIALS, (float *)specular);
-   glUniform1fv(Program3D_uShine,   MAX_MATERIALS, shine);
-   glUniform2iv(Program3D_uTexSize, MAX_MATERIALS, textureSize);
+   glUniform3fv(Program3D_uAColor,  numMaterials, (float *)ambient);
+   glUniform3fv(Program3D_uDColor,  numMaterials, (float *)diffuse);
+   glUniform3fv(Program3D_uSColor,  numMaterials, (float *)specular);
+   glUniform1fv(Program3D_uShine,   numMaterials, shine);
+   glUniform2iv(Program3D_uTexSize, numMaterials, textureSize);
+   error = glGetError();
+   assert(error == 0);
    
    glUniform3f(Program3D_uLightPos, 100, 20, 33);
    

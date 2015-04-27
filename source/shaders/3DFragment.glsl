@@ -47,7 +47,8 @@ void main() {
       sColor = UsColor[vMaterial];
       shine = Ushine[vMaterial];
       
-      fragColor = texture(uTexUnits, vec3(vUV, vMaterial));
+      vec2 UV = vUV / uTexSize[vMaterial];
+      fragColor = texture(uTexUnits, vec3(UV, vMaterial));
       
       return;
    }

@@ -35,7 +35,7 @@ InGameState::InGameState() {
    PlayerPhysicsComponent *movement = new PlayerPhysicsComponent();
    InputComponent *i = new PlayerInputComponent();
    
-   player = new GameObject(new ModelRenderer("models/Little Wyvern/model.obj", "models/Little Wyvern/"),
+   player = new GameObject(new ModelRenderer("models/Wild Boar/model.obj", "models/Wild Boar/"),
                                   movement, i, new PlayerCollisionComponent);
    player->setType(OBJECT_PLAYER);
    player->addCollision(OBJECT_TARGET);

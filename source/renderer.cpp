@@ -230,7 +230,7 @@ void ProgramTextrender(Renderer *p, glm::mat4 Model) {
 }
 
 void TexRenderer::loadTexture(char *filename) {
-    LoadTexture(filename, texID);
+    texture_load(filename, texID);
 }
 
 GLuint vbo_fbo_vertices;
