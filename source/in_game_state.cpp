@@ -21,21 +21,41 @@
 // Farthest Z value of track
 float track_length = 0.0f;
 
+GameObject *playerObj;
+int currentPlayerShip = 0;
+std::vector<GraphicsComponent *> ships;
+
+void switchModels() {
+   currentPlayerShip = (currentPlayerShip + 1) % ships.size();
+   playerObj->setGraphics(ships[currentPlayerShip]);
+}
+
 InGameState::InGameState() {
    State::State();
    track_segments.clear();
    
    // Move camera
-   camera_init();
-   camera_setPosition(glm::vec3(0, 2, 0));
-   camera_lookAt(glm::vec3(0, 2, -10));
+   camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
    
    target_number = 0;
    
-   PlayerPhysicsComponent *movement = new PlayerPhysicsComponent();
+   MovementComponent *movement = new PlayerPhysicsComponent();
    InputComponent *i = new PlayerInputComponent();
-   player = new GameObject(new ModelRenderer("models/Wild Boar/model.obj", "models/Wild Boar/"),
-                                  movement, i, new PlayerCollisionComponent);
+   
+   // Create player ships
+   std::string model;
+   model = "models/Red Razelle/";
+   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   model = "models/Sonic Phantom/";
+   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   model = "models/Wild Boar/";
+   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   model = "models/Magic Seagull/";
+   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   model = "models/Little Wyvern/";
+   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   
+   playerObj = player = new GameObject(ships[currentPlayerShip], movement, i, new PlayerCollisionComponent);
    player->setType(OBJECT_PLAYER);
    player->addCollision(OBJECT_TARGET);
    player->setPosition(glm::vec3(0, 0, 0));
@@ -43,6 +63,9 @@ InGameState::InGameState() {
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
    
+   input_set_callback(GLFW_KEY_P, switchModels);
+   
+   camera_follow(player, glm::vec3(0, 1, 4));
    
    //GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
    //addObject(ground);
@@ -70,8 +93,7 @@ void InGameState::send(std::string message, void *data) {
 }
 
 void InGameState::update(float dt) {
-   camera_update();
-   
+   // Update all objects and the camera
    State::update(dt);
 
    float player_z = player->getPosition().z;

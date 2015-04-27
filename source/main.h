@@ -14,9 +14,13 @@
 
 #include "GLSL.h"
 #include "tiny_obj_loader.h"
-#define MATH_PI 3.1415926535897932384626433832795
-#define RADIANS_TO_DEG float(180.0f / MATH_PI)
-#define DEG_TO_RADIANS float(MATH_PI / 180.0f)
+
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
+#endif
+
+#define RADIANS_TO_DEG float(180.0f / M_PI)
+#define DEG_TO_RADIANS float(M_PI / 180.0f)
 
 #define CAMERA_SPEED 0.005
 #define CAMERA_MOVE 0.1

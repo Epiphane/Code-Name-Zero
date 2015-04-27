@@ -69,15 +69,15 @@ GroundRenderer::GroundRenderer(float size) {
 
 std::unordered_map<std::string, ModelRenderer> modelRenderers;
 
-ModelRenderer::ModelRenderer(const char *filename) : ModelRenderer(filename, "") {};
+ModelRenderer::ModelRenderer(std::string filename) : ModelRenderer(filename, "") {};
 
-ModelRenderer::ModelRenderer(const char *filename, const char *baseDir) {
+ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {
    GraphicsComponent::GraphicsComponent();
    
    std::vector<tinyobj::shape_t> shapes;
    std::vector<tinyobj::material_t> materials;
    
-   std::string err = tinyobj::LoadObj(shapes, materials, filename, baseDir);
+   std::string err = tinyobj::LoadObj(shapes, materials, filename.c_str(), baseDir.c_str());
    if(!err.empty()) {
       std::cerr << err << std::endl;
    }

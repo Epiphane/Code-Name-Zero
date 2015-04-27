@@ -14,8 +14,16 @@
 #include "game_object.h"
 #include "state.h"
 
-void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
+void MovementComponent::update(GameObject *obj, State *world, float dt) {
    glm::vec3 new_position = obj->getPosition() + speed*dt;
+   
+   obj->setPosition(new_position);
+}
+
+void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
+   MovementComponent::update(obj, world, dt);
+   
+   glm::vec3 new_position = obj->getPosition();
    
    // check if ship is going to go outside of track bounds
    if (new_position.x > 3.0f) {
@@ -28,8 +36,9 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    obj->setPosition(new_position);
    
    if (!DEBUG) {
-      camera_setPosition(obj->getPosition() + glm::vec3(0, 1, 0));
-      camera_lookAt(obj->getPosition() + glm::vec3(0, 1, -2));
+//      glm::vec3 up = glm::vec3(0, 1, 0);
+//      camera_setPosition(obj->getPosition() + up + glm::vec3(0, 0, 1));
+//      camera_lookAt(obj->getPosition() + up);
    }
    
    

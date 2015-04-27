@@ -23,6 +23,8 @@ void State::update(float dt) {
       else
          iterator ++;
    }
+   
+   camera_update(dt);
 }
 
 void State::render(float dt) {
