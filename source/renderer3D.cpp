@@ -18,7 +18,7 @@ GLuint Program3D_uWinScale, Program3D_uProj, Program3D_uModel, Program3D_uView;
 GLuint Program3D_uLightPos, Program3D_uAColor, Program3D_uDColor;
 GLuint Program3D_uSColor, Program3D_uShine, Program3D_uBend;
 GLuint Program3D_aPosition, Program3D_aNormal;
-GLuint Program3D_uTexSize, Program3D_uTexUnits;
+GLuint Program3D_uTexScale, Program3D_uTexUnits;
 
 void setMaterial(unsigned int mat, GLuint uDColor, GLuint uSColor, GLuint uAColor, GLuint uShine) {
     switch(mat) {
@@ -96,7 +96,7 @@ void Renderer3D_init() {
    Program3D_aNormal = glGetAttribLocation(Program3D, "aNormal");
    Program3D_aPosition = glGetAttribLocation(Program3D, "aPosition");
    Program3D_uTexUnits = glGetUniformLocation(Program3D, "uTexUnits");
-   Program3D_uTexSize = glGetUniformLocation(Program3D, "uTexSize");
+   Program3D_uTexScale = glGetUniformLocation(Program3D, "uTexScale");
 }
 
 Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0) {
@@ -133,7 +133,7 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniform3fv(Program3D_uDColor,  numMaterials, (float *)diffuse);
    glUniform3fv(Program3D_uSColor,  numMaterials, (float *)specular);
    glUniform1fv(Program3D_uShine,   numMaterials, shine);
-   glUniform2iv(Program3D_uTexSize, numMaterials, textureSize);
+   glUniform2fv(Program3D_uTexScale,numMaterials, (float *)textureScale);
    error = glGetError();
    assert(error == 0);
    
@@ -199,7 +199,9 @@ void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::ma
       shine[i] = data[i].shininess;
       
 //      LoadTexture((char *) (baseDir + data[i].diffuse_texname).c_str(), (int) textures[i]);
-      texture_loadToArray(baseDir + data[i].diffuse_texname, texture, i, &textureSize[2 * i], &textureSize[2 * i + 1]);
+      int width, height;
+      texture_loadToArray(baseDir + data[i].diffuse_texname, texture, i, &width, &height);
+      textureScale[i] = glm::vec2((float) width / MAX_TEXTURE_SIZE, (float) height / MAX_TEXTURE_SIZE);
    }
 }
 

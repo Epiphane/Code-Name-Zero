@@ -8,11 +8,12 @@ in vec4 vWorldSpace;
 uniform vec3 uLightPos;
 
 #define MAX_MATERIALS 30
+
 uniform vec3 UaColor[MAX_MATERIALS];
 uniform vec3 UdColor[MAX_MATERIALS];
 uniform vec3 UsColor[MAX_MATERIALS];
 uniform float Ushine[MAX_MATERIALS];
-uniform vec2 uTexSize[MAX_MATERIALS];
+uniform vec2 uTexScale[MAX_MATERIALS];
 uniform sampler2DArray uTexUnits;
 
 uniform int uShadeModel;
@@ -47,9 +48,11 @@ void main() {
       sColor = UsColor[vMaterial];
       shine = Ushine[vMaterial];
       
-      vec2 UV = vUV / uTexSize[vMaterial];
+      vec2 UV = vec2(vUV.x * uTexScale[vMaterial].x,
+                     vUV.y * uTexScale[vMaterial].y);
       fragColor = texture(uTexUnits, vec3(UV, vMaterial));
       
-      return;
+      if (fragColor.a == 0)
+         discard;
    }
 }

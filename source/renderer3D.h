@@ -39,7 +39,7 @@ private:
    glm::vec3 ambient[MAX_MATERIALS], diffuse[MAX_MATERIALS];
    glm::vec3 specular[MAX_MATERIALS];
    float shine[MAX_MATERIALS];
-   int textureSize[MAX_MATERIALS * 2];
+   glm::vec2 textureScale[MAX_MATERIALS];
    GLuint texture;
    
 public:
