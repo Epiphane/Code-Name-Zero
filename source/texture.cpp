@@ -93,23 +93,23 @@ GLvoid LoadTexture(std::string image_file, int texID) {
    
    // Open the file
    FILE * file = fopen(imagepath,"rb");
-   if (!file)							    {printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", imagepath); getchar(); return 0;}
+   if (!file)							    {printf("%s could not be opened. Are you in the right directory ? Don't forget to read the FAQ !\n", imagepath); getchar(); return;}
    
    // Read the header, i.e. the 54 first bytes
    
    // If less than 54 bytes are read, problem
    if ( fread(header, 1, 54, file)!=54 ){
       printf("Not a correct BMP file\n");
-      return 0;
+      return;
    }
    // A BMP files always begins with "BM"
    if ( header[0]!='B' || header[1]!='M' ){
       printf("Not a correct BMP file\n");
-      return 0;
+      return;
    }
    // Make sure this is a 24bpp file
-   if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    return 0;}
-   if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    return 0;}
+   if ( *(int*)&(header[0x1E])!=0  )         {printf("Not a correct BMP file\n");    return;}
+   if ( *(int*)&(header[0x1C])!=24 )         {printf("Not a correct BMP file\n");    return;}
    
    // Read the information about the image
    dataPos    = *(int*)&(header[0x0A]);

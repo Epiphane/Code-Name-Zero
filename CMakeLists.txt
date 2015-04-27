@@ -122,6 +122,15 @@ if (WIN32)
    endforeach(RESOURCE)
 
    file(COPY ${ABS_RESOURCES} DESTINATION ${PROJECT_BINARY_DIR})
+   
+   # Find user and system name
+	#SET(SYSTEM_NAME $ENV{USERDOMAIN} CACHE STRING SystemName)
+	#SET(USER_NAME $ENV{USERNAME} CACHE STRING UserName)
+
+	# Configure the template file
+	#SET(USER_FILE ${_projectName}.vcproj.${SYSTEM_NAME}.${USER_NAME}.user)
+	#SET(OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/${USER_FILE})
+	#CONFIGURE_FILE(UserTemplate.user ${USER_FILE} @ONLY)
 endif (WIN32)
 
 foreach(SHADER ${SHADERS})

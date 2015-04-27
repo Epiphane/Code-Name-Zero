@@ -11,7 +11,6 @@
 
 #include "main.h"
 #include "tiny_obj_loader.h"
-#include "obj_parser.h"
 #include "renderer3D.h"
 #include "graphics_component.h"
 #include "game_object.h"
