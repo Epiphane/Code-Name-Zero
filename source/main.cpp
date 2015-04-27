@@ -94,8 +94,6 @@ int main(int argc, char **argv) {
 
    glfwWindowHint(GLFW_SAMPLES, 4);
    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-//   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-   //   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -127,6 +125,7 @@ int main(int argc, char **argv) {
    input_init(window);
    input_set_callback(GLFW_KEY_SPACE, toggleDebug);
 
+//   glEnable(GL_TEXTURE_2D);
    glEnable (GL_BLEND);
    glEnable(GL_DEPTH_TEST);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

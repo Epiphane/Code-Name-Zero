@@ -7,9 +7,11 @@
 //
 
 #include <iostream>
+#include <unordered_map>
 
 #include "main.h"
 #include "tiny_obj_loader.h"
+#include "renderer3D.h"
 #include "graphics_component.h"
 #include "game_object.h"
 
@@ -36,34 +38,36 @@ GroundRenderer::GroundRenderer(float size) {
    bounds.min_y = -1;
    bounds.max_y = 0;
    
-   const float posBuf[] = {
+   const std::vector<float> posBuf = {
       -size, 0,  size,
       size, 0,  size,
       -size, 0, -size,
       size, 0, -size
    };
    
-   const unsigned int indBuf[] = {
+   const std::vector<unsigned int> indBuf = {
       0, 1, 2, 1, 2, 3
    };
    
-   const float norBuf[] = {
+   const std::vector<float> norBuf = {
       0, 1, 0,
       0, 1, 0,
       0, 1, 0,
       0, 1, 0
    };
    
-   Renderer *renderer = Program3D->create();
+   Renderer3D *renderer = new Renderer3D();
    
    renderer->setNumElements(6);
-   renderer->bufferData(INDICES_BUFFER, 6, (void *)&indBuf[0]);
+   renderer->bufferData(Indices, indBuf);
    
-   renderer->bufferData(VERTEX_BUFFER, 4 * 3, (void *)&posBuf[0]);
-   renderer->bufferData(NORMAL_BUFFER, 4 * 3, (void *)&norBuf[0]);
+   renderer->bufferData(Vertices, posBuf);
+   renderer->bufferData(Normals, norBuf);
    
    renderers.push_back(renderer);
 }
+
+std::unordered_map<std::string, ModelRenderer> modelRenderers;
 
 ModelRenderer::ModelRenderer(const char *filename) : ModelRenderer(filename, "") {};
 
@@ -78,66 +82,31 @@ ModelRenderer::ModelRenderer(const char *filename, const char *baseDir) {
       std::cerr << err << std::endl;
    }
    
-   if (materials.size())
-      std::cout << ":" << materials.size() << ":" << std::endl;
-   
    // resize_obj(shapes);
    for(int s = 0; s < shapes.size(); s ++) {
       const std::vector<float> &posBuf = shapes[s].mesh.positions;
       const std::vector<float> &norBuf = shapes[s].mesh.normals;
       const std::vector<float> &uvBuf = shapes[s].mesh.texcoords;
-      const std::vector<int> &matBuf = shapes[s].mesh.material_ids;
       const std::vector<unsigned int> &indBuf = shapes[s].mesh.indices;
       
-      /*std::vector<float> norBuf;
-      int idx1, idx2, idx3;
-      glm::vec3 v1, v2, v3;
-      // For every vertex initialize a normal to 0
-      for (int j = 0; j < shapes[s].mesh.positions.size()/3; j++) {
-         norBuf.push_back(0);
-         norBuf.push_back(0);
-         norBuf.push_back(0);
+      std::vector<float> matBuf(posBuf.size() / 3);
+      // Apply each material to every vertex
+      for(int i = 0; i < shapes[s].mesh.material_ids.size(); i ++) {
+         int mat = shapes[s].mesh.material_ids[i];
+         matBuf[indBuf[3 * i    ]] = mat;
+         matBuf[indBuf[3 * i + 1]] = mat;
+         matBuf[indBuf[3 * i + 2]] = mat;
       }
-      // Compute the normals for every face
-      // then add its normal to its associated vertex
-      for (int i = 0; i < shapes[s].mesh.indices.size()/3; i++) {
-         idx1 = shapes[s].mesh.indices[3*i+0];
-         idx2 = shapes[s].mesh.indices[3*i+1];
-         idx3 = shapes[s].mesh.indices[3*i+2];
-         v1 = glm::vec3(shapes[s].mesh.positions[3*idx1 +0],shapes[s].mesh.positions[3*idx1 +1], shapes[s].mesh.positions[3*idx1 +2]);
-         v2 = glm::vec3(shapes[s].mesh.positions[3*idx2 +0],shapes[s].mesh.positions[3*idx2 +1], shapes[s].mesh.positions[3*idx2 +2]);
-         v3 = glm::vec3(shapes[s].mesh.positions[3*idx3 +0],shapes[s].mesh.positions[3*idx3 +1], shapes[s].mesh.positions[3*idx3 +2]);
-         
-         glm::vec3 u, v;
-         
-         u = v2 - v1;
-         v = v3 - v1;
-         norBuf[3*idx1+0] += u.y * v.z - u.z * v.y;
-         norBuf[3*idx1+1] += u.z * v.x - u.x * v.z;
-         norBuf[3*idx1+2] += u.x * v.y - u.y * v.x;
-         
-         u = v3 - v2;
-         v = v1 - v2;
-         norBuf[3*idx2+0] += u.y * v.z - u.z * v.y;
-         norBuf[3*idx2+1] += u.z * v.x - u.x * v.z;
-         norBuf[3*idx2+2] += u.x * v.y - u.y * v.x;
-         
-         u = v1 - v3;
-         v = v2 - v3;
-         norBuf[3*idx3+0] += u.y * v.z - u.z * v.y;
-         norBuf[3*idx3+1] += u.z * v.x - u.x * v.z;
-         norBuf[3*idx3+2] += u.x * v.y - u.y * v.x;
-      }*/
       
-      Renderer *renderer = Program3D->create();
+      Renderer3D *renderer = new Renderer3D();
       
       renderer->setNumElements(indBuf.size());
-      renderer->bufferData(INDICES_BUFFER, indBuf.size(), (void *)&indBuf[0]);
-      
-      renderer->bufferData(VERTEX_BUFFER, posBuf.size(), (void *)&posBuf[0]);
-      renderer->bufferData(UV_BUFFER, uvBuf.size(), (void *)&uvBuf[0]);
-      renderer->bufferData(NORMAL_BUFFER, norBuf.size(), (void *)&norBuf[0]);
-      renderer->bufferData(MATERIAL_BUFFER, matBuf.size(), (void *)&matBuf[0]);
+      renderer->bufferData(Indices,   indBuf);
+      renderer->bufferData(Vertices,  posBuf);
+      renderer->bufferData(Normals,   norBuf);
+      renderer->bufferData(UVs,       uvBuf);
+      renderer->bufferData(Materials, matBuf);
+      renderer->setMaterials(baseDir, materials);
       
       renderers.push_back(renderer);
    }

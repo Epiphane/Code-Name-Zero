@@ -3,9 +3,11 @@ set(HEADERS
    GLIncludes.h
    GLSL.h
    tiny_obj_loader.h
+   lodepng.h
    
    main.h
    camera.h
+   renderer3D.h
    renderer.h
    texture.h
    shader.hpp
@@ -28,9 +30,11 @@ set(HEADERS
 set(SOURCES
    GLSL.cpp
    tiny_obj_loader.cc
+   lodepng.cpp
    
    main.cpp
    camera.cpp
+   renderer3D.cpp
    renderer.cpp
    texture.cpp
    shader.cpp

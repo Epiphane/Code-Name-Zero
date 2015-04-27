@@ -16,14 +16,7 @@ using namespace std;
 #include "texture.h"
 #include "main.h"
 
-Program *Program3D = NULL;
-GLuint Program3D_uWinScale, Program3D_uProj, Program3D_uModel, Program3D_uView;
-GLuint Program3D_uLightPos, Program3D_uAColor, Program3D_uDColor;
-GLuint Program3D_uSColor, Program3D_uShine, Program3D_uBend;
-GLuint Program3D_aPosition, Program3D_aNormal;
-Renderer *Program3Dcreate();
-void Program3DbufferData(Renderer *p, int type, long num, void *data);
-void Program3Drender(Renderer *p, glm::mat4 Model);
+#include "renderer3D.h"
 
 Program *ProgramText = NULL;
 GLuint ProgramText_uTexUnit, ProgramText_aPosition, ProgramText_aTexCoord;
@@ -56,6 +49,9 @@ glm::mat4 Projection;
 glm::mat4 currentMVP;
 std::stack<glm::mat4> MatrixStack;
 
+glm::mat4 renderer_getCurrentModel() { return currentMVP; }
+glm::mat4 renderer_getProjection() { return Projection; }
+
 void Renderer::pushMatrix(glm::mat4 matrix) {
     MatrixStack.push(currentMVP);
     
@@ -66,67 +62,6 @@ void Renderer::popMatrix() {
     currentMVP = MatrixStack.top();
     
     MatrixStack.pop();
-}
-
-void setMaterial(Material mat, GLuint uDColor, GLuint uSColor, GLuint uAColor, GLuint uShine) {
-    switch(mat) {
-        case MATERIAL_METAL:
-            glUniform3f(Program3D_uAColor, 0.15, 0.15, 0.15);
-            glUniform3f(Program3D_uDColor, 0.4, 0.4, 0.4);
-            glUniform3f(Program3D_uSColor, 0.14, 0.14, 0.14);
-            glUniform1f(Program3D_uShine, 76.8);
-            break;
-        case MATERIAL_RED_METAL:
-            glUniform3f(Program3D_uAColor, 0.05, 0.05, 0.05);
-            glUniform3f(Program3D_uDColor, 0.4, 0.05, 0.05);
-            glUniform3f(Program3D_uSColor, 0.4, 0.05, 0.05);
-            glUniform1f(Program3D_uShine, 25.0);
-            break;
-        case MATERIAL_RUBBER:
-            glUniform3f(Program3D_uAColor, 0, 0, 0);//2, 0.02, 0.02);
-            glUniform3f(Program3D_uDColor, 0, 0, 0);//.01, 0.01, 0.01);
-            glUniform3f(Program3D_uSColor, 0.1, 0.1, 0.1);
-            glUniform1f(Program3D_uShine, -100.0);
-            break;
-        case MATERIAL_CHAIR:
-            glUniform3f(Program3D_uAColor, 0.02, 0.02, 0.01);
-            glUniform3f(Program3D_uDColor, 0.2, 0.2, 0.2);
-            glUniform3f(Program3D_uSColor, 0.1, 0.1, 0.1);
-            glUniform1f(Program3D_uShine, 10.0);
-            break;
-        case MATERIAL_GRASS:
-            glUniform3f(Program3D_uAColor, 0.15, 0.4, 0.15);
-            glUniform3f(Program3D_uDColor, 0.4, 0.7, 0.4);
-            glUniform3f(Program3D_uSColor, 0, 0, 0);
-            glUniform1f(Program3D_uShine, -100.0);
-            break;
-       case MATERIAL_GREEN:
-          glUniform3f(Program3D_uAColor, 0.316,0.925, 0.148);
-          glUniform3f(Program3D_uDColor, 0, 1.0, 0);
-          glUniform3f(Program3D_uSColor, 0.2,0.9,0.2);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-       case MATERIAL_RED: // Lane 2 (Red)
-          glUniform3f(Program3D_uAColor, 0.925, 0.148, 0.316);
-          glUniform3f(Program3D_uDColor, 1.0, 0, 0);
-          glUniform3f(Program3D_uSColor, 0.9,0.2,0.2);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-       case MATERIAL_YELLOW: // Lane 3 (Yellow)
-          glUniform3f(Program3D_uAColor, 0.925, 0.925, 0.02);
-          glUniform3f(Program3D_uDColor, 0.9, 0.9, 0);
-          glUniform3f(Program3D_uSColor, 0.8,0.8,0.2);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-       case MATERIAL_BLUE: // Lane 3 (Blue)
-          glUniform3f(Program3D_uAColor, 0.148, 0.316, 0.925);
-          glUniform3f(Program3D_uDColor, 0.2, 0.2, 0.8);
-          glUniform3f(Program3D_uSColor, 0.2,0.2,0.9);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-        default:
-            std::cerr << "Error: Material " << mat << " not found" << std::endl;
-    }
 }
 
 void setUniforms(GLuint uWinScale, GLuint uPerspective, GLuint uView, GLuint uModel, glm::mat4 MVP) {
@@ -150,39 +85,12 @@ void shaders_init() {
    glGenVertexArrays(1, &VertexArrayID);
    glBindVertexArray(VertexArrayID);
    
-    Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 400.0f);
-    currentMVP = glm::mat4(1.0f);
-    MatrixStack.empty();
-   
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadMatrixf(&Projection[0][0]);
-//   
-//   error = glGetError();
-//   std::cout << error << std::endl;
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-   
-   // ----------------- 3D MODEL SHADER -------------------------
-   Program3D = (Program *) malloc(sizeof(Program));
-   
-   Program3D->programID = LoadShaders("./shaders/3DVertex.glsl", "./shaders/3DFragment.glsl");
-   Program3D_uWinScale = glGetUniformLocation(Program3D->programID, "windowScale");
-   Program3D_uProj = glGetUniformLocation(Program3D->programID, "uProjMatrix");
-   Program3D_uModel = glGetUniformLocation(Program3D->programID, "uModelMatrix");
-   Program3D_uView = glGetUniformLocation(Program3D->programID, "uViewMatrix");
-   Program3D_uAColor = glGetUniformLocation(Program3D->programID, "UaColor");
-   Program3D_uDColor = glGetUniformLocation(Program3D->programID, "UdColor");
-   Program3D_uSColor = glGetUniformLocation(Program3D->programID, "UsColor");
-   Program3D_uLightPos = glGetUniformLocation(Program3D->programID, "uLightPos");
-   Program3D_uShine = glGetUniformLocation(Program3D->programID, "uShine");
-   Program3D_uBend = glGetUniformLocation(Program3D->programID, "uBend");
-   Program3D_aNormal = glGetAttribLocation(Program3D->programID, "aNormal");
-   Program3D_aPosition = glGetAttribLocation(Program3D->programID, "aPosition");
+   Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 400.0f);
+   currentMVP = glm::mat4(1.0f);
+   MatrixStack.empty();
 
-   Program3D->create = &Program3Dcreate;
-   Program3D->bufferData = &Program3DbufferData;
-   Program3D->render = &Program3Drender;
-
+   Renderer3D_init();
+   
     // ---------------- TEXT SHADER ---------------------------
     ProgramText = (Program *) malloc(sizeof(Program));
 
@@ -208,101 +116,6 @@ void shaders_init() {
 	ProgramPostProc->render = &ProgramPostProcrender;
 	ProgramPostProccreate();
 	ProgramPostProcbufferData(NULL, 0, 0, NULL);
-}
-
-// ----------------- PROGRAM 3D -------------------------------
-Renderer *Program3Dcreate() {
-    Renderer *prog = new Renderer(5);
-    prog->program = Program3D;
-    prog->mat = MATERIAL_METAL;
-    
-    return (Renderer *)prog;
-}
-
-void Program3DbufferData(Renderer *p, int type, long num, void *data) {
-   size_t scalar;
-   GLuint bufType;
-    
-   if(type == VERTEX_BUFFER) {
-      bufType = GL_ARRAY_BUFFER;
-      scalar = sizeof(float);
-      
-      glBindBuffer(bufType, p->getBuffer(0));
-   }
-   else if(type == NORMAL_BUFFER) {
-      bufType = GL_ARRAY_BUFFER;
-      scalar = sizeof(float);
-
-      glBindBuffer(bufType, p->getBuffer(1));
-   }
-   else if(type == UV_BUFFER) {
-      bufType = GL_ARRAY_BUFFER;
-      scalar = sizeof(float);
-      
-      glBindBuffer(bufType, p->getBuffer(2));
-   }
-   else if(type == MATERIAL_BUFFER) {
-      bufType = GL_ARRAY_BUFFER;
-      scalar = sizeof(int);
-      
-      glBindBuffer(bufType, p->getBuffer(3));
-   }
-   else if(type == INDICES_BUFFER) {
-      bufType = GL_ELEMENT_ARRAY_BUFFER;
-      scalar = sizeof(unsigned int);
-        
-      glBindBuffer(bufType, p->getBuffer(4));
-   }
-   else {
-      std::cerr << "Buffer type " << type << " not recognized" << std::endl;
-      exit(1);
-   }
-    
-   glBufferData(bufType, scalar * num, data, GL_STATIC_DRAW);
-}
-
-void Program3Drender(Renderer *p, glm::mat4 Model) {
-    glUseProgram(Program3D->programID);
-    
-    // Send window scale
-    setUniforms(Program3D_uWinScale, Program3D_uProj, Program3D_uView, Program3D_uModel, Model);
-    glUniform3f(Program3D_uBend, p->bend.x, p->bend.y, p->bend.z);
-    
-    setMaterial(p->mat, Program3D_uDColor, Program3D_uSColor, Program3D_uAColor, Program3D_uShine);
-    
-    glUniform3f(Program3D_uLightPos, 100, 20, 33);
-    
-   // Bind attributes...
-   glEnableVertexAttribArray(LOCATION_POSITION);
-   glBindBuffer(GL_ARRAY_BUFFER, p->getBuffer(0));
-   glVertexAttribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-   glEnableVertexAttribArray(LOCATION_NORMAL);
-   glBindBuffer(GL_ARRAY_BUFFER, p->getBuffer(1));
-   glVertexAttribPointer(LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   
-   glEnableVertexAttribArray(LOCATION_UV);
-   glBindBuffer(GL_ARRAY_BUFFER, p->getBuffer(2));
-   glVertexAttribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
-   
-   glEnableVertexAttribArray(LOCATION_MATERIAL);
-   glBindBuffer(GL_ARRAY_BUFFER, p->getBuffer(3));
-   glVertexAttribPointer(LOCATION_MATERIAL, 2, GL_INT, GL_FALSE, 0, 0);
-   
-   // Draw it!
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, p->getBuffer(4));
-   glDrawElements(GL_TRIANGLES, p->getNumElements(), GL_UNSIGNED_INT, 0);
-    
-   if(p->getNumElements() == 0)
-      std::cout << "WARNING: Rendering a sprite with 0 elements" << std::endl;
-   // Cleanup
-   
-   glDisableVertexAttribArray(LOCATION_POSITION);
-   glDisableVertexAttribArray(LOCATION_NORMAL);
-   glDisableVertexAttribArray(LOCATION_UV);
-   glDisableVertexAttribArray(LOCATION_MATERIAL);
-
-   glUseProgram(0);
 }
 
 // ----------------- PROGRAM TEXT -----------------------------
@@ -417,7 +230,7 @@ void ProgramTextrender(Renderer *p, glm::mat4 Model) {
 }
 
 void TexRenderer::loadTexture(char *filename) {
-    LoadTexture(filename, texID);
+    texture_load(filename, texID);
 }
 
 GLuint vbo_fbo_vertices;

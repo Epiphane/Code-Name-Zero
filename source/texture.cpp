@@ -7,7 +7,10 @@
 //
 
 #include <iostream>
+#include <unordered_map>
+#include <cassert>
 
+#include "lodepng.h"
 #include "texture.h"
 
 // Uniform and attribute locations
@@ -22,8 +25,6 @@ typedef struct Image {
    char *data;
 } Image;
 
-Image *TextureImage;
-
 typedef struct RGB {
    GLubyte r;
    GLubyte g;
@@ -33,13 +34,58 @@ typedef struct RGB {
 RGB myimage[64][64];
 RGB* g_pixel;
 
-int ImageLoad(char *filename, Image *image);
+std::unordered_map<std::string, Image *> textures;
+int repeats = 0;
+
+int ImageLoad(std::string filename, Image *image);
+int loadPNG(std::string filename, Image *image);
+
+GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *width, int *height) {
+   Image *img = textures[filename];
+   if (!img) {
+      img = textures[filename] = (Image *) malloc(sizeof(Image));
+      if (img == NULL) {
+         printf("Error allocating space for image");
+         exit(1);
+      }
+      std::cout << "trying to load " << filename << std::endl;
+      if (!ImageLoad(filename, img)) {
+         exit(1);
+      }
+   }
+   
+   // Check sizes
+   *width = img->sizeX;
+   *height = img->sizeY;
+   assert(*width <= MAX_TEXTURE_SIZE);
+   assert(*height <= MAX_TEXTURE_SIZE);
+   
+   glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+   GLenum error = glGetError();
+   assert(error == 0);
+   //Upload pixel data.
+   //The first 0 refers to the mipmap level (level 0, since there's only 1)
+   //The following 2 zeroes refers to the x and y offsets in case you only want to specify a subrectangle.
+   //The final 0 refers to the layer index offset (we start from index 0 and have 2 levels).
+   //Altogether you can specify a 3D box subset of the overall texture, but only one mip level at a time.
+   glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layer, *width, *height, 1, GL_RGBA, GL_UNSIGNED_BYTE, img->data);
+    error = glGetError();
+   assert(error == 0);
+   
+   //Always set reasonable texture parameters
+   glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+   
+    error = glGetError();
+   assert(error == 0);
+}
 
 // ------------------- TEXTURE LOADING ------------------------
 //routines to load in a bmp files - must be 2^nx2^m and a 24bit bmp
-GLvoid LoadTexture(char* image_file, int texID) {
-   
-   TextureImage = (Image *) malloc(sizeof(Image));
+GLvoid texture_load(std::string image_file, int texID) {
+   Image *TextureImage = (Image *) malloc(sizeof(Image));
    if (TextureImage == NULL) {
       printf("Error allocating space for image");
       exit(1);
@@ -57,7 +103,6 @@ GLvoid LoadTexture(char* image_file, int texID) {
                 0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage->data);
    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST); /*  cheap scaling when image bigger than texture */
    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST); /*  cheap scaling when image smalled than texture*/
-   
 }
 
 
@@ -92,8 +137,7 @@ static unsigned int getshort(FILE *fp){
 }
 
 /*  quick and dirty bitmap loader...for 24 bit bitmaps with 1 plane only.  */
-
-int ImageLoad(char *filename, Image *image) {
+int loadBMP(std::string filename, Image *image) {
    FILE *file;
    unsigned long size;                 /*  size of the image in bytes. */
    unsigned long i;                    /*  standard counter. */
@@ -102,9 +146,10 @@ int ImageLoad(char *filename, Image *image) {
    char temp;                          /*  used to convert bgr to rgb color. */
    
    /*  make sure the file is there. */
-   if ((file = fopen(filename, "rb"))==NULL) {
-      printf("File Not Found : %s\n",filename);
-      return 0;
+   std::cout << "loading " << filename << std::endl;
+   if ((file = fopen(filename.c_str(), "rb"))==NULL) {
+      std::cerr << "File not found: " << filename << std::endl;
+      return ImageLoad("textures/sky.bmp", image);
    }
    
    /*  seek through the bmp header, up to the width height: */
@@ -123,14 +168,14 @@ int ImageLoad(char *filename, Image *image) {
    /*  read the planes */
    planes = getshort(file);
    if (planes != 1) {
-      printf("Planes from %s is not 1: %u\n", filename, planes);
+      std::cerr << "Planes from " << filename << " is not 1: " << planes << std::endl;
       return 0;
    }
    
    /*  read the bpp */
    bpp = getshort(file);
    if (bpp != 24) {
-      printf("Bpp from %s is not 24: %u\n", filename, bpp);
+      std::cerr << "BPP from " << filename << " is not 24: " << bpp << std::endl;
       return 0;
    }
    
@@ -145,7 +190,7 @@ int ImageLoad(char *filename, Image *image) {
    }
    
    if ((i = fread(image->data, size, 1, file)) != 1) {
-      printf("Error reading image data from %s.\n", filename);
+      std::cerr << "Error reading image data from " << filename << std::endl;;
       return 0;
    }
    
@@ -159,4 +204,40 @@ int ImageLoad(char *filename, Image *image) {
    
    /*  we're done. */
    return 1;
+}
+
+int loadPNG(std::string filename, Image *image) {
+   std::vector<unsigned char> img; //the raw pixels
+   unsigned width, height;
+   
+   //decode
+   unsigned error = lodepng::decode(img, width, height, filename);
+   
+   //if there's an error, display it
+   if (error == 48) {
+      image->sizeX = image->sizeY = 1;
+      image->data = (char *)calloc(1, sizeof(char) * 4);
+      image->data[3] = 255;
+      return 1;
+   }
+   else {
+      if (error)
+         std::cout << "decoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+      
+      image->data = (char *) malloc(sizeof(char) * img.size());
+      
+      image->sizeX = width;
+      image->sizeY = height;
+      for(int i = 0; i < img.size(); i ++)
+         image->data[i] = img[i];
+      
+      return error == 0;
+   }
+}
+
+int ImageLoad(std::string filename, Image *image) {
+   if (filename.find(".png"))
+      return loadPNG(filename, image);
+   else
+      return loadBMP(filename, image);
 }

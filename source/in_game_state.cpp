@@ -40,7 +40,6 @@ InGameState::InGameState() {
    player->setType(OBJECT_PLAYER);
    player->addCollision(OBJECT_TARGET);
    player->setPosition(glm::vec3(0, 0, 0));
-   player->transform(glm::rotate(180.0f, 0.0f, 1.0f, 0.0f));
    player->getGraphics()->getRenderer(0)->mat = MATERIAL_BLUE;
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
@@ -102,17 +101,4 @@ void InGameState::render(float dt) {
    State::render(dt);
 //   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 //   ProgramPostProcrender((Renderer *)getWindow(), glm::mat4());
-   
-   char score[16];
-   //sprintf(score, "Score: %d out of %d", player->score, target_number);
-   renderText(score, 50, 700);
-   
-   elapsed[pos++] = dt;
-   pos %= 25;
-   float tot = 0;
-   for (int i = 0; i < 25; i ++)
-      tot += elapsed[i];
-   
-   sprintf(score, "FPS: %f", 25.0f / tot);
-   renderText(score, 50, 650);
 }
