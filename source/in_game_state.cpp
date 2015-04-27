@@ -35,12 +35,11 @@ InGameState::InGameState() {
    PlayerPhysicsComponent *movement = new PlayerPhysicsComponent();
    InputComponent *i = new PlayerInputComponent();
    
-   player = new GameObject(new ModelRenderer("models/Wild Boar/model.obj", "models/Wild Boar/"),
+   player = new GameObject(new ModelRenderer("models/Little Wyvern/model.obj", "models/Little Wyvern/"),
                                   movement, i, new PlayerCollisionComponent);
    player->setType(OBJECT_PLAYER);
    player->addCollision(OBJECT_TARGET);
    player->setPosition(glm::vec3(0, 0, 0));
-   player->transform(glm::rotate(180.0f, 0.0f, 1.0f, 0.0f));
    player->getGraphics()->getRenderer(0)->mat = MATERIAL_BLUE;
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);

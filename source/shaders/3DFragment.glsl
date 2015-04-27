@@ -12,8 +12,8 @@ uniform vec3 UaColor[MAX_MATERIALS];
 uniform vec3 UdColor[MAX_MATERIALS];
 uniform vec3 UsColor[MAX_MATERIALS];
 uniform float Ushine[MAX_MATERIALS];
-
-uniform sampler2D uTexUnit;
+uniform vec2 uTexSize[MAX_MATERIALS];
+uniform sampler2DArray uTexUnits;
 
 uniform int uShadeModel;
 uniform int uShowNormal;
@@ -38,6 +38,10 @@ void main() {
       dColor = UdColor[vMaterial];
       sColor = UsColor[vMaterial];
       shine = Ushine[vMaterial];
+      
+      fragColor = texture(uTexUnits, vec3(vUV, vMaterial));
+      
+      return;
    }
    
    float Id = dot(normalize(vNormal), lightVector);

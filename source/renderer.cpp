@@ -16,7 +16,7 @@ using namespace std;
 #include "texture.h"
 #include "main.h"
 
-#include "renderer_3D.h"
+#include "renderer3D.h"
 
 Program *ProgramText = NULL;
 GLuint ProgramText_uTexUnit, ProgramText_aPosition, ProgramText_aTexCoord;

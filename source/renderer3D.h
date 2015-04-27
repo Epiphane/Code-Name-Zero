@@ -18,7 +18,7 @@
 #include "renderer.h"
 #include "GLSL.h"
 
-#define MAX_MATERIALS 30
+#define MAX_MATERIALS 50
 
 void Renderer3D_init();
 
@@ -39,6 +39,8 @@ private:
    glm::vec3 ambient[MAX_MATERIALS], diffuse[MAX_MATERIALS];
    glm::vec3 specular[MAX_MATERIALS];
    float shine[MAX_MATERIALS];
+   int textureSize[MAX_MATERIALS * 2];
+   GLuint texture;
    
 public:
    Renderer3D();
@@ -55,7 +57,7 @@ public:
    void bufferData(DataType type, const std::vector<unsigned int>& data);
    
    // Set materials for an object
-   void setMaterials(const std::vector<tinyobj::material_t>& data);
+   void setMaterials(std::string baseDir, const std::vector<tinyobj::material_t>& data);
    
    // Render the data!
    void render(glm::mat4 Model);

@@ -9,14 +9,16 @@
 #include "main.h"
 #include "shader.hpp"
 #include "camera.h"
+#include "texture.h"
 #include "renderer.h"
-#include "renderer_3D.h"
+#include "renderer3D.h"
 
 GLuint Program3D;
 GLuint Program3D_uWinScale, Program3D_uProj, Program3D_uModel, Program3D_uView;
 GLuint Program3D_uLightPos, Program3D_uAColor, Program3D_uDColor;
 GLuint Program3D_uSColor, Program3D_uShine, Program3D_uBend;
 GLuint Program3D_aPosition, Program3D_aNormal;
+GLuint Program3D_uTexSize, Program3D_uTexUnits;
 
 void setMaterial(unsigned int mat, GLuint uDColor, GLuint uSColor, GLuint uAColor, GLuint uShine) {
     switch(mat) {
@@ -93,10 +95,16 @@ void Renderer3D_init() {
    Program3D_uBend = glGetUniformLocation(Program3D, "uBend");
    Program3D_aNormal = glGetAttribLocation(Program3D, "aNormal");
    Program3D_aPosition = glGetAttribLocation(Program3D, "aPosition");
+   Program3D_uTexUnits = glGetUniformLocation(Program3D, "uTexUnits");
+   Program3D_uTexSize = glGetUniformLocation(Program3D, "uTexSize");
 }
 
 Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0) {
    glGenBuffers(NUM_BUFFERS, buffers);
+   glGenTextures(1,&texture);
+   
+   GLenum error = glGetError();
+   assert(error == 0);
 };
 
 void Renderer3D::render(glm::mat4 Model) {
@@ -121,12 +129,19 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniformMatrix4fv(Program3D_uView,  1, GL_FALSE, &View [0][0]);
    glUniformMatrix4fv(Program3D_uProj,  1, GL_FALSE, &Proj [0][0]);
    
-   glUniform3fv(Program3D_uAColor, MAX_MATERIALS, (float *)ambient);
-   glUniform3fv(Program3D_uDColor, MAX_MATERIALS, (float *)diffuse);
-   glUniform3fv(Program3D_uSColor, MAX_MATERIALS, (float *)specular);
-   glUniform1fv(Program3D_uShine,  MAX_MATERIALS, shine);
+   glUniform3fv(Program3D_uAColor,  MAX_MATERIALS, (float *)ambient);
+   glUniform3fv(Program3D_uDColor,  MAX_MATERIALS, (float *)diffuse);
+   glUniform3fv(Program3D_uSColor,  MAX_MATERIALS, (float *)specular);
+   glUniform1fv(Program3D_uShine,   MAX_MATERIALS, shine);
+   glUniform2iv(Program3D_uTexSize, MAX_MATERIALS, textureSize);
    
    glUniform3f(Program3D_uLightPos, 100, 20, 33);
+   
+   glActiveTexture(GL_TEXTURE0);
+   glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+   glUniform1i(Program3D_uTexUnits, 0);
+   error = glGetError();
+   assert(error == 0);
    
    // Bind attributes...
    glEnableVertexAttribArray(LOCATION_POSITION);
@@ -143,7 +158,7 @@ void Renderer3D::render(glm::mat4 Model) {
    
    glEnableVertexAttribArray(LOCATION_MATERIAL);
    glBindBuffer(GL_ARRAY_BUFFER, buffers[b_material]);
-   glVertexAttribPointer(LOCATION_MATERIAL, 1, GL_INT, GL_FALSE, 0, 0);
+   glVertexAttribPointer(LOCATION_MATERIAL, 1, GL_FLOAT, GL_FALSE, 0, 0);
    
    // Draw it!
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
@@ -160,20 +175,29 @@ void Renderer3D::render(glm::mat4 Model) {
    
    glUseProgram(0);
    
-
    error = glGetError();
-
    assert(error == 0);
 }
 
-void Renderer3D::setMaterials(const std::vector<tinyobj::material_t>& data) {
+void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::material_t>& data) {
    numMaterials = data.size();
    assert(numMaterials < MAX_MATERIALS);
+   if (numMaterials == 0)
+      return;
+   
+   glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+   glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, numMaterials);
+   GLenum error = glGetError();
+   assert(error == 0);
+   
    for(int i = 0; i < numMaterials; i ++) {
       ambient[i]  = glm::vec3(data[i].ambient[0],  data[i].ambient[1],  data[i].ambient[2]);
       diffuse[i]  = glm::vec3(data[i].diffuse[0],  data[i].diffuse[1],  data[i].diffuse[2]);
       specular[i] = glm::vec3(data[i].specular[0], data[i].specular[1], data[i].specular[2]);
       shine[i] = data[i].shininess;
+      
+//      LoadTexture((char *) (baseDir + data[i].diffuse_texname).c_str(), (int) textures[i]);
+      texture_loadToArray(baseDir + data[i].diffuse_texname, texture, i, &textureSize[2 * i], &textureSize[2 * i + 1]);
    }
 }
 
@@ -214,37 +238,21 @@ void Renderer3D::bufferData(DataType type, size_t size, void *data) {
 }
 
 void Renderer3D::bufferData(DataType type, const std::vector<float> &data) {
-   if (type == Vertices || type == UVs || type == Normals) {
-      bufferData(type, sizeof(float) * data.size(), (void *)&data[0]);
-   }
-   else {
-      assert(0);
-   }
+   assert(type == Vertices || type == UVs || type == Normals || type == Materials);
+   bufferData(type, sizeof(float) * data.size(), (void *)&data[0]);
 }
 
 void Renderer3D::bufferData(DataType type, const std::vector<glm::vec3> &data) {
-   if (type == Vertices || type == UVs || type == Normals) {
-      bufferData(type, sizeof(glm::vec3) * data.size(), (void *)&data[0]);
-   }
-   else {
-      assert(0);
-   }
+   assert(type == Vertices || type == UVs || type == Normals);
+   bufferData(type, sizeof(glm::vec3) * data.size(), (void *)&data[0]);
 }
 
-void Renderer3D::bufferData(DataType type, const std::vector<unsigned int> &data) {
-   if (type == Indices || type == Materials) {
-      bufferData(type, sizeof(unsigned int) * data.size(), (void *)&data[0]);
-   }
-   else {
-      assert(0);
-   }
+void Renderer3D::bufferData(DataType type, const std::vector<unsigned int> &d) {
+   assert(type == Indices || type == Materials);
+   bufferData(type, sizeof(unsigned int) * d.size(), (void *)&d[0]);
 }
 
 void Renderer3D::bufferData(DataType type, const std::vector<int> &data) {
-   if (type == Indices || type == Materials) {
-      bufferData(type, sizeof(int) * data.size(), (void *)&data[0]);
-   }
-   else {
-      assert(0);
-   }
+   assert(type == Indices || type == Materials);
+   bufferData(type, sizeof(int) * data.size(), (void *)&data[0]);
 }

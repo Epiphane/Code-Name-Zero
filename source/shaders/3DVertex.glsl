@@ -3,7 +3,7 @@
 layout(location = 0) in vec4 aPosition;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aUV;
-layout(location = 3) in int aMaterial;
+layout(location = 3) in float aMaterial;
 
 uniform mat4 uProjMatrix;
 uniform mat4 uViewMatrix;
@@ -21,7 +21,7 @@ void main()
    vWorldSpace = uViewMatrix * uModelMatrix * aPosition;
    gl_Position = uProjMatrix * uViewMatrix * uModelMatrix * aPosition;
    
-   vMaterial = aMaterial;
+   vMaterial = int(aMaterial);
    vUV = aUV;
    vNormal = (uViewMatrix * uModelMatrix * vec4(aNormal, 0)).xyz;
 }

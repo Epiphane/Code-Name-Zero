@@ -7,11 +7,12 @@
 //
 
 #include <iostream>
+#include <unordered_map>
 
 #include "main.h"
 #include "tiny_obj_loader.h"
 #include "obj_parser.h"
-#include "renderer_3D.h"
+#include "renderer3D.h"
 #include "graphics_component.h"
 #include "game_object.h"
 
@@ -67,6 +68,8 @@ GroundRenderer::GroundRenderer(float size) {
    renderers.push_back(renderer);
 }
 
+std::unordered_map<std::string, ModelRenderer> modelRenderers;
+
 ModelRenderer::ModelRenderer(const char *filename) : ModelRenderer(filename, "") {};
 
 ModelRenderer::ModelRenderer(const char *filename, const char *baseDir) {
@@ -87,7 +90,7 @@ ModelRenderer::ModelRenderer(const char *filename, const char *baseDir) {
       const std::vector<float> &uvBuf = shapes[s].mesh.texcoords;
       const std::vector<unsigned int> &indBuf = shapes[s].mesh.indices;
       
-      int matBuf[posBuf.size() / 3];
+      std::vector<float> matBuf(posBuf.size() / 3);
       // Apply each material to every vertex
       for(int i = 0; i < shapes[s].mesh.material_ids.size(); i ++) {
          int mat = shapes[s].mesh.material_ids[i];
@@ -99,12 +102,12 @@ ModelRenderer::ModelRenderer(const char *filename, const char *baseDir) {
       Renderer3D *renderer = new Renderer3D();
       
       renderer->setNumElements(indBuf.size());
-      renderer->bufferData(Indices, indBuf);
-      renderer->bufferData(Vertices, posBuf);
-      renderer->bufferData(Normals, norBuf);
-      renderer->bufferData(UVs, uvBuf);
-      renderer->bufferData(Materials, posBuf.size() / 3 * sizeof(int), matBuf);
-      renderer->setMaterials(materials);
+      renderer->bufferData(Indices,   indBuf);
+      renderer->bufferData(Vertices,  posBuf);
+      renderer->bufferData(Normals,   norBuf);
+      renderer->bufferData(UVs,       uvBuf);
+      renderer->bufferData(Materials, matBuf);
+      renderer->setMaterials(baseDir, materials);
       
       renderers.push_back(renderer);
    }

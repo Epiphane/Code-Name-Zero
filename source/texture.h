@@ -11,6 +11,9 @@
 
 #include "GLSL.h"
 
-GLvoid LoadTexture(char* image_file, int tex_id);
+#define MAX_TEXTURE_SIZE 512
+
+GLvoid LoadTexture(std::string image_file, int tex_id);
+GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *width, int *height);
 
 #endif /* defined(__RGBZero__texture__) */
