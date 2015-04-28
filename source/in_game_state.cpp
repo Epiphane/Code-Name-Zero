@@ -121,5 +121,25 @@ float elapsed[25] = {1};
 int pos = 0;
 void InGameState::render(float dt) {
 
+   // Turn on frame buffer
+   glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
+
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
    State::render(dt);
+   
+   // Turn off frame buffer, and render frame buffer to screen
+   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+   int blurRate;
+
+   if (!DEBUG) {
+      MovementComponent *playMove = (MovementComponent *)player->getPhysics();
+      blurRate = glm::length(playMove->getSpeed() / 2.0f) - 50;
+   }
+   else {
+      blurRate = 0;
+   }
+
+   ProgramPostProcrender(blurRate);
 }

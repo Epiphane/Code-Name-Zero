@@ -275,7 +275,7 @@ void ProgramPostProcbufferData(Renderer *p, int type, long num, void *data) {
 	/* Depth buffer */
 	glGenRenderbuffers(1, &rbo_depth);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo_depth);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, 1024, 768);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1024, 768);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	/* Framebuffer to link everything together */
