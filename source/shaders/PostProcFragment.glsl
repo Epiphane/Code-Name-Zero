@@ -14,7 +14,7 @@ void main(void) {
 
   if (blur > 0) {
      for (int i = 0; i < blur; i++) {
-        fragColor += texture(fbo_texture, vTexcoord + (vOffset / 1000f * i));
+        fragColor += texture(fbo_texture, vTexcoord + (vOffset / 1000.0f * i));
      }
      fragColor /= blur;
   }

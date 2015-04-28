@@ -303,7 +303,7 @@ void ProgramPostProcrender(Renderer *p, glm::mat4 Model) {
 	glUseProgram(ProgramPostProc->programID);
 	glBindTexture(GL_TEXTURE_2D, fbo_texture);
 	glUniform1i(ProgramPostProc_fbo_texture, /*GL_TEXTURE*/0);
-	glUniform1i(ProgramPostProc_blur, (int)p);
+	glUniform1i(ProgramPostProc_blur, (int64_t)p);
 	glEnableVertexAttribArray(ProgramPostProc_v_coord);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
