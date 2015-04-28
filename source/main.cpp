@@ -162,14 +162,14 @@ int main(int argc, char **argv) {
          // Clear the screen
 
 		 // Turn on frame buffer
-//		 glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
+		 glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
 
          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          currentState->render(glfwGetTime() - clock);
 
 		 // Turn off frame buffer, and render frame buffer to screen
-//		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//		 ProgramPostProcrender((Renderer *) blurRate, glm::mat4());
+		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		 ProgramPostProcrender(blurRate);
 
          clock = nextTime;
       }

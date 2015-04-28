@@ -115,7 +115,7 @@ void shaders_init() {
 
 	ProgramPostProc->create = &ProgramPostProccreate;
 	ProgramPostProc->bufferData = &ProgramPostProcbufferData;
-	ProgramPostProc->render = &ProgramPostProcrender;
+//	ProgramPostProc->render = &ProgramPostProcrender;
 	ProgramPostProccreate();
 	ProgramPostProcbufferData(NULL, 0, 0, NULL);
 }
@@ -296,14 +296,14 @@ unsigned int get_fbo() {
 }
 
 
-void ProgramPostProcrender(Renderer *p, glm::mat4 Model) {
+void ProgramPostProcrender(int blur) {
 //	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(ProgramPostProc->programID);
 	glBindTexture(GL_TEXTURE_2D, fbo_texture);
 	glUniform1i(ProgramPostProc_fbo_texture, /*GL_TEXTURE*/0);
-	glUniform1i(ProgramPostProc_blur, (int64_t)p);
+	glUniform1i(ProgramPostProc_blur, blur);
 	glEnableVertexAttribArray(ProgramPostProc_v_coord);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);

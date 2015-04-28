@@ -89,7 +89,7 @@ public:
     void loadTexture(char *filename);
 };
 
-void ProgramPostProcrender(Renderer *p, glm::mat4 Model);
+void ProgramPostProcrender(int blur);
 unsigned int get_fbo();
 
 #endif
