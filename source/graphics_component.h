@@ -31,8 +31,8 @@ public:
 
 class ModelRenderer : public GraphicsComponent {
 public:
-   ModelRenderer(const char *filename, const char *baseDir);
-   ModelRenderer(const char *filename);
+   ModelRenderer(std::string filename, std::string baseDir);
+   ModelRenderer(std::string filename);
 };
 
 class GroundRenderer : public GraphicsComponent {

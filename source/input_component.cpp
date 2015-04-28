@@ -14,46 +14,39 @@
 #include "physics_component.h"
 #include "game_object.h"
 
-const float PLAYER_SPEED = 20;
+const float PLAYER_SPEED = 100;
 
 void WheelInputComponent::update(GameObject *obj) {
    //Moved to physics_component.cpp : MovementComponent
 }
 
 void PlayerInputComponent::update(GameObject *obj) {
-   PlayerPhysicsComponent *movement = dynamic_cast<PlayerPhysicsComponent *>(obj->getPhysics());
+   MovementComponent *movement = dynamic_cast<MovementComponent *>(obj->getPhysics());
    if (movement != NULL) {
-      glm::vec3 speed = movement->getSpeed();
-      speed.x = 0.0f;
-       if (!DEBUG) {
-          
-           if (input_keyDown(GLFW_KEY_A)) {
-              speed.x -= PLAYER_SPEED;
-           }
-           if (input_keyDown(GLFW_KEY_D)) {
-               speed.x += PLAYER_SPEED;
-           }
-       } else {
-           if (input_keyDown(GLFW_KEY_A)) {
-               camera_move(-CAMERA_MOVE, 0, 0);
-           }
-           if (input_keyDown(GLFW_KEY_S)) {
-               camera_move(0, 0, -CAMERA_MOVE);
-           }
-           if (input_keyDown(GLFW_KEY_D)) {
-               camera_move(CAMERA_MOVE, 0, 0);
-           }
-           if (input_keyDown(GLFW_KEY_W)) {
-               camera_move(0, 0, CAMERA_MOVE);
-           }
-           if (input_keyDown(GLFW_KEY_Q)) {
-               camera_move(0, CAMERA_MOVE, 0);
-           }
-           if (input_keyDown(GLFW_KEY_E)) {
-               camera_move(0, -CAMERA_MOVE, 0);
-           }
+      glm::vec3 accel = movement->getSpeed();
+      accel.x = accel.y = 0.0f;
+      accel = glm::vec3(0);
+      if (!DEBUG) {
+         if (input_keyDown(GLFW_KEY_W)) {
+            accel.y -= PLAYER_SPEED;
+         }
+         if (input_keyDown(GLFW_KEY_S)) {
+            accel.y += PLAYER_SPEED;
+         }
+         if (input_keyDown(GLFW_KEY_A)) {
+            accel.x -= PLAYER_SPEED;
+         }
+         if (input_keyDown(GLFW_KEY_D)) {
+            accel.x += PLAYER_SPEED;
+         }
+         if (input_keyDown(GLFW_KEY_Q)) {
+            accel.z -= 1;
+         }
+         if (input_keyDown(GLFW_KEY_E)) {
+            accel.z += 1;
+         }
       }
       
-      movement->setSpeed(speed);
+      movement->setAccel(accel);
    }
 }

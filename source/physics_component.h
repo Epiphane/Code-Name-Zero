@@ -18,14 +18,21 @@ public:
    virtual void update(GameObject *obj, State *world, float dt) {};
 };
 
-class PlayerPhysicsComponent : public PhysicsComponent {
+class MovementComponent : public PhysicsComponent {
 private:
-   glm::vec3 speed;
+   glm::vec3 speed, accel;
    
 public:
-   virtual void update(GameObject *obj, State *world, float dt);
    glm::vec3 getSpeed(){return speed;}
    void setSpeed(glm::vec3 s){speed = s;}
+   void setAccel(glm::vec3 a){accel = a;}
+   
+   virtual void update(GameObject *obj, State *world, float dt);
+};
+
+class PlayerPhysicsComponent : public MovementComponent {
+public:
+   virtual void update(GameObject *obj, State *world, float dt);
 };
 
 class TrackPhysicsComponent : public PhysicsComponent {

@@ -6,45 +6,117 @@
 //  Copyright (c) 2015 Thomas Steinke. All rights reserved.
 //
 
+#include <noise.h>
 #include <glm/ext.hpp>
+
 #include "main.h"
 #include "camera.h"
+#include "game_object.h"
+
+#define SHAKE_SCALE 0.01f
+noise::module::Perlin shake;
+float t = 0;
+
+GameObject *following = nullptr;
+glm::vec3 followOffset = glm::vec3(0, 1, 4);
 
 glm::vec3 position;
-glm::mat4 transform(1.0f);
-bool inCar = false;
+glm::mat4 transform(1.0f), destination(1.0f);
 double pitch, yaw;
 
-glm::vec3 saved_position;
-glm::vec3 saved_lookAt;
-glm::mat4 saved_transform;
-
-void camera_init() {
+glm::vec3 savedPosition;
+glm::mat4 savedTransform, savedDestination;
+void camera_setDebug(bool debug) {
+   if (debug) {
+      savedPosition    = position;
+      savedDestination = destination;
+      savedTransform   = transform;
+   }
+   else {
+      position    = savedPosition;
+      destination = savedDestination;
+      transform   = savedTransform;
+   }
 }
 
-void camera_saveState() {
-    saved_position = position;
-    saved_lookAt = camera_getLookAt();
-    saved_transform = transform;
+void camera_init(glm::vec3 _position, glm::vec3 lookAt) {
+   position= _position;
+   camera_lookAt(lookAt);
+}
+
+void camera_follow(GameObject *follow, glm::vec3 offset) {
+   following = follow;
+   transform = destination = following->getModel();
+   followOffset = offset;
 }
 
 void camera_setPosition(glm::vec3 _position) {
-    position = _position;
+   position = _position;
 }
 
-void camera_setTransform(glm::mat4 _transform) {
-    transform = _transform;
-    inCar = (transform != glm::mat4(1.0f));
+void camera_update(float dt) {
+   if (DEBUG) {
+      if (input_keyDown(GLFW_KEY_A)) {
+         camera_move(-CAMERA_MOVE, 0, 0);
+      }
+      if (input_keyDown(GLFW_KEY_S)) {
+         camera_move(0, 0, -CAMERA_MOVE);
+      }
+      if (input_keyDown(GLFW_KEY_D)) {
+         camera_move(CAMERA_MOVE, 0, 0);
+      }
+      if (input_keyDown(GLFW_KEY_W)) {
+         camera_move(0, 0, CAMERA_MOVE);
+      }
+      if (input_keyDown(GLFW_KEY_Q)) {
+         camera_move(0, CAMERA_MOVE, 0);
+      }
+      if (input_keyDown(GLFW_KEY_E)) {
+         camera_move(0, -CAMERA_MOVE, 0);
+      }
+      
+      double dx, dy;
+      input_getMouse(&dx, &dy);
+      
+      camera_movePitch(dy * CAMERA_SPEED);
+      camera_moveYaw(dx * CAMERA_SPEED);
+   }
+   else if (following != nullptr) {
+      position = following->getPosition();// + followOffset;
+//      position = glm::vec3(0);
+      destination = following->getModel();
+      
+      transform += (destination - transform) * dt * 5;
+      
+      // Follow the player's direction if it exists
+      MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
+      if (movement != NULL) {
+//         camera_lookAt(position + movement->getSpeed());
+         
+         // Shake camera
+         t += 0.01f;
+         double freq = glm::length(movement->getSpeed()) / 100.0f;
+         if (freq > 10.0f) freq = 10.0f;
+         shake.SetFrequency(freq);
+      }
+   }
 }
-
-void camera_update() { }
 
 glm::vec3 camera_getPosition() { return position; }
 glm::vec3 camera_getLookAt() {
-    float y = yaw;
-    float p = pitch;
-    
-    return glm::vec3(cos(y) * cos(p), sin(p), -sin(y) * cos(p));
+   float y = yaw;
+   float p = pitch;
+   
+   if (!DEBUG && following != nullptr) {
+      // Follow the player's direction if it exists
+      MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
+      if (movement != NULL) {
+         y += shake.GetValue(0, t, 0) * SHAKE_SCALE;
+         p += shake.GetValue(t, 0, 0) * SHAKE_SCALE;
+      }
+   }
+   
+   return glm::vec3(cos(y) * cos(p), sin(p), -sin(y) * cos(p));
 }
 
 void camera_lookAt(glm::vec3 dest) {
@@ -57,10 +129,10 @@ void camera_lookAt(glm::vec3 dest) {
 
 void camera_setPitch(double _pitch) {
     pitch = _pitch;
-    if (pitch > MATH_PI * 5 / 11)
-        pitch = MATH_PI * 5 / 11;
-    if (pitch < -MATH_PI * 5 / 11)
-        pitch = -MATH_PI * 5 / 11;
+    if (pitch > M_PI * 5 / 11)
+        pitch = M_PI * 5 / 11;
+    if (pitch < -M_PI * 5 / 11)
+        pitch = -M_PI * 5 / 11;
 }
 
 void camera_movePitch(double dp) {
@@ -82,9 +154,10 @@ void camera_move(float dx, float dy, float dz) {
 }
 
 glm::mat4 camera_getMatrix() {
-    glm::vec4 pos = transform * glm::vec4(position, 1);
+    glm::vec4 pos = glm::vec4(position, 1);
     glm::vec4 dir = transform * glm::vec4(camera_getLookAt(), 0);
     glm::vec4 up = transform * glm::vec4(0, 1, 0, 0);
-    
-    return glm::translate(glm::vec3(0, 0, -3)) * glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
+   
+//   return glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
+    return glm::translate(-followOffset) * glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
 }

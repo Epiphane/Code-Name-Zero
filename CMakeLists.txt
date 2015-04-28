@@ -46,6 +46,16 @@ list(APPEND INCLUDES
    ${DEP_DIR}
 )
 
+#noise
+set(NOISE_DIR "${DEP_DIR}/libnoise")
+add_subdirectory(${NOISE_DIR})
+list(APPEND INCLUDES
+   ${NOISE_DIR}/src/noise
+)
+list(APPEND LIBS
+   noise
+)
+
 # FMOD
 set(FMOD_DIR "${DEP_DIR}/FMOD")
 set(FMOD_INCLUDE_DIR "${FMOD_DIR}/include")
@@ -122,7 +132,7 @@ if (WIN32)
    endforeach(RESOURCE)
 
    file(COPY ${ABS_RESOURCES} DESTINATION ${PROJECT_BINARY_DIR})
-   
+
    # Find user and system name
 	#SET(SYSTEM_NAME $ENV{USERDOMAIN} CACHE STRING SystemName)
 	#SET(USER_NAME $ENV{USERNAME} CACHE STRING UserName)
