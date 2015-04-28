@@ -85,7 +85,7 @@ InGameState::InGameState() {
       track_length-=27.5f;
    }
    
-   soundtrack = audio_load_music("./audio/RGB_Happy_Electro.wav", 120);
+   soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
    soundtrack->play();
 }
 
