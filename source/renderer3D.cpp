@@ -18,7 +18,7 @@ GLuint Program3D_uWinScale, Program3D_uProj, Program3D_uModel, Program3D_uView;
 GLuint Program3D_uLightPos, Program3D_uAColor, Program3D_uDColor;
 GLuint Program3D_uSColor, Program3D_uShine, Program3D_uBend;
 GLuint Program3D_aPosition, Program3D_aNormal;
-GLuint Program3D_uTexScale, Program3D_uTexUnits;
+GLuint Program3D_uTexScale, Program3D_uTexUnits, Program3D_uHasTextures;
 
 void setMaterial(unsigned int mat, GLuint uDColor, GLuint uSColor, GLuint uAColor, GLuint uShine) {
     switch(mat) {
@@ -97,11 +97,11 @@ void Renderer3D_init() {
    Program3D_aPosition = glGetAttribLocation(Program3D, "aPosition");
    Program3D_uTexUnits = glGetUniformLocation(Program3D, "uTexUnits");
    Program3D_uTexScale = glGetUniformLocation(Program3D, "uTexScale");
+   Program3D_uHasTextures = glGetUniformLocation(Program3D, "uHasTextures");
 }
 
-Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0) {
+Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
    glGenBuffers(NUM_BUFFERS, buffers);
-   glGenTextures(1,&texture);
    
    GLenum error = glGetError();
    assert(error == 0);
@@ -133,17 +133,19 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniform3fv(Program3D_uDColor,  numMaterials, (float *)diffuse);
    glUniform3fv(Program3D_uSColor,  numMaterials, (float *)specular);
    glUniform1fv(Program3D_uShine,   numMaterials, shine);
-   glUniform2fv(Program3D_uTexScale,numMaterials, (float *)textureScale);
+   glUniform1i(Program3D_uHasTextures, hasTextures);
+   if (hasTextures) {
+      glUniform2fv(Program3D_uTexScale,numMaterials, (float *)textureScale);
+      
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+      glUniform1i(Program3D_uTexUnits, 0);
+   }
+   
    error = glGetError();
    assert(error == 0);
    
    glUniform3f(Program3D_uLightPos, 100, 20, 33);
-   
-   glActiveTexture(GL_TEXTURE0);
-   glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
-   glUniform1i(Program3D_uTexUnits, 0);
-   error = glGetError();
-   assert(error == 0);
    
    // Bind attributes...
    glEnableVertexAttribArray(LOCATION_POSITION);
@@ -183,12 +185,16 @@ void Renderer3D::render(glm::mat4 Model) {
 
 void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::material_t>& data) {
    numMaterials = data.size();
+   std::cout << numMaterials << std::endl;
    assert(numMaterials < MAX_MATERIALS);
    if (numMaterials == 0)
       return;
    
-   glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
-   glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, numMaterials);
+   if (hasTextures) {
+      glDeleteTextures(0, &texture);
+      hasTextures = false;
+   }
+   
    GLenum error = glGetError();
    assert(error == 0);
    
@@ -198,10 +204,19 @@ void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::ma
       specular[i] = glm::vec3(data[i].specular[0], data[i].specular[1], data[i].specular[2]);
       shine[i] = data[i].shininess;
       
-//      LoadTexture((char *) (baseDir + data[i].diffuse_texname).c_str(), (int) textures[i]);
-      int width, height;
-      texture_loadToArray(baseDir + data[i].diffuse_texname, texture, i, &width, &height);
-      textureScale[i] = glm::vec2((float) width / MAX_TEXTURE_SIZE, (float) height / MAX_TEXTURE_SIZE);
+      if (data[i].diffuse_texname.length() > 0) {
+         if (!hasTextures) {
+            glGenTextures(1,&texture);
+            glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
+            glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, MAX_TEXTURE_SIZE, MAX_TEXTURE_SIZE, numMaterials);
+            
+            hasTextures = true;
+         }
+      
+         int width, height;
+         texture_loadToArray(baseDir + data[i].diffuse_texname, texture, i, &width, &height);
+         textureScale[i] = glm::vec2((float) width / MAX_TEXTURE_SIZE, (float) height / MAX_TEXTURE_SIZE);
+      }
    }
 }
 
