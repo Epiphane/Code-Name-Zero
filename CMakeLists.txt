@@ -53,7 +53,7 @@ list(APPEND INCLUDES
    ${NOISE_DIR}/src/noise
 )
 list(APPEND LIBS
-   noise
+   noise-static
 )
 
 # FMOD

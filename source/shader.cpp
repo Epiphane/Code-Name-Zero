@@ -87,7 +87,7 @@ GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const cha
       // Windows returns empty error messages, check if error message is null first before quitting
       if (errorMessage[0] != '\0') {
          printf("%s\n", &errorMessage[0]);
-         exit(1);
+//         exit(1);
       }
    }
    

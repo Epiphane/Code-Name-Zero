@@ -185,7 +185,6 @@ void Renderer3D::render(glm::mat4 Model) {
 
 void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::material_t>& data) {
    numMaterials = data.size();
-   std::cout << numMaterials << std::endl;
    assert(numMaterials < MAX_MATERIALS);
    if (numMaterials == 0)
       return;

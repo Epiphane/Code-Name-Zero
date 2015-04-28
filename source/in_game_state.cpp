@@ -63,6 +63,9 @@ InGameState::InGameState() {
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
    
+   //GameObject *obj = new GameObject(new ModelRenderer("models/bunny.obj"));
+   //addObject(obj);
+   
    input_set_callback(GLFW_KEY_P, switchModels);
    
    camera_follow(player, glm::vec3(0, 1, 4));
@@ -99,7 +102,7 @@ void InGameState::update(float dt) {
    float player_z = player->getPosition().z;
    
    if (player_z <= track_segments[1]->getPosition().z) {
-      GameObject *track = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"));
+      GameObject *track = new GameObject(new ModelRenderer("models/RGB_track.obj", "models/"));
       track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
       track->setPosition(glm::vec3(0.0f,0.0f,track_length));
       track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;

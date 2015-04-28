@@ -29,9 +29,8 @@ void main() {
    vec3 sColor = vec3(0);
    float shine = 0;
    vec3 lightVector = normalize(uLightPos - vWorldSpace.xyz);
-   float u = vUV.x;
    
-   if (vMaterial < 0 || uTexScale[vMaterial].x < 2.0 / 512.0) {
+   if (vMaterial < 0) {
       // Placeholder: Basic metal
       aColor = vec3(0.15, 0.15, 0.15);
       dColor = vec3(0.4, 0.4, 0.4);

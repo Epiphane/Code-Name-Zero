@@ -82,8 +82,7 @@ void camera_update(float dt) {
       camera_moveYaw(dx * CAMERA_SPEED);
    }
    else if (following != nullptr) {
-      position = following->getPosition();// + followOffset;
-//      position = glm::vec3(0);
+      position = following->getPosition();
       destination = following->getModel();
       
       transform += (destination - transform) * dt * 5;
@@ -91,8 +90,6 @@ void camera_update(float dt) {
       // Follow the player's direction if it exists
       MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
       if (movement != NULL) {
-//         camera_lookAt(position + movement->getSpeed());
-         
          // Shake camera
          t += 0.01f;
          double freq = glm::length(movement->getSpeed()) / 100.0f;
