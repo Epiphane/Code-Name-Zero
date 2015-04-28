@@ -6,10 +6,16 @@
 //  Copyright (c) 2015 Thomas Steinke. All rights reserved.
 //
 
+#include <noise.h>
 #include <glm/ext.hpp>
+
 #include "main.h"
 #include "camera.h"
 #include "game_object.h"
+
+#define SHAKE_SCALE 0.01f
+noise::module::Perlin shake;
+float t = 0;
 
 GameObject *following = nullptr;
 glm::vec3 followOffset = glm::vec3(0, 1, 4);
@@ -80,23 +86,39 @@ void camera_update(float dt) {
       // Follow the player's direction if it exists
       MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
       if (movement != NULL) {
-         camera_lookAt(position + movement->getSpeed());
+//         camera_lookAt(position + movement->getSpeed());
          
          double dx, dy;
          input_getMouse(&dx, &dy);
          
          camera_movePitch(dy * CAMERA_SPEED);
          camera_moveYaw(dx * CAMERA_SPEED);
+         
+         // Shake camera
+         t += 0.01f;
+         shake.SetFrequency(glm::length(movement->getSpeed()) / 100.0f);
       }
    }
 }
 
 glm::vec3 camera_getPosition() { return position; }
 glm::vec3 camera_getLookAt() {
-    float y = yaw;
-    float p = pitch;
-    
-    return glm::vec3(cos(y) * cos(p), sin(p), -sin(y) * cos(p));
+   float y = yaw;
+   float p = pitch;
+   
+   if (!DEBUG && following != nullptr) {
+      position = following->getPosition();// + followOffset;
+      
+      // Follow the player's direction if it exists
+      MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
+      if (movement != NULL) {
+         float speed = glm::length(movement->getSpeed());
+         y += shake.GetValue(0, t, 0) * SHAKE_SCALE;
+         p += shake.GetValue(t, 0, 0) * SHAKE_SCALE;
+      }
+   }
+   
+   return glm::vec3(cos(y) * cos(p), sin(p), -sin(y) * cos(p));
 }
 
 void camera_lookAt(glm::vec3 dest) {
