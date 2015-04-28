@@ -33,7 +33,6 @@ GLuint compileShader(const char *filePath, GLenum shaderType) {
    
    // Compile Shader
    printf("Compiling shader : %s\n", filePath);
-   std::cout << shaderCode << std::endl;
    const char *sourcePointer = shaderCode.c_str();
    glShaderSource(shaderID, 1, &sourcePointer , NULL);
    glCompileShader(shaderID);

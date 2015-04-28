@@ -42,6 +42,8 @@ private:
    glm::vec2 textureScale[MAX_MATERIALS];
    GLuint texture;
    
+   bool hasTextures;
+   
 public:
    Renderer3D();
    

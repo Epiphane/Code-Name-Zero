@@ -34,7 +34,6 @@ InGameState::InGameState() {
    
    PlayerPhysicsComponent *movement = new PlayerPhysicsComponent();
    InputComponent *i = new PlayerInputComponent();
-   
    player = new GameObject(new ModelRenderer("models/Wild Boar/model.obj", "models/Wild Boar/"),
                                   movement, i, new PlayerCollisionComponent);
    player->setType(OBJECT_PLAYER);
@@ -44,13 +43,14 @@ InGameState::InGameState() {
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
    
+   
    //GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
    //addObject(ground);
    
    // NOTE:
    // 10 Segments of track seems to be the magic number, 27.5 units long
    for (int i=0; i<15; i++) {
-      GameObject *track = new GameObject(new ModelRenderer("models/RGB_tracksection.obj"));
+      GameObject *track = new GameObject(new ModelRenderer("models/RGB_track.obj", "models/"));
       track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
       track->setPosition(glm::vec3(0.0f,0.0f,i*-27.5f));
       track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
