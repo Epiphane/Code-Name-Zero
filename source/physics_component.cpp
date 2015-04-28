@@ -15,6 +15,8 @@
 #include "state.h"
 
 void MovementComponent::update(GameObject *obj, State *world, float dt) {
+//   speed += 
+   
    glm::vec3 new_position = obj->getPosition() + speed*dt;
    
    obj->setPosition(new_position);

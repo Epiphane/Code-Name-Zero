@@ -20,10 +20,11 @@ public:
 
 class MovementComponent : public PhysicsComponent {
 private:
-   glm::vec3 speed;
+   glm::vec3 speed, accel;
 public:
    glm::vec3 getSpeed(){return speed;}
    void setSpeed(glm::vec3 s){speed = s;}
+   void setAccel(glm::vec3 a){accel = a;}
    
    virtual void update(GameObject *obj, State *world, float dt);
 };

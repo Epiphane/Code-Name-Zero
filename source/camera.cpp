@@ -73,32 +73,30 @@ void camera_update(float dt) {
       if (input_keyDown(GLFW_KEY_E)) {
          camera_move(0, -CAMERA_MOVE, 0);
       }
-      
-      double dx, dy;
-      input_getMouse(&dx, &dy);
-      
-      camera_movePitch(dy * CAMERA_SPEED);
-      camera_moveYaw(dx * CAMERA_SPEED);
    }
    else if (following != nullptr) {
-      position = following->getPosition();// + followOffset;
+//      position = following->getPosition();// + followOffset;
+      position = glm::vec3(0);
+      transform = following->getModel();
       
       // Follow the player's direction if it exists
       MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
       if (movement != NULL) {
 //         camera_lookAt(position + movement->getSpeed());
          
-         double dx, dy;
-         input_getMouse(&dx, &dy);
-         
-         camera_movePitch(dy * CAMERA_SPEED);
-         camera_moveYaw(dx * CAMERA_SPEED);
-         
          // Shake camera
          t += 0.01f;
-         shake.SetFrequency(glm::length(movement->getSpeed()) / 100.0f);
+         double freq = glm::length(movement->getSpeed()) / 100.0f;
+         if (freq > 10.0f) freq = 10.0f;
+         shake.SetFrequency(freq);
       }
    }
+   
+   double dx, dy;
+   input_getMouse(&dx, &dy);
+   
+   camera_movePitch(dy * CAMERA_SPEED);
+   camera_moveYaw(dx * CAMERA_SPEED);
 }
 
 glm::vec3 camera_getPosition() { return position; }
@@ -107,12 +105,9 @@ glm::vec3 camera_getLookAt() {
    float p = pitch;
    
    if (!DEBUG && following != nullptr) {
-      position = following->getPosition();// + followOffset;
-      
       // Follow the player's direction if it exists
       MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
       if (movement != NULL) {
-         float speed = glm::length(movement->getSpeed());
          y += shake.GetValue(0, t, 0) * SHAKE_SCALE;
          p += shake.GetValue(t, 0, 0) * SHAKE_SCALE;
       }
@@ -159,6 +154,7 @@ glm::mat4 camera_getMatrix() {
     glm::vec4 pos = transform * glm::vec4(position, 1);
     glm::vec4 dir = transform * glm::vec4(camera_getLookAt(), 0);
     glm::vec4 up = transform * glm::vec4(0, 1, 0, 0);
-    
+   
+//   return glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
     return glm::translate(-followOffset) * glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
 }

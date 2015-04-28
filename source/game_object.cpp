@@ -43,7 +43,19 @@ float GameObject::getRadius() {
 glm::mat4 GameObject::getModel() {
    glm::mat4 model = glm::translate(position);
    
+   MovementComponent *movement = dynamic_cast<MovementComponent *>(physics);
+   if (movement != nullptr) {
+      glm::vec3 speed = glm::normalize(movement->getSpeed());
+      
+      float pitch = asin(speed.y);
+      model *= glm::rotate(pitch * RADIANS_TO_DEG, 1.0f, 0.0f, 0.0f);
+      float yaw = acos(-speed.z / cos(pitch));
+      if (speed.x > 0) yaw *= -1;
+      model *= glm::rotate(yaw * RADIANS_TO_DEG, 0.0f, 1.0f, 0.0f);
+   }
+   
    model *= this->Model;
+   
    return model;
 }
 
