@@ -21,6 +21,7 @@ public:
 class MovementComponent : public PhysicsComponent {
 private:
    glm::vec3 speed, accel;
+   
 public:
    glm::vec3 getSpeed(){return speed;}
    void setSpeed(glm::vec3 s){speed = s;}

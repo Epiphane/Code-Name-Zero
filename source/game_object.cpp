@@ -47,11 +47,11 @@ glm::mat4 GameObject::getModel() {
    if (movement != nullptr) {
       glm::vec3 speed = glm::normalize(movement->getSpeed());
       
-      float pitch = asin(speed.y);
+      float pitch = asinf(speed.y);
+      float yaw = -atan2f(-speed.x, speed.z);
+      if (speed.z > 0) model *= glm::rotate(180.0f, 0.0f, 0.0f, 1.0f);
       model *= glm::rotate(pitch * RADIANS_TO_DEG, 1.0f, 0.0f, 0.0f);
-      float yaw = acos(-speed.z / cos(pitch));
-      if (speed.x > 0) yaw *= -1;
-      model *= glm::rotate(yaw * RADIANS_TO_DEG, 0.0f, 1.0f, 0.0f);
+      model *= glm::rotate(yaw * RADIANS_TO_DEG + 180, 0.0f, 1.0f, 0.0f);
    }
    
    model *= this->Model;

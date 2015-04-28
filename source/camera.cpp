@@ -20,12 +20,12 @@ float t = 0;
 GameObject *following = nullptr;
 glm::vec3 followOffset = glm::vec3(0, 1, 4);
 
-glm::vec3 position, destination;
-glm::mat4 transform(1.0f);
+glm::vec3 position;
+glm::mat4 transform(1.0f), destination(1.0f);
 double pitch, yaw;
 
-glm::vec3 savedPosition, savedDestination;
-glm::mat4 savedTransform;
+glm::vec3 savedPosition;
+glm::mat4 savedTransform, savedDestination;
 void camera_setDebug(bool debug) {
    if (debug) {
       savedPosition    = position;
@@ -40,17 +40,18 @@ void camera_setDebug(bool debug) {
 }
 
 void camera_init(glm::vec3 _position, glm::vec3 lookAt) {
-   position = destination = _position;
+   position= _position;
    camera_lookAt(lookAt);
 }
 
 void camera_follow(GameObject *follow, glm::vec3 offset) {
    following = follow;
+   transform = destination = following->getModel();
    followOffset = offset;
 }
 
 void camera_setPosition(glm::vec3 _position) {
-   position = destination = _position;
+   position = _position;
 }
 
 void camera_update(float dt) {
@@ -73,11 +74,19 @@ void camera_update(float dt) {
       if (input_keyDown(GLFW_KEY_E)) {
          camera_move(0, -CAMERA_MOVE, 0);
       }
+      
+      double dx, dy;
+      input_getMouse(&dx, &dy);
+      
+      camera_movePitch(dy * CAMERA_SPEED);
+      camera_moveYaw(dx * CAMERA_SPEED);
    }
    else if (following != nullptr) {
-//      position = following->getPosition();// + followOffset;
-      position = glm::vec3(0);
-      transform = following->getModel();
+      position = following->getPosition();// + followOffset;
+//      position = glm::vec3(0);
+      destination = following->getModel();
+      
+      transform += (destination - transform) * dt * 5;
       
       // Follow the player's direction if it exists
       MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
@@ -91,12 +100,6 @@ void camera_update(float dt) {
          shake.SetFrequency(freq);
       }
    }
-   
-   double dx, dy;
-   input_getMouse(&dx, &dy);
-   
-   camera_movePitch(dy * CAMERA_SPEED);
-   camera_moveYaw(dx * CAMERA_SPEED);
 }
 
 glm::vec3 camera_getPosition() { return position; }
@@ -151,7 +154,7 @@ void camera_move(float dx, float dy, float dz) {
 }
 
 glm::mat4 camera_getMatrix() {
-    glm::vec4 pos = transform * glm::vec4(position, 1);
+    glm::vec4 pos = glm::vec4(position, 1);
     glm::vec4 dir = transform * glm::vec4(camera_getLookAt(), 0);
     glm::vec4 up = transform * glm::vec4(0, 1, 0, 0);
    
