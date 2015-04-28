@@ -146,18 +146,30 @@ int main(int argc, char **argv) {
       if (nextTime - clock > SEC_PER_FRAME) {
          input_update();
 
+		 int blurRate;
+
          // Update and render the game
          // Use fixed time updating
          if (!DEBUG) {
             currentState->update(SEC_PER_FRAME);
+			blurRate = 40;
          }
          else {
             currentState->update(0);
+			blurRate = 0;
          }
 
          // Clear the screen
+
+		 // Turn on frame buffer
+//		 glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
+
          glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          currentState->render(glfwGetTime() - clock);
+
+		 // Turn off frame buffer, and render frame buffer to screen
+//		 glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//		 ProgramPostProcrender((Renderer *) blurRate, glm::mat4());
 
          clock = nextTime;
       }

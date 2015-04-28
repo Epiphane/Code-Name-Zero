@@ -118,9 +118,5 @@ float elapsed[25] = {1};
 int pos = 0;
 void InGameState::render(float dt) {
 
-//	glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
-
    State::render(dt);
-//   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//   ProgramPostProcrender((Renderer *)getWindow(), glm::mat4());
 }

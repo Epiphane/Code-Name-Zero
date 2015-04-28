@@ -25,7 +25,7 @@ void ProgramTextbufferData(Renderer *p, int type, long num, void *data);
 void ProgramTextrender(Renderer *p, glm::mat4 Model);
 
 Program *ProgramPostProc = NULL;
-GLuint ProgramPostProc_v_coord, ProgramPostProc_fbo_texture;
+GLuint ProgramPostProc_v_coord, ProgramPostProc_fbo_texture, ProgramPostProc_blur;
 Renderer *ProgramPostProccreate();
 void ProgramPostProcbufferData(Renderer *p, int type, long num, void *data);
 GLuint fbo, fbo_texture, rbo_depth;
@@ -110,6 +110,8 @@ void shaders_init() {
 	ProgramPostProc->programID = LoadShaders("./shaders/PostProcVertex.glsl", "./shaders/PostProcFragment.glsl");
 	ProgramPostProc_v_coord = glGetAttribLocation(ProgramPostProc->programID, "v_coord");
 	ProgramPostProc_fbo_texture = glGetUniformLocation(ProgramPostProc->programID, "fbo_texture");
+	ProgramPostProc_blur = glGetUniformLocation(ProgramPostProc->programID, "blur");
+
 
 	ProgramPostProc->create = &ProgramPostProccreate;
 	ProgramPostProc->bufferData = &ProgramPostProcbufferData;
@@ -235,10 +237,10 @@ void TexRenderer::loadTexture(char *filename) {
 
 GLuint vbo_fbo_vertices;
 GLfloat fbo_vertices[] = {
-	-1, -1,
-	1, -1,
-	-1, 1,
-	1, 1,
+	-1.0f, -1.0f,
+	1.0f, -1.0f,
+	-1.0f, 1.0f,
+	1.0f, 1.0f,
 };
 
 Renderer *ProgramPostProccreate() {
@@ -296,11 +298,12 @@ unsigned int get_fbo() {
 
 void ProgramPostProcrender(Renderer *p, glm::mat4 Model) {
 //	glClearColor(0.0, 0.0, 0.0, 1.0);
-//	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(ProgramPostProc->programID);
 	glBindTexture(GL_TEXTURE_2D, fbo_texture);
 	glUniform1i(ProgramPostProc_fbo_texture, /*GL_TEXTURE*/0);
+	glUniform1i(ProgramPostProc_blur, (int)p);
 	glEnableVertexAttribArray(ProgramPostProc_v_coord);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);
