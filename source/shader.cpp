@@ -72,7 +72,6 @@ GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const cha
    glAttachShader(programID, vertexShader);
    if (geomFilePath != NULL) {
        glAttachShader(programID, geomShader);
-      std::cout << geomFilePath << std::endl;
    }
    glAttachShader(programID, fragShader);
    glLinkProgram(programID);
@@ -92,7 +91,8 @@ GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const cha
    }
    
    glDeleteShader(vertexShader);
-   //    glDeleteShader(geomShader);
+   if (geomFilePath != NULL)
+       glDeleteShader(geomShader);
    glDeleteShader(fragShader);
    
    return programID;

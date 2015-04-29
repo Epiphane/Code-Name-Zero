@@ -7,10 +7,13 @@ set(HEADERS
    
    main.h
    camera.h
+   renderer2D.h
    renderer3D.h
    renderer.h
    texture.h
    shader.hpp
+
+   HUD.h
 
    audio_manager.h
    input_manager.h
@@ -34,10 +37,13 @@ set(SOURCES
    
    main.cpp
    camera.cpp
+   renderer2D.cpp
    renderer3D.cpp
    renderer.cpp
    texture.cpp
    shader.cpp
+
+   HUD.cpp
 
    audio_manager.cpp
    input_manager.cpp
@@ -63,6 +69,9 @@ set(RESOURCES
 )
 
 set(SHADERS
+   2DFragment.glsl
+   2DGeometry.glsl
+   2DVertex.glsl
    3DFragment.glsl
    3DVertex.glsl
    TextFragment.glsl

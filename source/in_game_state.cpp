@@ -32,6 +32,7 @@ void switchModels() {
 
 InGameState::InGameState() {
    State::State();
+   
    track_segments.clear();
    
    // Move camera
@@ -87,6 +88,8 @@ InGameState::InGameState() {
    
    soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
    soundtrack->play();
+   
+   hud = new HUD(player);
 }
 
 void InGameState::send(std::string message, void *data) {
@@ -98,6 +101,8 @@ void InGameState::send(std::string message, void *data) {
 void InGameState::update(float dt) {
    // Update all objects and the camera
    State::update(dt);
+   
+   hud->update(dt);
 
    float player_z = player->getPosition().z;
    
@@ -113,19 +118,17 @@ void InGameState::update(float dt) {
       track_segments[0]->die();
       track_segments.erase(track_segments.begin());
    }
-   
-   
 }
 
 float elapsed[25] = {1};
 int pos = 0;
 void InGameState::render(float dt) {
-
    // Turn on frame buffer
    glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
-
+   
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+   // Render scene
    State::render(dt);
    
    // Turn off frame buffer, and render frame buffer to screen
@@ -140,6 +143,8 @@ void InGameState::render(float dt) {
    else {
       blurRate = 0;
    }
-
+   
    ProgramPostProcrender(blurRate);
+   hud->render(dt);
+   
 }
