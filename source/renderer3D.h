@@ -44,6 +44,16 @@ private:
    
    bool hasTextures;
    
+   static bool initialized;
+   void init();
+   static GLuint program;
+   static GLuint uProj, uModel, uView;
+   static GLuint uWinScale, uLightPos;
+   static GLuint uAColor, uDColor;
+   static GLuint uSColor, uShine;
+   static GLuint aPosition, aNormal;
+   static GLuint uTexScale, uTexUnits, uHasTextures;
+   
 public:
    Renderer3D();
    

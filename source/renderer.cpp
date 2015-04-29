@@ -16,8 +16,6 @@ using namespace std;
 #include "texture.h"
 #include "main.h"
 
-#include "renderer3D.h"
-
 Program *ProgramText = NULL;
 GLuint ProgramText_uTexUnit, ProgramText_aPosition, ProgramText_aTexCoord;
 Renderer *ProgramTextcreate();
@@ -88,8 +86,6 @@ void shaders_init() {
    Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 400.0f);
    currentMVP = glm::mat4(1.0f);
    MatrixStack.empty();
-
-   Renderer3D_init();
    
     // ---------------- TEXT SHADER ---------------------------
     ProgramText = (Program *) malloc(sizeof(Program));

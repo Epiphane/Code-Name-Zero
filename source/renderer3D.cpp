@@ -13,94 +13,38 @@
 #include "renderer.h"
 #include "renderer3D.h"
 
-GLuint Program3D;
-GLuint Program3D_uWinScale, Program3D_uProj, Program3D_uModel, Program3D_uView;
-GLuint Program3D_uLightPos, Program3D_uAColor, Program3D_uDColor;
-GLuint Program3D_uSColor, Program3D_uShine, Program3D_uBend;
-GLuint Program3D_aPosition, Program3D_aNormal;
-GLuint Program3D_uTexScale, Program3D_uTexUnits, Program3D_uHasTextures;
+GLuint Renderer3D::program, Renderer3D::uWinScale, Renderer3D::uProj;
+GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos;
+GLuint Renderer3D::uAColor, Renderer3D::uDColor, Renderer3D::uSColor;
+GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
+GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
 
-void setMaterial(unsigned int mat, GLuint uDColor, GLuint uSColor, GLuint uAColor, GLuint uShine) {
-    switch(mat) {
-        case MATERIAL_METAL:
-            glUniform3f(Program3D_uAColor, 0.15, 0.15, 0.15);
-            glUniform3f(Program3D_uDColor, 0.4, 0.4, 0.4);
-            glUniform3f(Program3D_uSColor, 0.14, 0.14, 0.14);
-            glUniform1f(Program3D_uShine, 76.8);
-            break;
-        case MATERIAL_RED_METAL:
-            glUniform3f(Program3D_uAColor, 0.05, 0.05, 0.05);
-            glUniform3f(Program3D_uDColor, 0.4, 0.05, 0.05);
-            glUniform3f(Program3D_uSColor, 0.4, 0.05, 0.05);
-            glUniform1f(Program3D_uShine, 25.0);
-            break;
-        case MATERIAL_RUBBER:
-            glUniform3f(Program3D_uAColor, 0, 0, 0);//2, 0.02, 0.02);
-            glUniform3f(Program3D_uDColor, 0, 0, 0);//.01, 0.01, 0.01);
-            glUniform3f(Program3D_uSColor, 0.1, 0.1, 0.1);
-            glUniform1f(Program3D_uShine, -100.0);
-            break;
-        case MATERIAL_CHAIR:
-            glUniform3f(Program3D_uAColor, 0.02, 0.02, 0.01);
-            glUniform3f(Program3D_uDColor, 0.2, 0.2, 0.2);
-            glUniform3f(Program3D_uSColor, 0.1, 0.1, 0.1);
-            glUniform1f(Program3D_uShine, 10.0);
-            break;
-        case MATERIAL_GRASS:
-            glUniform3f(Program3D_uAColor, 0.15, 0.4, 0.15);
-            glUniform3f(Program3D_uDColor, 0.4, 0.7, 0.4);
-            glUniform3f(Program3D_uSColor, 0, 0, 0);
-            glUniform1f(Program3D_uShine, -100.0);
-            break;
-       case MATERIAL_GREEN:
-          glUniform3f(Program3D_uAColor, 0.316,0.925, 0.148);
-          glUniform3f(Program3D_uDColor, 0, 1.0, 0);
-          glUniform3f(Program3D_uSColor, 0.2,0.9,0.2);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-       case MATERIAL_RED: // Lane 2 (Red)
-          glUniform3f(Program3D_uAColor, 0.925, 0.148, 0.316);
-          glUniform3f(Program3D_uDColor, 1.0, 0, 0);
-          glUniform3f(Program3D_uSColor, 0.9,0.2,0.2);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-       case MATERIAL_YELLOW: // Lane 3 (Yellow)
-          glUniform3f(Program3D_uAColor, 0.925, 0.925, 0.02);
-          glUniform3f(Program3D_uDColor, 0.9, 0.9, 0);
-          glUniform3f(Program3D_uSColor, 0.8,0.8,0.2);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-       case MATERIAL_BLUE: // Lane 3 (Blue)
-          glUniform3f(Program3D_uAColor, 0.148, 0.316, 0.925);
-          glUniform3f(Program3D_uDColor, 0.2, 0.2, 0.8);
-          glUniform3f(Program3D_uSColor, 0.2,0.2,0.9);
-          glUniform1f(Program3D_uShine, 60);
-          break;
-        default:
-            std::cerr << "Error: Material " << mat << " not found" << std::endl;
-    }
-}
-
-void Renderer3D_init() {
-   Program3D = LoadShaders("./shaders/3DVertex.glsl", "./shaders/3DFragment.glsl");
-   Program3D_uWinScale = glGetUniformLocation(Program3D, "windowScale");
-   Program3D_uProj = glGetUniformLocation(Program3D, "uProjMatrix");
-   Program3D_uModel = glGetUniformLocation(Program3D, "uModelMatrix");
-   Program3D_uView = glGetUniformLocation(Program3D, "uViewMatrix");
-   Program3D_uAColor = glGetUniformLocation(Program3D, "UaColor");
-   Program3D_uDColor = glGetUniformLocation(Program3D, "UdColor");
-   Program3D_uSColor = glGetUniformLocation(Program3D, "UsColor");
-   Program3D_uLightPos = glGetUniformLocation(Program3D, "uLightPos");
-   Program3D_uShine = glGetUniformLocation(Program3D, "uShine");
-   Program3D_uBend = glGetUniformLocation(Program3D, "uBend");
-   Program3D_aNormal = glGetAttribLocation(Program3D, "aNormal");
-   Program3D_aPosition = glGetAttribLocation(Program3D, "aPosition");
-   Program3D_uTexUnits = glGetUniformLocation(Program3D, "uTexUnits");
-   Program3D_uTexScale = glGetUniformLocation(Program3D, "uTexScale");
-   Program3D_uHasTextures = glGetUniformLocation(Program3D, "uHasTextures");
+bool Renderer3D::initialized = false;
+void Renderer3D::init() {
+   std::cout << "init" << std::endl;
+   program = LoadShaders("./shaders/3DVertex.glsl", "./shaders/3DFragment.glsl");
+   uWinScale = glGetUniformLocation(program, "windowScale");
+   uProj = glGetUniformLocation(program, "uProjMatrix");
+   uModel = glGetUniformLocation(program, "uModelMatrix");
+   uView = glGetUniformLocation(program, "uViewMatrix");
+   uAColor = glGetUniformLocation(program, "UaColor");
+   uDColor = glGetUniformLocation(program, "UdColor");
+   uSColor = glGetUniformLocation(program, "UsColor");
+   uLightPos = glGetUniformLocation(program, "uLightPos");
+   uShine = glGetUniformLocation(program, "uShine");
+   aNormal = glGetAttribLocation(program, "aNormal");
+   aPosition = glGetAttribLocation(program, "aPosition");
+   uTexUnits = glGetUniformLocation(program, "uTexUnits");
+   uTexScale = glGetUniformLocation(program, "uTexScale");
+   uHasTextures = glGetUniformLocation(program, "uHasTextures");
+   
+   initialized = true;
 }
 
 Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
+   if (!initialized)
+      init();
+   
    glGenBuffers(NUM_BUFFERS, buffers);
    
    GLenum error = glGetError();
@@ -111,13 +55,13 @@ void Renderer3D::render(glm::mat4 Model) {
    GLenum error = glGetError();
    assert(error == 0);
    
-   glUseProgram(Program3D);
+   glUseProgram(program);
    
    // Send window scale
    if(w_width > w_height)
-      glUniform2f(Program3D_uWinScale, (float) w_height / w_width, 1);
+      glUniform2f(uWinScale, (float) w_height / w_width, 1);
    else
-      glUniform2f(Program3D_uWinScale, 1, (float) w_width / w_height);
+      glUniform2f(uWinScale, 1, (float) w_width / w_height);
    
    // Send camera projection
    Model = renderer_getCurrentModel() * Model;
@@ -125,27 +69,27 @@ void Renderer3D::render(glm::mat4 Model) {
    glm::mat4 View = camera_getMatrix();
    glm::mat4 Proj = renderer_getProjection();
    
-   glUniformMatrix4fv(Program3D_uModel, 1, GL_FALSE, &Model[0][0]);
-   glUniformMatrix4fv(Program3D_uView,  1, GL_FALSE, &View [0][0]);
-   glUniformMatrix4fv(Program3D_uProj,  1, GL_FALSE, &Proj [0][0]);
+   glUniformMatrix4fv(uModel, 1, GL_FALSE, &Model[0][0]);
+   glUniformMatrix4fv(uView,  1, GL_FALSE, &View [0][0]);
+   glUniformMatrix4fv(uProj,  1, GL_FALSE, &Proj [0][0]);
    
-   glUniform3fv(Program3D_uAColor,  numMaterials, (float *)ambient);
-   glUniform3fv(Program3D_uDColor,  numMaterials, (float *)diffuse);
-   glUniform3fv(Program3D_uSColor,  numMaterials, (float *)specular);
-   glUniform1fv(Program3D_uShine,   numMaterials, shine);
-   glUniform1i(Program3D_uHasTextures, hasTextures);
+   glUniform3fv(uAColor,  numMaterials, (float *)ambient);
+   glUniform3fv(uDColor,  numMaterials, (float *)diffuse);
+   glUniform3fv(uSColor,  numMaterials, (float *)specular);
+   glUniform1fv(uShine,   numMaterials, shine);
+   glUniform1i(uHasTextures, hasTextures);
    if (hasTextures) {
-      glUniform2fv(Program3D_uTexScale,numMaterials, (float *)textureScale);
+      glUniform2fv(uTexScale,numMaterials, (float *)textureScale);
       
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
-      glUniform1i(Program3D_uTexUnits, 0);
+      glUniform1i(uTexUnits, 0);
    }
    
    error = glGetError();
    assert(error == 0);
    
-   glUniform3f(Program3D_uLightPos, 100, 20, 33);
+   glUniform3f(uLightPos, 100, 20, 33);
    
    // Bind attributes...
    glEnableVertexAttribArray(LOCATION_POSITION);
