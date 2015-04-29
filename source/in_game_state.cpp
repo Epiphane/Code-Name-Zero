@@ -131,11 +131,11 @@ void InGameState::render(float dt) {
    // Turn off frame buffer, and render frame buffer to screen
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-   int blurRate;
+   static int blurRate = 0;
 
    if (!DEBUG) {
       MovementComponent *playMove = (MovementComponent *)player->getPhysics();
-      blurRate = glm::length(playMove->getSpeed() / 2.0f) - 50;
+	  blurRate = (glm::length(playMove->getSpeed()) / 10.0f + playMove->getAccel().z * 60.0f + 9 * blurRate) / 10;
    }
    else {
       blurRate = 0;

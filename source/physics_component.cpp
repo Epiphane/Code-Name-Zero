@@ -28,7 +28,7 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
    
    obj->setPosition(new_position);
    
-   accel = glm::vec3(0);
+//   accel = glm::vec3(0);
 }
 
 void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {

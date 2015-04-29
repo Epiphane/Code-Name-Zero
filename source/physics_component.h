@@ -24,6 +24,7 @@ private:
    
 public:
    glm::vec3 getSpeed(){return speed;}
+   glm::vec3 getAccel(){ return accel; }
    void setSpeed(glm::vec3 s){speed = s;}
    void setAccel(glm::vec3 a){accel = a;}
    
