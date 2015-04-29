@@ -56,6 +56,7 @@ public:
    
    float getRadius();
    glm::mat4 getModel();
+   glm::mat4 getTransform();
    glm::vec3 getPosition() { return position; }
    glm::vec3 getScale()    { return scale;    }
    glm::vec3 getRotation() { return rotation; }

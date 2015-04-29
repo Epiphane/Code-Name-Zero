@@ -14,7 +14,7 @@
 GameObject::GameObject(GraphicsComponent *g) : GameObject(g, NULL, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p) : GameObject(g, p, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i) : GameObject(g, p, i, NULL) {};
-GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : remove(false), position(glm::vec3(0, 0, 0)), scale(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c) {
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : remove(false), position(glm::vec3(0)), scale(glm::vec3(1)), rotation(glm::vec3(0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c) {
    children.clear();
 
    setBounds(g->getBounds());
@@ -41,6 +41,10 @@ float GameObject::getRadius() {
 }
 
 glm::mat4 GameObject::getModel() {
+   return this->getTransform() * glm::scale(scale) * glm::rotate(rotation.y, 0.0f, 1.0f, 0.0f) * this->Model;
+}
+
+glm::mat4 GameObject::getTransform() {
    glm::mat4 model = glm::translate(position);
    
    MovementComponent *movement = dynamic_cast<MovementComponent *>(physics);
@@ -53,8 +57,6 @@ glm::mat4 GameObject::getModel() {
       model *= glm::rotate(pitch * RADIANS_TO_DEG, 1.0f, 0.0f, 0.0f);
       model *= glm::rotate(yaw * RADIANS_TO_DEG + 180, 0.0f, 1.0f, 0.0f);
    }
-   
-   model *= this->Model;
    
    return model;
 }

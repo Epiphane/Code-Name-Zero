@@ -24,10 +24,27 @@ float track_length = 0.0f;
 GameObject *playerObj;
 int currentPlayerShip = 0;
 std::vector<GraphicsComponent *> ships;
+Music *sanic = nullptr, *_soundtrack;
 
 void switchModels() {
    currentPlayerShip = (currentPlayerShip + 1) % ships.size();
    playerObj->setGraphics(ships[currentPlayerShip]);
+   
+   if (currentPlayerShip == 2) {
+      playerObj->transform(glm::translate(0.0f, 0.0f, -15.0f));
+      sanic->start();
+      _soundtrack->pause();
+      
+      playerObj->setScale(glm::vec3(0.035f));
+      playerObj->setRotation(glm::vec3(0, 180, 0));
+   }
+   else {
+      _soundtrack->play();
+      sanic->pause();
+      
+      playerObj->setScale(glm::vec3(1.0f));
+      playerObj->setRotation(glm::vec3(0));
+   }
 }
 
 InGameState::InGameState() {
@@ -48,6 +65,8 @@ InGameState::InGameState() {
    ships.push_back(new ModelRenderer(model + "model.obj", model));
    model = "models/Sonic Phantom/";
    ships.push_back(new ModelRenderer(model + "model.obj", model));
+   model = "models/Sonic/";
+   ships.push_back(new ModelRenderer(model + "model.obj", model));
    model = "models/Wild Boar/";
    ships.push_back(new ModelRenderer(model + "model.obj", model));
    model = "models/Magic Seagull/";
@@ -62,9 +81,6 @@ InGameState::InGameState() {
    player->getGraphics()->getRenderer(0)->mat = MATERIAL_BLUE;
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
-   
-   //GameObject *obj = new GameObject(new ModelRenderer("models/bunny.obj"));
-   //addObject(obj);
    
    input_set_callback(GLFW_KEY_P, switchModels);
    
@@ -85,7 +101,8 @@ InGameState::InGameState() {
       track_length-=27.5f;
    }
    
-   soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
+   sanic = audio_load_music("./audio/SANIC.mp3", 120);
+   _soundtrack = soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
    soundtrack->play();
 }
 
@@ -114,7 +131,10 @@ void InGameState::update(float dt) {
       track_segments.erase(track_segments.begin());
    }
    
-   
+   if (currentPlayerShip == 2) {
+      player->transform(glm::rotate(39.0f, 0.0f, 1.0f, 1.0f));
+      player->setRotation(player->getRotation() + glm::vec3(0, 59, 0));
+   }
 }
 
 float elapsed[25] = {1};

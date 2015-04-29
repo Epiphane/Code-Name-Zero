@@ -85,9 +85,51 @@ ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {
    // resize_obj(shapes);
    for(int s = 0; s < shapes.size(); s ++) {
       const std::vector<float> &posBuf = shapes[s].mesh.positions;
-      const std::vector<float> &norBuf = shapes[s].mesh.normals;
+      std::vector<float> &norBuf = shapes[s].mesh.normals;
       const std::vector<float> &uvBuf = shapes[s].mesh.texcoords;
       const std::vector<unsigned int> &indBuf = shapes[s].mesh.indices;
+      
+      if (norBuf.size() == 0) {
+         norBuf.clear();
+         int idx1, idx2, idx3;
+         glm::vec3 v1, v2, v3;
+         // For every vertex initialize a normal to 0
+         for (int j = 0; j < shapes[s].mesh.positions.size()/3; j++) {
+            norBuf.push_back(0);
+            norBuf.push_back(0);
+            norBuf.push_back(0);
+         }
+         // Compute the normals for every face
+         // then add its normal to its associated vertex
+         for (int i = 0; i < shapes[s].mesh.indices.size()/3; i++) {
+            idx1 = shapes[s].mesh.indices[3*i+0];
+            idx2 = shapes[s].mesh.indices[3*i+1];
+            idx3 = shapes[s].mesh.indices[3*i+2];
+            v1 = glm::vec3(shapes[s].mesh.positions[3*idx1 +0],shapes[s].mesh.positions[3*idx1 +1], shapes[s].mesh.positions[3*idx1 +2]);
+            v2 = glm::vec3(shapes[s].mesh.positions[3*idx2 +0],shapes[s].mesh.positions[3*idx2 +1], shapes[s].mesh.positions[3*idx2 +2]);
+            v3 = glm::vec3(shapes[s].mesh.positions[3*idx3 +0],shapes[s].mesh.positions[3*idx3 +1], shapes[s].mesh.positions[3*idx3 +2]);
+            
+            glm::vec3 u, v;
+            
+            u = v2 - v1;
+            v = v3 - v1;
+            norBuf[3*idx1+0] += u.y * v.z - u.z * v.y;
+            norBuf[3*idx1+1] += u.z * v.x - u.x * v.z;
+            norBuf[3*idx1+2] += u.x * v.y - u.y * v.x;
+            
+            u = v3 - v2;
+            v = v1 - v2;
+            norBuf[3*idx2+0] += u.y * v.z - u.z * v.y;
+            norBuf[3*idx2+1] += u.z * v.x - u.x * v.z;
+            norBuf[3*idx2+2] += u.x * v.y - u.y * v.x;
+            
+            u = v1 - v3;
+            v = v2 - v3;
+            norBuf[3*idx3+0] += u.y * v.z - u.z * v.y;
+            norBuf[3*idx3+1] += u.z * v.x - u.x * v.z;
+            norBuf[3*idx3+2] += u.x * v.y - u.y * v.x;
+         }
+      }
       
       std::vector<float> matBuf(posBuf.size() / 3);
       // Apply each material to every vertex

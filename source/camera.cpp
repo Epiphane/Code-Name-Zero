@@ -46,7 +46,7 @@ void camera_init(glm::vec3 _position, glm::vec3 lookAt) {
 
 void camera_follow(GameObject *follow, glm::vec3 offset) {
    following = follow;
-   transform = destination = following->getModel();
+   transform = destination = following->getTransform();
    followOffset = offset;
 }
 
@@ -83,7 +83,7 @@ void camera_update(float dt) {
    }
    else if (following != nullptr) {
       position = following->getPosition();
-      destination = following->getModel();
+      destination = following->getTransform();
       
       transform += (destination - transform) * dt * 5;
       

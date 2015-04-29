@@ -166,6 +166,7 @@ void Renderer3D::render(glm::mat4 Model) {
    
    // Draw it!
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
+   // If you get an error here you're trying to use an unbound variable in the shader
    glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0);
    
    if(elements == 0)

@@ -172,5 +172,22 @@ void Music::update() {
 }
 
 void Music::play() {
-   audio_play_music(this);
+   if (channel == nullptr)
+      audio_play_music(this);
+   else
+      channel->setPaused(false);
+}
+
+void Music::start() {
+   if (channel == nullptr) {
+      audio_play_music(this);
+   }
+   else {
+      channel->setPosition(0, FMOD_TIMEUNIT_MS);
+      channel->setPaused(false);
+   }
+}
+
+void Music::pause() {
+   channel->setPaused(true);
 }

@@ -33,6 +33,8 @@ public:
    
    void update();
    void play();
+   void start();
+   void pause();
    
    FMOD::Channel *getChannel() { return channel; }
    FMOD::Sound *getSound() { return sound; }
