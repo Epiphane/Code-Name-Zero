@@ -22,9 +22,11 @@ class HUD {
 private:
    long speed, score;
    
-   const float HUD_TEXTURE_SIZE = 512.0f;
+   const float HUD_TEXTURE_SIZE = 128.0f;
+   const int MAX_SPEED_DIGITS = 4;
+   const int MAX_SPEED = 10000;
    
-   static unsigned int buf_progress_ndx;
+   static unsigned int buf_progress_ndx, mph_digit_ndx;
    static float progress_bar_height;
    
    Renderer2D *renderer;

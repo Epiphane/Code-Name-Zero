@@ -25,6 +25,7 @@ private:
 public:
    InGameState();
    
+   GameObject *getPlayer() { return player; }
    Music *getSoundtrack() { return soundtrack; }
    
    int getTotalTargets() { return target_number; }

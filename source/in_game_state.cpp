@@ -78,8 +78,7 @@ InGameState::InGameState() {
    // NOTE:
    // 10 Segments of track seems to be the magic number, 27.5 units long
    for (int i=0; i<15; i++) {
-      GameObject *track = new GameObject(new ModelRenderer("models/RGB_track.obj", "models/"));
-      track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
+      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->setPosition(glm::vec3(0.0f,0.0f,i*-27.5f));
       track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
       addObject(track);
@@ -106,11 +105,10 @@ void InGameState::update(float dt) {
    hud->update(dt, this);
 
    float player_z = player->getPosition().z;
-   std::cout << player_z << std::endl;
+//   std::cout << player_z << std::endl;
    
    if (player_z <= track_segments[1]->getPosition().z) {
       GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
-      track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
       track->setPosition(glm::vec3(0.0f,0.0f,track_length));
       track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
       addObject(track);
