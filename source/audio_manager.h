@@ -27,12 +27,16 @@ private:
    FMOD::Sound *sound;
    Beat beat;
    Beat bpm;
+   unsigned int length;
    
 public:
-   Music(FMOD::Sound *s, Beat _bpm) : channel(nullptr), sound(s), beat(0), bpm(_bpm) {};
+   Music(FMOD::Sound *s, Beat _bpm);
    
    void update();
    void play();
+   
+   unsigned int getLength() { return length; }
+   float getProgress();
    
    FMOD::Channel *getChannel() { return channel; }
    FMOD::Sound *getSound() { return sound; }

@@ -6,6 +6,7 @@
 //
 //
 
+#include "in_game_state.h"
 #include "game_object.h"
 #include "HUD.h"
 #include "texture.h"
@@ -13,7 +14,7 @@
 unsigned int HUD::buf_progress_ndx;
 float HUD::progress_bar_height;
 
-HUD::HUD(GameObject *player) : player(player) {
+HUD::HUD() {
    posBuf.clear();
    uvBuf.clear();
    
@@ -32,11 +33,11 @@ HUD::HUD(GameObject *player) : player(player) {
    renderer->bufferData(UVs, uvBuf);
 }
 
-void HUD::update(float dt) {
+void HUD::update(float dt, InGameState *state) {
    speed = 182;
    score = 21000;
    
-   static float percentDone = 0;
+   float percentDone = state->getSoundtrack()->getProgress();
    if (percentDone < 1) {
       percentDone += dt / 2;
       

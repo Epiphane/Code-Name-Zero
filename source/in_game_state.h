@@ -25,6 +25,8 @@ private:
 public:
    InGameState();
    
+   Music *getSoundtrack() { return soundtrack; }
+   
    int getTotalTargets() { return target_number; }
    void collide(GameObject *obj);
    void update(float dt);

@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Thomas Steinke. All rights reserved.
 //
 
+#include <float.h>
 #include <glm/ext.hpp>
 #include <fstream>
 #include <sstream>
@@ -89,7 +90,7 @@ InGameState::InGameState() {
    soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
    soundtrack->play();
    
-   hud = new HUD(player);
+   hud = new HUD();
 }
 
 void InGameState::send(std::string message, void *data) {
@@ -102,12 +103,13 @@ void InGameState::update(float dt) {
    // Update all objects and the camera
    State::update(dt);
    
-   hud->update(dt);
+   hud->update(dt, this);
 
    float player_z = player->getPosition().z;
+   std::cout << player_z << std::endl;
    
    if (player_z <= track_segments[1]->getPosition().z) {
-      GameObject *track = new GameObject(new ModelRenderer("models/RGB_track.obj", "models/"));
+      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
       track->setPosition(glm::vec3(0.0f,0.0f,track_length));
       track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
@@ -146,5 +148,4 @@ void InGameState::render(float dt) {
    
    ProgramPostProcrender(blurRate);
    hud->render(dt);
-   
 }

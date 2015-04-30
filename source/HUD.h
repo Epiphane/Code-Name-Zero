@@ -15,12 +15,12 @@
 
 #include "renderer2D.h"
 
+class InGameState;
 class GameObject;
 
 class HUD {
 private:
    long speed, score;
-   GameObject *player;
    
    const float HUD_TEXTURE_SIZE = 512.0f;
    
@@ -32,9 +32,9 @@ private:
    std::vector<glm::vec2> posBuf, uvBuf;
    
 public:
-   HUD(GameObject *player);
+   HUD();
    
-   void update(float dt);
+   void update(float dt, InGameState *state);
    void render(float dt);
 };
 
