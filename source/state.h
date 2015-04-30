@@ -13,12 +13,20 @@
 
 #include "game_object.h"
 
+struct Plane {
+    float a, b, c, d;
+};
+
 class State {
 private:
-   std::vector<GameObject *> objects;
+    std::vector<GameObject *> objects;
+    std::vector<GameObject *> rendererQueue;
+    
+    void updateRendererQueue();
+    bool toCull(const Plane &plane, GameObject *obj);
    
 public:
-   State() { objects.clear(); }
+   State() { objects.clear(); rendererQueue.clear(); }
    
    virtual void start();
    virtual void pause();
