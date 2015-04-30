@@ -48,7 +48,7 @@ GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *wi
          printf("Error allocating space for image");
          exit(1);
       }
-      std::cout << "trying to load " << filename << std::endl;
+//      std::cout << "trying to load " << filename << std::endl;
       if (!ImageLoad(filename, img)) {
          exit(1);
       }
@@ -61,16 +61,8 @@ GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *wi
    assert(*height <= MAX_TEXTURE_SIZE);
    
    glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
-   GLenum error = glGetError();
-   assert(error == 0);
-   //Upload pixel data.
-   //The first 0 refers to the mipmap level (level 0, since there's only 1)
-   //The following 2 zeroes refers to the x and y offsets in case you only want to specify a subrectangle.
-   //The final 0 refers to the layer index offset (we start from index 0 and have 2 levels).
-   //Altogether you can specify a 3D box subset of the overall texture, but only one mip level at a time.
+   
    glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, layer, *width, *height, 1, GL_RGBA, GL_UNSIGNED_BYTE, img->data);
-    error = glGetError();
-   assert(error == 0);
    
    //Always set reasonable texture parameters
    glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
@@ -78,36 +70,40 @@ GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *wi
    glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D_ARRAY,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
    
-    error = glGetError();
+   GLenum error = glGetError();
    assert(error == 0);
 }
 
 // ------------------- TEXTURE LOADING ------------------------
 //routines to load in a bmp files - must be 2^nx2^m and a 24bit bmp
-GLvoid texture_load(std::string image_file, int texID) {
-   Image *TextureImage = (Image *) malloc(sizeof(Image));
-   if (TextureImage == NULL) {
-      printf("Error allocating space for image");
-      exit(1);
+GLvoid texture_load(std::string filename, int texture) {
+   Image *img = textures[filename];
+   if (!img) {
+      img = textures[filename] = (Image *) malloc(sizeof(Image));
+      if (img == NULL) {
+         printf("Error allocating space for image");
+         exit(1);
+      }
+            std::cout << "trying to load " << filename << std::endl;
+      if (!ImageLoad(filename, img)) {
+         exit(1);
+      }
    }
-   std::cout << "trying to load " << image_file << std::endl;
-   if (!ImageLoad(image_file, TextureImage)) {
-      exit(1);
-   }
-   /*  2d texture, level of detail 0 (normal), 3 components (red, green, blue),            */
-   /*  x size from image, y size from image,                                              */
-   /*  border 0 (normal), rgb color data, unsigned byte data, data  */
-   glBindTexture(GL_TEXTURE_2D, texID);
-   glTexImage2D(GL_TEXTURE_2D, 0, 3,
-                TextureImage->sizeX, TextureImage->sizeY,
-                0, GL_RGB, GL_UNSIGNED_BYTE, TextureImage->data);
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST); /*  cheap scaling when image bigger than texture */
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST); /*  cheap scaling when image smalled than texture*/
+   
+   glBindTexture(GL_TEXTURE_2D, texture);
+   
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->sizeX, img->sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, img->data);
+   
+   //Always set reasonable texture parameters
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);//LINEAR);
+   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);//LINEAR);
+   
+   GLenum error = glGetError();
+   assert(error == 0);
 }
 
 
 /* BMP file loader loads a 24-bit bmp file only */
-
 /*
  * getint and getshort are help functions to load the bitmap byte by byte
  */

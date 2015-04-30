@@ -20,8 +20,6 @@
 
 #define MAX_MATERIALS 50
 
-void Renderer3D_init();
-
 class Renderer3D : public Renderer {
 private:
    const static int NUM_BUFFERS = 5;

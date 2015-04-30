@@ -21,7 +21,6 @@ GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
 
 bool Renderer3D::initialized = false;
 void Renderer3D::init() {
-   std::cout << "init" << std::endl;
    program = LoadShaders("./shaders/3DVertex.glsl", "./shaders/3DFragment.glsl");
    uWinScale = glGetUniformLocation(program, "windowScale");
    uProj = glGetUniformLocation(program, "uProjMatrix");

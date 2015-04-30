@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Thomas Steinke. All rights reserved.
 //
 
+#include <float.h>
 #include <glm/ext.hpp>
 #include <fstream>
 #include <sstream>
@@ -32,6 +33,7 @@ void switchModels() {
 
 InGameState::InGameState() {
    State::State();
+   
    track_segments.clear();
    
    // Move camera
@@ -76,8 +78,7 @@ InGameState::InGameState() {
    // NOTE:
    // 10 Segments of track seems to be the magic number, 27.5 units long
    for (int i=0; i<15; i++) {
-      GameObject *track = new GameObject(new ModelRenderer("models/RGB_track.obj", "models/"));
-      track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
+      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->setPosition(glm::vec3(0.0f,0.0f,i*-27.5f));
       track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
       addObject(track);
@@ -87,6 +88,8 @@ InGameState::InGameState() {
    
    soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
    soundtrack->play();
+   
+   hud = new HUD();
 }
 
 void InGameState::send(std::string message, void *data) {
@@ -98,12 +101,14 @@ void InGameState::send(std::string message, void *data) {
 void InGameState::update(float dt) {
    // Update all objects and the camera
    State::update(dt);
+   
+   hud->update(dt, this);
 
    float player_z = player->getPosition().z;
+//   std::cout << player_z << std::endl;
    
    if (player_z <= track_segments[1]->getPosition().z) {
-      GameObject *track = new GameObject(new ModelRenderer("models/RGB_track.obj", "models/"));
-      track->transform(glm::rotate(-90.0f, 0.0f, 1.0f, 0.0f));
+      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->setPosition(glm::vec3(0.0f,0.0f,track_length));
       track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
       addObject(track);
@@ -113,19 +118,17 @@ void InGameState::update(float dt) {
       track_segments[0]->die();
       track_segments.erase(track_segments.begin());
    }
-   
-   
 }
 
 float elapsed[25] = {1};
 int pos = 0;
 void InGameState::render(float dt) {
-
    // Turn on frame buffer
    glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
-
+   
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+   // Render scene
    State::render(dt);
    
    // Turn off frame buffer, and render frame buffer to screen
@@ -140,6 +143,7 @@ void InGameState::render(float dt) {
    else {
       blurRate = 0;
    }
-
+   
    ProgramPostProcrender(blurRate);
+   hud->render(dt);
 }

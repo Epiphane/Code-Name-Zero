@@ -40,7 +40,7 @@ namespace {
       
       return result == FMOD_OK;
    }
-} // namespace
+}; // namespace
 
 FMOD::System *audio_system = nullptr;
 FMOD::ChannelGroup *sounds = nullptr;
@@ -157,6 +157,17 @@ void audio_play_sound(const char *fileName) {
    check(audio_system->playSound(sound, sounds, true, &channel), "sound play");
    
    channel->setPaused(false);
+}
+
+Music::Music(FMOD::Sound *s, Beat _bpm) : channel(nullptr), sound(s), beat(0), bpm(_bpm) {
+   check(s->getLength(&length, FMOD_TIMEUNIT_MS), "length get");
+};
+
+float Music::getProgress() {
+   unsigned int position;
+   check(channel->getPosition(&position, FMOD_TIMEUNIT_MS), "time check");
+   
+   return (float) position / length;
 }
 
 void Music::update() {

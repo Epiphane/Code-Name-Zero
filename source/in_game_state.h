@@ -11,6 +11,7 @@
 
 #include "audio_manager.h"
 #include "state.h"
+#include "HUD.h"
 
 class InGameState : public State {
 private:
@@ -19,8 +20,13 @@ private:
    Music *soundtrack;
    std::vector<GameObject*> track_segments;
    
+   HUD *hud;
+   
 public:
    InGameState();
+   
+   GameObject *getPlayer() { return player; }
+   Music *getSoundtrack() { return soundtrack; }
    
    int getTotalTargets() { return target_number; }
    void collide(GameObject *obj);
