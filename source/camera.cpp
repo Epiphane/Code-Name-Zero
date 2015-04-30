@@ -24,13 +24,15 @@ glm::vec3 position;
 glm::mat4 transform(1.0f), destination(1.0f);
 double pitch, yaw;
 
-glm::vec3 savedPosition;
+glm::vec3 savedPosition, savedLookAt;
 glm::mat4 savedTransform, savedDestination;
+
 void camera_setDebug(bool debug) {
    if (debug) {
       savedPosition    = position;
       savedDestination = destination;
       savedTransform   = transform;
+      savedLookAt      = camera_getLookAt();
    }
    else {
       position    = savedPosition;
@@ -148,6 +150,14 @@ void camera_move(float dx, float dy, float dz) {
     position += dz * glm::vec3(cos(yaw), 0, -sin(yaw));
     position += dy * glm::vec3(0, 1, 0);
     position += dx * glm::cross(glm::vec3(cos(yaw), 0, -sin(yaw)), glm::vec3(0, 1, 0));
+}
+
+glm::mat4 camera_savedMatrix() {
+    glm::vec4 pos = savedTransform * glm::vec4(savedPosition, 1);
+    glm::vec4 dir = savedTransform * glm::vec4(savedLookAt, 0);
+    glm::vec4 up = savedTransform * glm::vec4(0, 1, 0, 0);
+
+    return glm::translate(glm::vec3(0, 0, -3)) * glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
 }
 
 glm::mat4 camera_getMatrix() {

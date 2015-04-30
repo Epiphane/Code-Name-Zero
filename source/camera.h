@@ -27,6 +27,7 @@ void camera_setDebug(bool debug);
 void camera_init(glm::vec3 position, glm::vec3 lookAt);
 void camera_update(float dt);
 
+glm::mat4 camera_savedMatrix();
 glm::mat4 camera_getMatrix();
 glm::vec3 camera_getPosition();
 glm::vec3 camera_getLookAt();
