@@ -18,6 +18,7 @@ typedef enum {
 // Location for shader attributes
 const int LOCATION_POSITION = 0;
 const int LOCATION_NORMAL = 1;
+const int LOCATION_SHAPE = 1; // For debug shader
 const int LOCATION_UV = 2;
 const int LOCATION_COLOR = 2;
 const int LOCATION_MATERIAL = 3;

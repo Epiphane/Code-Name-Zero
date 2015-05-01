@@ -17,6 +17,7 @@
 #include "in_game_state.h"
 #include "camera.h"
 #include "renderer.h"
+#include "rendererDebug.h"
 #include "main.h"
 
 // Farthest Z value of track
@@ -65,15 +66,9 @@ InGameState::InGameState() {
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
    
-   //GameObject *obj = new GameObject(new ModelRenderer("models/bunny.obj"));
-   //addObject(obj);
-   
    input_set_callback(GLFW_KEY_P, switchModels);
    
    camera_follow(player, glm::vec3(0, 1, 4));
-   
-   //GameObject *ground = new GameObject(new GroundRenderer(GROUND_WIDTH/2));
-   //addObject(ground);
    
    // NOTE:
    // 10 Segments of track seems to be the magic number, 27.5 units long
@@ -130,6 +125,8 @@ void InGameState::render(float dt) {
 
    // Render scene
    State::render(dt);
+   if (DEBUG)
+      RendererDebug::instance()->render();
    
    // Turn off frame buffer, and render frame buffer to screen
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -146,4 +143,5 @@ void InGameState::render(float dt) {
    
    ProgramPostProcrender(blurRate);
    hud->render(dt);
+   
 }

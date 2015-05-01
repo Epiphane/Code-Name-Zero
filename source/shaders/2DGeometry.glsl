@@ -35,5 +35,6 @@ void main()
       gl_Position = vec4(vertices[i].xy, -1, 1);
       EmitVertex();
    }
+   
    EndPrimitive();
 }

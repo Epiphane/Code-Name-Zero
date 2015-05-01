@@ -93,19 +93,9 @@ void State::render(float dt) {
    
    for(iterator = rendererQueue.begin(); iterator < rendererQueue.end(); iterator ++) {
       (*iterator)->render();
-   }
-   
-   if (DEBUG) {
-      return;
-      glm::mat4 View = camera_getMatrix();
       
-      glMatrixMode(GL_MODELVIEW);
-      glLoadMatrixf(&View[0][0]);
-      
-      std::vector<GameObject *>::iterator iterator;
-      for(iterator = objects.begin(); iterator < objects.end(); iterator ++) {
+      if (DEBUG)
          (*iterator)->_debug_render();
-      }
    }
 }
 

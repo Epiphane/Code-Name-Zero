@@ -9,6 +9,7 @@
 #include "main.h"
 #include "state.h"
 #include "game_object.h"
+#include "rendererDebug.h"
 
 /* Constructors (ew) */
 GameObject::GameObject(GraphicsComponent *g) : GameObject(g, NULL, NULL, NULL) {};
@@ -96,15 +97,7 @@ void GameObject::render() {
 
 void GameObject::_debug_render() {
    if (collision) {
-      glPushMatrix();
-
-      glm::mat4 Model = getModel();
-      glMultMatrixf(&Model[0][0]);
-
-      _debug_drawBounds(this->bounds);
-      _debug_drawSphere(this->getRadius());
-      _debug_drawAxis();
-
-      glPopMatrix();
+      RendererDebug::instance()->renderBounds(position, bounds);
+      RendererDebug::instance()->renderCircle(position, getRadius());
    }
 }

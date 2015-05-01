@@ -31,8 +31,6 @@ void Renderer3D::init() {
    uSColor = glGetUniformLocation(program, "UsColor");
    uLightPos = glGetUniformLocation(program, "uLightPos");
    uShine = glGetUniformLocation(program, "uShine");
-   aNormal = glGetAttribLocation(program, "aNormal");
-   aPosition = glGetAttribLocation(program, "aPosition");
    uTexUnits = glGetUniformLocation(program, "uTexUnits");
    uTexScale = glGetUniformLocation(program, "uTexScale");
    uHasTextures = glGetUniformLocation(program, "uHasTextures");
