@@ -16,6 +16,7 @@
 
 #include "tiny_obj_loader.h"
 #include "renderer.h"
+#include "renderer2D.h"
 #include "GLSL.h"
 #include "bounds.h"
 
@@ -33,12 +34,14 @@ private:
    void init();
    static GLuint program;
    static GLuint uProj, uView, uWinScale;
-   static GLuint aShape, aPosition;
    
    GLuint buffers[NUM_BUFFERS];
    
    std::vector<glm::vec3> positions;
    std::vector<int> shapes;
+   std::vector<std::string> debug_log;
+   
+   Renderer2D *log_renderer;
    
    RendererDebug();
 public:
@@ -49,9 +52,15 @@ public:
    
    void renderCircle(glm::vec3 center, float radius);
    void renderBounds(glm::vec3 center, const Bounds &bounds);
+   void renderText(glm::vec3 center, std::string text);
+   // Write text to the debug log
+   void log(std::string text);
+   // Write text inside the world
    
    // Render the data!
-   void render();
+   void clearLog() { debug_log.clear(); }
+   void renderLog();
+   void render(glm::mat4 model);
 };
 
 #endif /* defined(__RGBZero__renderer_Debug__) */

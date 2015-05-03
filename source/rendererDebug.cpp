@@ -14,7 +14,7 @@
 #include "rendererDebug.h"
 
 GLuint RendererDebug::program, RendererDebug::uWinScale, RendererDebug::uProj;
-GLuint RendererDebug::uView, RendererDebug::aShape, RendererDebug::aPosition;
+GLuint RendererDebug::uView;
 
 bool RendererDebug::initialized = false;
 void RendererDebug::init() {
@@ -35,6 +35,9 @@ RendererDebug::RendererDebug() : Renderer(0) {
    
    positions.clear();
    shapes.clear();
+   debug_log.clear();
+   
+   log_renderer = new Renderer2D("./textures/font.png");
    
    glGenBuffers(NUM_BUFFERS, buffers);
    
@@ -56,7 +59,49 @@ void RendererDebug::renderBounds(glm::vec3 center, const Bounds &bounds) {
    shapes.push_back(SHAPE_BOX);
 }
 
-void RendererDebug::render() {
+void RendererDebug::log(std::string text) {
+   debug_log.push_back(text);
+}
+
+void RendererDebug::renderText(glm::vec3 center, std::string text) {
+   
+}
+
+void RendererDebug::renderLog() {
+   if (debug_log.size() == 0) return;
+   std::vector<glm::vec2> positions, uvs;
+   
+   float font_size = 32.0f;
+   float font_width = font_size / w_width;
+   float font_height = font_size / w_height;
+   for (int i = 0; i < debug_log.size(); i ++) {
+      glm::vec2 text_pos = glm::vec2(1 - font_width * debug_log[i].length(),
+                                     1 - i * font_height);
+      
+      for (int c = 0; c < debug_log[i].length(); c ++) {
+         positions.push_back(text_pos);
+         positions.push_back(text_pos + glm::vec2(font_width, -font_height));
+         
+         char character = debug_log[i][c];
+         float uv_x = (character%16)/16.0f;
+         float uv_y = (character/16)/16.0f;
+         uvs.push_back(glm::vec2(uv_x, uv_y));
+         uvs.push_back(glm::vec2(uv_x, uv_y) + glm::vec2(1.0f / 16.0f));
+         
+         text_pos.x += font_width;
+      }
+   }
+   
+   log_renderer->setNumElements(positions.size());
+   log_renderer->bufferData(Vertices, positions);
+   log_renderer->bufferData(UVs, uvs);
+   
+   log_renderer->render(glm::mat4(1.0f));
+   
+   debug_log.clear();
+}
+
+void RendererDebug::render(glm::mat4 model) {
    GLenum error = glGetError();
    assert(error == 0);
    
@@ -73,9 +118,9 @@ void RendererDebug::render() {
    else
       glUniform2f(uWinScale, 1, (float) w_width / w_height);
    
+   // Send projection and view matrices
    glm::mat4 View = camera_getMatrix();
    glm::mat4 Proj = renderer_getProjection();
-   
    glUniformMatrix4fv(uView,  1, GL_FALSE, &View [0][0]);
    glUniformMatrix4fv(uProj,  1, GL_FALSE, &Proj [0][0]);
    

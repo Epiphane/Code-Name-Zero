@@ -65,14 +65,6 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    
    setSpeed(new_speed);
    obj->setPosition(new_position);
-   
-   if (!DEBUG) {
-//      glm::vec3 up = glm::vec3(0, 1, 0);
-//      camera_setPosition(obj->getPosition() + up + glm::vec3(0, 0, 1));
-//      camera_lookAt(obj->getPosition() + up);
-   }
-   
-   
 }
 
 //void TrackPhysicsComponent::update(GameObject *obj, State *world, float dt) {
