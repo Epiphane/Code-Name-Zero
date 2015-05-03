@@ -37,7 +37,7 @@ RendererDebug::RendererDebug() : Renderer(0) {
    shapes.clear();
    debug_log.clear();
    
-   log_renderer = new Renderer2D("./textures/font.png");
+   log_renderer = new Renderer2D("./textures/font.png", -0.5);
    
    glGenBuffers(NUM_BUFFERS, buffers);
    

@@ -15,7 +15,7 @@
 
 GLuint Renderer2D::program, Renderer2D::uWinScale, Renderer2D::uProj;
 GLuint Renderer2D::uModel, Renderer2D::aUV, Renderer2D::aPosition;
-GLuint Renderer2D::uTexture;
+GLuint Renderer2D::uTexture, Renderer2D::uZValue;
 
 bool Renderer2D::initialized = false;
 void Renderer2D::init() {
@@ -26,11 +26,12 @@ void Renderer2D::init() {
    aPosition = glGetAttribLocation(program, "aPosition");
    aUV = glGetAttribLocation(program, "aUV");
    uTexture = glGetUniformLocation(program, "uTexture");
+   uZValue = glGetUniformLocation(program, "uZValue");
    
    initialized = true;
 }
 
-Renderer2D::Renderer2D(std::string textureName) : Renderer(0) {
+Renderer2D::Renderer2D(std::string textureName, float z) : Renderer(0), z(z) {
    if (!initialized)
       init();
    
@@ -59,6 +60,8 @@ void Renderer2D::render(glm::mat4 Model) {
    
    glUniformMatrix4fv(uProj,  1, GL_FALSE, &Proj [0][0]);
    glUniformMatrix4fv(uModel, 1, GL_FALSE, &Model[0][0]);
+   
+   glUniform1f(uZValue, z);
    
    error = glGetError();
    assert(error == 0);

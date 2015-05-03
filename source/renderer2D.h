@@ -28,15 +28,17 @@ private:
    GLuint buffers[NUM_BUFFERS];
    GLuint elements, texture;
    
+   float z;
+   
    static bool initialized;
    void init();
    static GLuint program;
-   static GLuint uProj, uModel;
+   static GLuint uProj, uModel, uZValue;
    static GLuint uWinScale, uTexture;
    static GLuint aPosition, aUV;
    
 public:
-   Renderer2D(std::string texture);
+   Renderer2D(std::string texture, float z = 0);
    
    // Refers to the number of indices
    void setNumElements(GLuint num) { elements = num; }

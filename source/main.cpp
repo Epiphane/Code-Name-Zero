@@ -169,6 +169,7 @@ int main(int argc, char **argv) {
          elapsed = elapsed / fps_sample_rate;
          
          float fps = 1 / elapsed;
+         RendererDebug::instance()->log("Hey there handsome \2");
          RendererDebug::instance()->log("FPS: " + std::to_string(fps));
          RendererDebug::instance()->log("Time since last frame: " + std::to_string(elapsed));
          
