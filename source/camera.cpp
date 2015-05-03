@@ -22,7 +22,7 @@ glm::vec3 followOffset = glm::vec3(0, 1, 4);
 
 glm::vec3 position;
 glm::mat4 transform(1.0f), destination(1.0f);
-double pitch, yaw;
+double pitch, yaw, savedPitch, savedYaw;
 
 glm::vec3 savedPosition, savedLookAt;
 glm::mat4 savedTransform, savedDestination;
@@ -33,11 +33,18 @@ void camera_setDebug(bool debug) {
       savedDestination = destination;
       savedTransform   = transform;
       savedLookAt      = camera_getLookAt();
+      
+      transform = glm::mat4(1.0f);
+      savedPitch = pitch;
+      savedYaw = yaw;
    }
    else {
       position    = savedPosition;
       destination = savedDestination;
       transform   = savedTransform;
+   
+      pitch = savedPitch;
+      yaw = savedYaw;
    }
 }
 

@@ -31,9 +31,7 @@ void toggleDebug() {
    DEBUG = !DEBUG;
    
    audio_setPaused(DEBUG);
-   if (DEBUG) {
-      camera_setDebug(DEBUG);
-   }
+   camera_setDebug(DEBUG);
 }
 
 State *currentState = NULL;
