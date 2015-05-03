@@ -52,10 +52,9 @@ public:
    
    void renderCircle(glm::vec3 center, float radius);
    void renderBounds(glm::vec3 center, const Bounds &bounds);
-   void renderText(glm::vec3 center, std::string text);
+   
    // Write text to the debug log
    void log(std::string text);
-   // Write text inside the world
    
    // Render the data!
    void clearLog() { debug_log.clear(); }

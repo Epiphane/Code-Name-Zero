@@ -63,10 +63,6 @@ void RendererDebug::log(std::string text) {
    debug_log.push_back(text);
 }
 
-void RendererDebug::renderText(glm::vec3 center, std::string text) {
-   
-}
-
 void RendererDebug::renderLog() {
    if (debug_log.size() == 0) return;
    std::vector<glm::vec2> positions, uvs;
