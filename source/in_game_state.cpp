@@ -115,9 +115,9 @@ void InGameState::update(float dt) {
    }
 }
 
-float elapsed[25] = {1};
-int pos = 0;
 void InGameState::render(float dt) {
+   INIT_BENCHMARK
+
    // Turn on frame buffer
    glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
    
@@ -126,7 +126,8 @@ void InGameState::render(float dt) {
    // Render scene
    State::render(dt);
    if (DEBUG)
-      RendererDebug::instance()->render();
+      RendererDebug::instance()->render(glm::mat4(1));
+   COMPUTE_BENCHMARK(25, "Render elements time: ")
    
    // Turn off frame buffer, and render frame buffer to screen
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -142,6 +143,10 @@ void InGameState::render(float dt) {
    }
    
    ProgramPostProcrender(blurRate);
+   COMPUTE_BENCHMARK(25, "Blur time: ")
+   
+   // Render non-blurred elements
    hud->render(dt);
    
+   COMPUTE_BENCHMARK(25, "HUD time: ")
 }

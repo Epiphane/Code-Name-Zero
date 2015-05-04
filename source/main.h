@@ -14,6 +14,7 @@
 
 #include "GLSL.h"
 #include "tiny_obj_loader.h"
+#include "rendererDebug.h"
 
 #ifndef M_PI
 #define M_PI 3.1415926535897932384626433832795
@@ -33,6 +34,20 @@
 
 #define FIRST_STATE InGameState
 
+#define INIT_BENCHMARK float _clock = glfwGetTime();
+#define COMPUTE_BENCHMARK(samp, msg) if (true) {\
+   static float _samples[samp] = {1};\
+   static int _pos = 0;\
+   _samples[_pos] = glfwGetTime() - _clock;\
+   _pos = (_pos + 1) % samp;\
+   float _elapsed = 0;\
+   for (int i = 0; i < samp; i ++)\
+      _elapsed += _samples[i];\
+   _elapsed = _elapsed / samp;\
+   RendererDebug::instance()->log(msg + std::to_string(_elapsed), false);\
+   _clock = glfwGetTime(); /* Chain debugging */ \
+   }
+
 extern bool DEBUG;
 const extern int w_width;
 const extern int w_height;
@@ -40,6 +55,7 @@ const extern int w_height;
 class State;
 
 // Important game functions
+void setDebugLog(bool enabled);
 void setState(State *state);
 State *getCurrentState();
 
@@ -49,6 +65,7 @@ extern glm::vec3 randPoint(float r);
 void resize_obj(std::vector<tinyobj::shape_t> &shapes);
 
 // Debugging operators
+std::ostream &operator<< (std::ostream &out, const glm::vec2 &vec);
 std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec);
 std::ostream &operator<< (std::ostream &out, const glm::vec4 &vec);
 std::ostream &operator<< (std::ostream &out, const glm::mat4 &vec);

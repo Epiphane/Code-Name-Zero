@@ -23,6 +23,7 @@
 #include "in_game_state.h"
 #include "camera.h"
 #include "tiny_obj_loader.h"
+#include "rendererDebug.h"
 
 using namespace std;
 
@@ -33,6 +34,9 @@ void toggleDebug() {
    audio_setPaused(DEBUG);
    camera_setDebug(DEBUG);
 }
+
+bool showDebugLog = true;
+void setDebugLog(bool enabled) { showDebugLog = enabled; }
 
 State *currentState = NULL;
 State *getCurrentState() { return currentState; }
@@ -132,7 +136,8 @@ int main(int argc, char **argv) {
    audio_init();
    
    setState(new FIRST_STATE());
-    
+   RendererDebug::instance()->log("Hey there handsome \2", true);
+   
    double clock = glfwGetTime();
    do {
       assert(currentState != NULL);
@@ -141,6 +146,7 @@ int main(int argc, char **argv) {
       
       double nextTime = glfwGetTime();
       if (nextTime - clock > SEC_PER_FRAME) {
+         INIT_BENCHMARK
          input_update();
 
          // Update and render the game
@@ -152,12 +158,29 @@ int main(int argc, char **argv) {
             currentState->update(0);
          }
 
-         // Clear the screen
-
-
-
+         // Compute FPSf
+         const int fps_sample_rate = 100;
+         static float samples[fps_sample_rate] = {1};
+         static int pos = 0;
+         samples[pos] = glfwGetTime() - clock;
+         pos = (pos + 1) % fps_sample_rate;
+         float elapsed = 0;
+         for (int i = 0; i < fps_sample_rate; i ++)
+            elapsed += samples[i];
+         elapsed = elapsed / fps_sample_rate;
+         
+         float fps = 1 / elapsed;
+         RendererDebug::instance()->log("FPS: " + std::to_string(fps), false);
+         RendererDebug::instance()->log("Time since last frame: " + std::to_string(elapsed), false);
+         
 //         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          currentState->render(glfwGetTime() - clock);
+         
+         COMPUTE_BENCHMARK(100, "Render time: ")
+         if (showDebugLog)
+            RendererDebug::instance()->renderLog();
+         else
+            RendererDebug::instance()->clearLog();
 
          clock = nextTime;
       }
@@ -174,6 +197,11 @@ int main(int argc, char **argv) {
    glfwTerminate();
 
    return 0;
+}
+
+std::ostream &operator<< (std::ostream &out, const glm::vec2 &vec) {
+   out << "{" << vec.x << ", " << vec.y << "}";
+   return out;
 }
 
 std::ostream &operator<< (std::ostream &out, const glm::vec3 &vec) {

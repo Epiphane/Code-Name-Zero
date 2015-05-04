@@ -19,11 +19,11 @@ struct Plane {
 
 class State {
 private:
-    std::vector<GameObject *> objects;
-    std::vector<GameObject *> rendererQueue;
+   std::vector<GameObject *> objects;
+   std::vector<GameObject *> rendererQueue;
     
-    void updateRendererQueue();
-    bool toCull(const Plane &plane, GameObject *obj);
+   void updateRendererQueue();
+   bool toCull(const Plane &plane, GameObject *obj);
    
 public:
    State() { objects.clear(); rendererQueue.clear(); }

@@ -3,6 +3,8 @@
 layout (lines) in;
 layout (triangle_strip, max_vertices=4) out;
 
+uniform float uZValue;
+
 in vec2 vUV[];
 out vec2 fUV;
 
@@ -32,7 +34,7 @@ void main()
    // Emit the vertices of the quad
    for(int i = 0; i < 4; i ++) {
       fUV = uv[i];
-      gl_Position = vec4(vertices[i].xy, -1, 1);
+      gl_Position = vec4(vertices[i].xy, uZValue-0.5, 1);
       EmitVertex();
    }
    
