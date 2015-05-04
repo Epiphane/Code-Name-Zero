@@ -35,7 +35,8 @@ RendererDebug::RendererDebug() : Renderer(0) {
    
    positions.clear();
    shapes.clear();
-   debug_log.clear();
+   transient_log.empty();
+   persistent_log.clear();
    
    log_renderer = new Renderer2D("./textures/font.png", -0.5);
    
@@ -59,30 +60,64 @@ void RendererDebug::renderBounds(glm::vec3 center, const Bounds &bounds) {
    shapes.push_back(SHAPE_BOX);
 }
 
-void RendererDebug::log(std::string text) {
-   debug_log.push_back(text);
+RendererDebug *RendererDebug::instance() {
+   static RendererDebug *inst = new RendererDebug();
+   return inst;
+}
+
+void RendererDebug::log(std::string text, bool persistent) {
+   if (persistent)
+      persistent_log.push_back(text);
+   else
+      transient_log.push(text);
+}
+
+glm::vec2 characterUV(char c) {
+   return glm::vec2((c%16)/16.0f, (c/16)/16.0f);
 }
 
 void RendererDebug::renderLog() {
-   if (debug_log.size() == 0) return;
+   if (transient_log.size() == 0) return;
    std::vector<glm::vec2> positions, uvs;
    
-   float font_size = 32.0f;
-   float font_width = font_size / w_width;
-   float font_height = font_size / w_height;
-   for (int i = 0; i < debug_log.size(); i ++) {
-      glm::vec2 text_pos = glm::vec2(1 - font_width * debug_log[i].length(),
-                                     1 - i * font_height);
+   float font_size    = 32.0f;
+   float font_width   = font_size / w_width;
+   float font_height  = font_size / w_height;
+   glm::vec2 text_pos = glm::vec2(1);
+   while (transient_log.size() > 0) {
+      std::string message = transient_log.front();
+      text_pos.x = 1 - font_width * message.length();
       
-      for (int c = 0; c < debug_log[i].length(); c ++) {
+      for (int c = 0; c < message.length(); c ++) {
          positions.push_back(text_pos);
          positions.push_back(text_pos + glm::vec2(font_width, -font_height));
          
-         char character = debug_log[i][c];
-         float uv_x = (character%16)/16.0f;
-         float uv_y = (character/16)/16.0f;
-         uvs.push_back(glm::vec2(uv_x, uv_y));
-         uvs.push_back(glm::vec2(uv_x, uv_y) + glm::vec2(1.0f / 16.0f));
+         uvs.push_back(characterUV(message[c]));
+         uvs.push_back(characterUV(message[c]) + glm::vec2(1.0f / 16.0f));
+         
+         text_pos.x += font_width;
+      }
+      
+      text_pos.y -= font_height;
+      transient_log.pop();
+   }
+   
+   int linesLeft = (text_pos.y + 1) / font_height - 1;
+   while (persistent_log.size() > linesLeft) // Prune extra logs
+      persistent_log.erase(persistent_log.begin());
+   
+   for (int i = persistent_log.size() - 1; i >= 0; i --) {
+      std::string message = persistent_log[i];
+      
+      text_pos.x = 1 - font_width * message.length();
+      text_pos.y -= font_height;
+      
+      for (int c = 0; c < message.length(); c ++) {
+         positions.push_back(text_pos);
+         positions.push_back(text_pos + glm::vec2(font_width, -font_height));
+         
+         uvs.push_back(characterUV(message[c]));
+         uvs.push_back(characterUV(message[c]) + glm::vec2(1.0f / 16.0f));
          
          text_pos.x += font_width;
       }
@@ -93,8 +128,6 @@ void RendererDebug::renderLog() {
    log_renderer->bufferData(UVs, uvs);
    
    log_renderer->render(glm::mat4(1.0f));
-   
-   debug_log.clear();
 }
 
 void RendererDebug::render(glm::mat4 model) {

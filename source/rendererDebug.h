@@ -12,6 +12,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <queue>
 #include <glm/glm.hpp>
 
 #include "tiny_obj_loader.h"
@@ -39,25 +40,23 @@ private:
    
    std::vector<glm::vec3> positions;
    std::vector<int> shapes;
-   std::vector<std::string> debug_log;
+   std::queue<std::string> transient_log;
+   std::vector<std::string> persistent_log;
    
    Renderer2D *log_renderer;
    
    RendererDebug();
 public:
-   static RendererDebug *instance() {
-      static RendererDebug *inst = new RendererDebug();
-      return inst;
-   }
+   static RendererDebug *instance();
    
    void renderCircle(glm::vec3 center, float radius);
    void renderBounds(glm::vec3 center, const Bounds &bounds);
    
    // Write text to the debug log
-   void log(std::string text);
+   void log(std::string text, bool persistent);
    
    // Render the data!
-   void clearLog() { debug_log.clear(); }
+   void clearLog() { transient_log.empty(); persistent_log.clear(); }
    void renderLog();
    void render(glm::mat4 model);
 };

@@ -44,7 +44,7 @@
    for (int i = 0; i < samp; i ++)\
       _elapsed += _samples[i];\
    _elapsed = _elapsed / samp;\
-   RendererDebug::instance()->log(msg + std::to_string(_elapsed));\
+   RendererDebug::instance()->log(msg + std::to_string(_elapsed), false);\
    _clock = glfwGetTime(); /* Chain debugging */ \
    }
 
