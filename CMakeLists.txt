@@ -75,17 +75,23 @@ endif (APPLE)
 if (WIN32)
    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
       set(FMOD_WIN_ARCHITECTURE "x86_64")
+	  set(FMOD_WIN_LIB "fmod64_vc.lib")
+	  set(FMOD_WIN_LIB_DEBUG "fmodL64_vc.lib")
+	  set(FMOD_DLL "fmod64.dll")
    else (CMAKE_SIZEOF_VOID_P EQUAL 8)
       set(FMOD_WIN_ARCHITECTURE "x86")
+	  set(FMOD_WIN_LIB "fmod_vc.lib")
+	  set(FMOD_WIN_LIB_DEBUG "fmodL64_vc.lib")
+	  set(FMOD_DLL "fmod.dll")
    endif (CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-   set(FMOD_LIBRARY_RELEASE "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod_vc.lib")
-   set(FMOD_LIBRARY_DEBUG "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/fmodL_vc.lib")
+   set(FMOD_LIBRARY_RELEASE "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/${FMOD_WIN_LIB}")
+   set(FMOD_LIBRARY_DEBUG "${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/${FMOD_WIN_LIB_DEBUG}")
    list(APPEND LIBS
-      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod_vc.lib
-      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/fmodL_vc.lib
+      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/${FMOD_WIN_LIB}
+      ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/debug/${FMOD_WIN_LIB_DEBUG}
    )
-      file(COPY ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/fmod.dll DESTINATION ${PROJECT_BINARY_DIR})
+      file(COPY ${FMOD_DIR}/lib/win32/${FMOD_WIN_ARCHITECTURE}/release/${FMOD_DLL} DESTINATION ${PROJECT_BINARY_DIR})
 endif (WIN32)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
