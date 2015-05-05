@@ -21,6 +21,7 @@
 #include "main.h"
 
 // Farthest Z value of track
+const float track_piece_length = 30.005f;
 float track_length = 0.0f;
 
 GameObject *playerObj;
@@ -62,7 +63,6 @@ InGameState::InGameState() {
    player->setType(OBJECT_PLAYER);
    player->addCollision(OBJECT_TARGET);
    player->setPosition(glm::vec3(0, 0, 0));
-   player->getGraphics()->getRenderer(0)->mat = MATERIAL_BLUE;
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
    
@@ -74,11 +74,10 @@ InGameState::InGameState() {
    // 10 Segments of track seems to be the magic number, 27.5 units long
    for (int i=0; i<15; i++) {
       GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
-      track->setPosition(glm::vec3(0.0f,0.0f,i*-27.5f));
-      track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
+      track->setPosition(glm::vec3(0.0f,0.0f,i*-track_piece_length));
       addObject(track);
       track_segments.push_back(track);
-      track_length-=27.5f;
+      track_length-=track_piece_length;
    }
    
    soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
@@ -105,10 +104,9 @@ void InGameState::update(float dt) {
    if (player_z <= track_segments[1]->getPosition().z) {
       GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->setPosition(glm::vec3(0.0f,0.0f,track_length));
-      track->getGraphics()->getRenderer(0)->mat = MATERIAL_METAL;
       addObject(track);
       track_segments.push_back(track);
-      track_length-=27.5f;
+      track_length-=track_piece_length;
       
       track_segments[0]->die();
       track_segments.erase(track_segments.begin());
@@ -127,7 +125,7 @@ void InGameState::render(float dt) {
    State::render(dt);
    if (DEBUG)
       RendererDebug::instance()->render(glm::mat4(1));
-   COMPUTE_BENCHMARK(25, "Render elements time: ")
+   COMPUTE_BENCHMARK(25, "Render elements time: ", true)
    
    // Turn off frame buffer, and render frame buffer to screen
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -143,10 +141,10 @@ void InGameState::render(float dt) {
    }
    
    ProgramPostProcrender(blurRate);
-   COMPUTE_BENCHMARK(25, "Blur time: ")
+   COMPUTE_BENCHMARK(25, "Blur time: ", true)
    
    // Render non-blurred elements
    hud->render(dt);
    
-   COMPUTE_BENCHMARK(25, "HUD time: ")
+   COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }

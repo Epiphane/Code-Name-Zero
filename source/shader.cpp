@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -6,12 +5,12 @@
 #include <algorithm>
 using namespace std;
 
-#include <stdlib.h>
-#include <string.h>
-
 #include <GL/glew.h>
 
+#include "main.h"
 #include "shader.hpp"
+
+#define DEBUG_SHADER false
 
 // ----------------- LOAD SHADERS -----------------------------
 
@@ -32,7 +31,8 @@ GLuint compileShader(const char *filePath, GLenum shaderType) {
    int infoLogLength;
    
    // Compile Shader
-   printf("Compiling shader : %s\n", filePath);
+   if (DEBUG_SHADER)
+      DEBUG_LOG("Compiling shader: " + string(filePath))
    const char *sourcePointer = shaderCode.c_str();
    glShaderSource(shaderID, 1, &sourcePointer , NULL);
    glCompileShader(shaderID);
@@ -43,7 +43,7 @@ GLuint compileShader(const char *filePath, GLenum shaderType) {
    if(infoLogLength > 0){
       vector<char> errorMessage(infoLogLength+1);
       glGetShaderInfoLog(shaderID, infoLogLength, NULL, &errorMessage[0]);
-      printf("%s\n", &errorMessage[0]);
+      DEBUG_LOG(string(&errorMessage[0]));
    }
    
    return shaderID;
@@ -67,7 +67,8 @@ GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const cha
    GLuint fragShader = compileShader(fragFilePath, GL_FRAGMENT_SHADER);
    
    // Link the program
-   printf("Linking program\n");
+   if (DEBUG_SHADER)
+      DEBUG_LOG("Linking Program")
    GLuint programID = glCreateProgram();
    glAttachShader(programID, vertexShader);
    if (geomFilePath != NULL) {

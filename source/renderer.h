@@ -62,7 +62,7 @@ private:
     int numBuffers;
     
 public:
-    Renderer(int numBuffers);
+   Renderer(int numBuffers);
     ~Renderer();
     
     unsigned int getNumElements() { return elements; }
@@ -77,9 +77,9 @@ public:
     
     static void pushMatrix(glm::mat4 matrix);
     static void popMatrix();
-    
-    unsigned int mat;
-    glm::vec3 bend;
+   
+   /* Cloning functions */
+   virtual Renderer *clone();
 };
 
 class TexRenderer : public Renderer {

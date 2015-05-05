@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stack>
 #include <glm/ext.hpp>
+#include <typeinfo>
 using namespace std;
 
 #include "camera.h"
@@ -60,6 +61,12 @@ void Renderer::popMatrix() {
     currentMVP = MatrixStack.top();
     
     MatrixStack.pop();
+}
+
+Renderer *Renderer::clone() {
+   std::cerr << "Clone function not implemented for this kind of renderer" << std::endl;
+   // Clone function not implemented for this kind of renderer
+   assert(0);
 }
 
 void setUniforms(GLuint uWinScale, GLuint uPerspective, GLuint uView, GLuint uModel, glm::mat4 MVP) {

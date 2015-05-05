@@ -22,6 +22,24 @@ GraphicsComponent::GraphicsComponent() {
    bounds.min_z = bounds.max_z = 0;
 }
 
+GraphicsComponent *GraphicsComponent::clone() {
+   GraphicsComponent *copy = new GraphicsComponent;
+   
+   clone(copy);
+   
+   return copy;
+}
+
+void GraphicsComponent::clone(GraphicsComponent *copy) {
+   // Copy bounds
+   memcpy((void *)&copy->bounds, (void *)&bounds, sizeof(Bounds));
+   
+   // Copy renderers
+   std::vector<Renderer *>::iterator renderer;
+   for (renderer = renderers.begin(); renderer != renderers.end(); renderer ++)
+      copy->renderers.push_back((*renderer)->clone());
+}
+
 void GraphicsComponent::render(GameObject *obj) {
    glm::mat4 Model = obj->getModel();
    
@@ -67,12 +85,21 @@ GroundRenderer::GroundRenderer(float size) {
    renderers.push_back(renderer);
 }
 
-std::unordered_map<std::string, ModelRenderer> modelRenderers;
+std::unordered_map<std::string, std::string> baseDirs;
+std::unordered_map<std::string, ModelRenderer *> modelRenderers;
 
 ModelRenderer::ModelRenderer(std::string filename) : ModelRenderer(filename, "") {};
 
 ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {
    GraphicsComponent::GraphicsComponent();
+   
+   if (baseDirs[filename] == baseDir) {
+      if (modelRenderers[filename]) {
+         modelRenderers[filename]->clone(this);
+      
+         return;
+      }
+   }
    
    std::vector<tinyobj::shape_t> shapes;
    std::vector<tinyobj::material_t> materials;
@@ -109,6 +136,9 @@ ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {
       renderer->setMaterials(baseDir, materials);
       
       renderers.push_back(renderer);
+      
+      baseDirs[filename] = baseDir;
+      modelRenderers.emplace(filename, this);
    }
    
    // Compute bounds

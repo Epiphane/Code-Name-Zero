@@ -38,15 +38,27 @@ void Renderer3D::init() {
    initialized = true;
 }
 
-Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
+Renderer3D::Renderer3D(bool isClone) : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
    if (!initialized)
       init();
    
-   glGenBuffers(NUM_BUFFERS, buffers);
+   // Set the buffers to dirty, so we don't generate them until necessary
+   for (int i = 0; i < NUM_BUFFERS; i ++) _d_buffers[i] = isClone;
+   if (!isClone)
+      glGenBuffers(NUM_BUFFERS, buffers);
    
    GLenum error = glGetError();
    assert(error == 0);
 };
+
+Renderer *Renderer3D::clone() {
+   Renderer3D *copy = new Renderer3D(true);
+   
+   memcpy((void *)copy, (void *)this, sizeof(Renderer3D));
+   for (int i = 0; i < NUM_BUFFERS; i ++) copy->_d_buffers[i] = true;
+   
+   return copy;
+}
 
 void Renderer3D::render(glm::mat4 Model) {
    GLenum error = glGetError();
@@ -162,37 +174,40 @@ void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::ma
 
 void Renderer3D::bufferData(DataType type, size_t size, void *data) {
    GLuint bufType;
+   int bufIndex;
    
    if(type == Vertices) {
       bufType = GL_ARRAY_BUFFER;
-      
-      glBindBuffer(bufType, buffers[b_vertex]);
+      bufIndex = b_vertex;
    }
    else if(type == Normals) {
       bufType = GL_ARRAY_BUFFER;
-      
-      glBindBuffer(bufType, buffers[b_normal]);
+      bufIndex = b_normal;
    }
    else if(type == UVs) {
       bufType = GL_ARRAY_BUFFER;
-      
-      glBindBuffer(bufType, buffers[b_uv]);
+      bufIndex = b_uv;
    }
    else if(type == Materials) {
       bufType = GL_ARRAY_BUFFER;
-      
-      glBindBuffer(bufType, buffers[b_material]);
+      bufIndex = b_material;
    }
    else if(type == Indices) {
       bufType = GL_ELEMENT_ARRAY_BUFFER;
-      
-      glBindBuffer(bufType, buffers[b_index]);
+      bufIndex = b_index;
    }
    else {
       std::cerr << "Buffer type " << type << " not recognized" << std::endl;
       assert(0);
    }
    
+   // Make sure we're not overwriting a dirty/cloned buffer
+   if (_d_buffers[bufIndex]) {
+      glGenBuffers(1, &buffers[bufIndex]);
+      DEBUG_LOG("Buffer " + std::to_string(buffers[bufIndex]) + " created")
+      _d_buffers[bufIndex] = false;
+   }
+   glBindBuffer(bufType, buffers[bufIndex]);
    glBufferData(bufType, size, data, GL_STATIC_DRAW);
 }
 

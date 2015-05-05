@@ -34,8 +34,10 @@
 
 #define FIRST_STATE InGameState
 
+#define DEBUG_LOG_VAL(val) RendererDebug::instance()->log(std::to_string(val), true);
+#define DEBUG_LOG(val) RendererDebug::instance()->log(val, true);
 #define INIT_BENCHMARK float _clock = glfwGetTime();
-#define COMPUTE_BENCHMARK(samp, msg) if (true) {\
+#define COMPUTE_BENCHMARK(samp, msg, everyframe) if (true) {\
    static float _samples[samp] = {1};\
    static int _pos = 0;\
    _samples[_pos] = glfwGetTime() - _clock;\
@@ -44,7 +46,7 @@
    for (int i = 0; i < samp; i ++)\
       _elapsed += _samples[i];\
    _elapsed = _elapsed / samp;\
-   RendererDebug::instance()->log(msg + std::to_string(_elapsed), false);\
+   RendererDebug::instance()->log(msg + std::to_string(_elapsed), !everyframe);\
    _clock = glfwGetTime(); /* Chain debugging */ \
    }
 

@@ -25,8 +25,10 @@ public:
    GraphicsComponent();
    
    Bounds *getBounds() { return &bounds; }
-   Renderer *getRenderer(int i) { return renderers[i]; }
    virtual void render(GameObject *obj);
+   
+   GraphicsComponent *clone();
+   void clone(GraphicsComponent *other);
 };
 
 class ModelRenderer : public GraphicsComponent {

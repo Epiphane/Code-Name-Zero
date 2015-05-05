@@ -84,7 +84,7 @@ GLvoid texture_load(std::string filename, int texture) {
          printf("Error allocating space for image");
          exit(1);
       }
-            std::cout << "trying to load " << filename << std::endl;
+      
       if (!ImageLoad(filename, img)) {
          exit(1);
       }

@@ -66,8 +66,10 @@ RendererDebug *RendererDebug::instance() {
 }
 
 void RendererDebug::log(std::string text, bool persistent) {
-   if (persistent)
+   if (persistent) {
       persistent_log.push_back(text);
+      std::cout << text << std::endl;
+   }
    else
       transient_log.push(text);
 }
@@ -83,10 +85,10 @@ void RendererDebug::renderLog() {
    float font_size    = 32.0f;
    float font_width   = font_size / w_width;
    float font_height  = font_size / w_height;
-   glm::vec2 text_pos = glm::vec2(1);
+   glm::vec2 text_pos = glm::vec2(1) - glm::vec2(font_width, font_height) / 2.0f;
    while (transient_log.size() > 0) {
       std::string message = transient_log.front();
-      text_pos.x = 1 - font_width * message.length();
+      text_pos.x = 1 - font_width / 2 - font_width * message.length();
       
       for (int c = 0; c < message.length(); c ++) {
          positions.push_back(text_pos);
@@ -106,11 +108,12 @@ void RendererDebug::renderLog() {
    while (persistent_log.size() > linesLeft) // Prune extra logs
       persistent_log.erase(persistent_log.begin());
    
+   text_pos.y = font_height / 2.0f - 1;
    for (int i = persistent_log.size() - 1; i >= 0; i --) {
       std::string message = persistent_log[i];
       
-      text_pos.x = 1 - font_width * message.length();
-      text_pos.y -= font_height;
+      text_pos.x = 1 - font_width / 2 - font_width * message.length();
+      text_pos.y += font_height;
       
       for (int c = 0; c < message.length(); c ++) {
          positions.push_back(text_pos);

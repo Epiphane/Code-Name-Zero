@@ -52,8 +52,11 @@ private:
    static GLuint aPosition, aNormal;
    static GLuint uTexScale, uTexUnits, uHasTextures;
    
+   /* Dirty bits */
+   bool _d_buffers[NUM_BUFFERS];
+   
 public:
-   Renderer3D();
+   Renderer3D(bool clone = false);
    
    // Refers to the number of indices
    void setNumElements(GLuint num) { elements = num; }
@@ -71,6 +74,8 @@ public:
    
    // Render the data!
    void render(glm::mat4 Model);
+   
+   Renderer *clone();
 };
 
 #endif /* defined(__RGBZero__renderer_3D__) */
