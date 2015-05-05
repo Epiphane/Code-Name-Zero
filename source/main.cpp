@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
 //         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          currentState->render(glfwGetTime() - clock);
          
-         COMPUTE_BENCHMARK(100, "Render time: ")
+         COMPUTE_BENCHMARK(100, "Render time: ", true)
          if (showDebugLog)
             RendererDebug::instance()->renderLog();
          else
