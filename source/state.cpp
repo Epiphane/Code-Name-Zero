@@ -28,6 +28,14 @@ void State::update(float dt) {
    camera_update(dt);
 }
 
+void normalizePlane(Plane &plane) {
+    float magnitude = sqrt(plane.a * plane.a + plane.b * plane.b + plane.c * plane.c);
+    plane.a = plane.a / magnitude;
+    plane.b = plane.b / magnitude;
+    plane.c = plane.c / magnitude;
+    plane.d = plane.d / magnitude;
+}
+
 void State::updateRendererQueue() {
    std::vector<GameObject *>::iterator iterator;
    glm::mat4 camMatrix = camera_getMatrix();
@@ -45,32 +53,39 @@ void State::updateRendererQueue() {
    top.b = M[1].w - M[1].y;
    top.c = M[2].w - M[2].y;
    top.d = M[3].w - M[3].y;
-   
+   normalizePlane(top);
+    
    bottom.a = M[0].w + M[0].y;
    bottom.b = M[1].w + M[1].y;
    bottom.c = M[2].w + M[2].y;
    bottom.d = M[3].w + M[3].y;
-   
+   normalizePlane(bottom);
+    
    right.a = M[0].w - M[0].x;
    right.b = M[1].w - M[1].x;
    right.c = M[2].w - M[2].x;
    right.d = M[3].w - M[3].x;
-   
+   normalizePlane(right);
+    
    left.a = M[0].w + M[0].x;
    left.b = M[1].w + M[1].x;
    left.c = M[2].w + M[2].x;
    left.d = M[3].w + M[3].x;
-   
+   normalizePlane(left);
+    
    far.a = M[0].w - M[0].z;
    far.b = M[1].w - M[1].z;
    far.c = M[2].w - M[2].z;
    far.d = M[3].w - M[3].z;
-   
+   normalizePlane(far);
+    
    near.a = M[0].w + M[0].z;
    near.b = M[1].w + M[1].z;
    near.c = M[2].w + M[2].z;
    near.d = M[3].w + M[3].z;
-   
+   normalizePlane(near);
+    
+    
    for(iterator = objects.begin(); iterator < objects.end(); iterator ++) {
       if (!toCull(far, *iterator) && !toCull(near, *iterator) &&
           !toCull(left, *iterator) && !toCull(right, *iterator) &&
@@ -84,7 +99,7 @@ bool State::toCull(const Plane &plane, GameObject *obj) {
    glm::vec3 pt = obj->getPosition();
    float dist = plane.a * pt.x + plane.b * pt.y + plane.c * pt.z + plane.d;
    
-   return dist + obj->getRadius() * 2 < 0.0;
+   return dist + obj->getRadius() < 0.0;
 }
 
 void State::render(float dt) {
