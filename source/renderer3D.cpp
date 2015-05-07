@@ -14,7 +14,7 @@
 #include "renderer3D.h"
 
 GLuint Renderer3D::program, Renderer3D::uWinScale, Renderer3D::uProj;
-GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos, Renderer3D::uCameraPos;
+GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos;
 GLuint Renderer3D::uAColor, Renderer3D::uDColor, Renderer3D::uSColor;
 GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
 GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
@@ -34,38 +34,28 @@ void Renderer3D::init() {
    uTexUnits = glGetUniformLocation(program, "uTexUnits");
    uTexScale = glGetUniformLocation(program, "uTexScale");
    uHasTextures = glGetUniformLocation(program, "uHasTextures");
-   uCameraPos = glGetUniformLocation(program, "uCameraPos");
    
    initialized = true;
 }
 
-Renderer3D::Renderer3D(Renderer3D *clone) : Renderer(0), elements(0), numMaterials(0), hasTextures(false), b_vertex(clone->b_vertex), b_uv(clone->b_uv), b_normal(clone->b_normal), b_index(clone->b_index), b_material(clone->b_material) {
+Renderer3D::Renderer3D(bool isClone) : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
    if (!initialized)
       init();
    
-//   if (clone == nullptr) {
-//      buffers[b_vertex]   = new VBO(Vertices);
-//      buffers[b_uv]       = new VBO(UVs);
-//      buffers[b_normal]   = new VBO(Normals);
-//      buffers[b_material] = new VBO(Materials);
-//      buffers[b_index]    = new VBO(Indices);
-//   }
-//   else {
-//      buffers[b_vertex]   = new VBO(Vertices);
-//      buffers[b_uv]       = new VBO(UVs);
-//      buffers[b_normal]   = new VBO(Normals);
-//      buffers[b_material] = new VBO(Materials);
-//      buffers[b_index]    = new VBO(Indices);
-//   }
+   // Set the buffers to dirty, so we don't generate them until necessary
+   for (int i = 0; i < NUM_BUFFERS; i ++) _d_buffers[i] = isClone;
+   if (!isClone)
+      glGenBuffers(NUM_BUFFERS, buffers);
    
    GLenum error = glGetError();
    assert(error == 0);
 };
 
 Renderer *Renderer3D::clone() {
-   Renderer3D *copy = new Renderer3D();
+   Renderer3D *copy = new Renderer3D(true);
    
    memcpy((void *)copy, (void *)this, sizeof(Renderer3D));
+   for (int i = 0; i < NUM_BUFFERS; i ++) copy->_d_buffers[i] = true;
    
    return copy;
 }
@@ -107,21 +97,28 @@ void Renderer3D::render(glm::mat4 Model) {
    
    error = glGetError();
    assert(error == 0);
-
-   glm::vec3 camPos = camera_getPosition();
    
-//   glUniform3f(uLightPos, 50, 70, -533);
-   glUniform3f(uLightPos, camPos.x + 20, camPos.y + 20, camPos.z - 100 - ((int)camPos.z % 1000));
-   glUniform3f(uCameraPos, camPos.x, camPos.y, camPos.z);
+   glUniform3f(uLightPos, 100, 20, 33);
    
    // Bind attributes...
-   buffers[b_vertex]->attribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   buffers[b_normal]->attribPointer(LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   buffers[b_uv]->attribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
-   buffers[b_material]->attribPointer(LOCATION_MATERIAL, 1, GL_FLOAT, GL_FALSE, 0, 0);
+   glEnableVertexAttribArray(LOCATION_POSITION);
+   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_vertex]);
+   glVertexAttribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   
+   glEnableVertexAttribArray(LOCATION_NORMAL);
+   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_normal]);
+   glVertexAttribPointer(LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   
+   glEnableVertexAttribArray(LOCATION_UV);
+   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_uv]);
+   glVertexAttribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
+   
+   glEnableVertexAttribArray(LOCATION_MATERIAL);
+   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_material]);
+   glVertexAttribPointer(LOCATION_MATERIAL, 1, GL_FLOAT, GL_FALSE, 0, 0);
    
    // Draw it!
-   buffers[b_index]->bind();
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
    glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0);
    
    if(elements == 0)
@@ -167,7 +164,7 @@ void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::ma
             
             hasTextures = true;
          }
-      
+         
          int width, height;
          texture_loadToArray(baseDir + data[i].diffuse_texname, texture, i, &width, &height);
          textureScale[i] = glm::vec2((float) width / MAX_TEXTURE_SIZE, (float) height / MAX_TEXTURE_SIZE);
@@ -176,21 +173,27 @@ void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::ma
 }
 
 void Renderer3D::bufferData(DataType type, size_t size, void *data) {
+   GLuint bufType;
    int bufIndex;
    
    if(type == Vertices) {
+      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_vertex;
    }
    else if(type == Normals) {
+      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_normal;
    }
    else if(type == UVs) {
+      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_uv;
    }
    else if(type == Materials) {
+      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_material;
    }
    else if(type == Indices) {
+      bufType = GL_ELEMENT_ARRAY_BUFFER;
       bufIndex = b_index;
    }
    else {
@@ -199,7 +202,13 @@ void Renderer3D::bufferData(DataType type, size_t size, void *data) {
    }
    
    // Make sure we're not overwriting a dirty/cloned buffer
-   buffers[bufIndex]->bufferData(size, data, GL_STATIC_DRAW);
+   if (_d_buffers[bufIndex]) {
+      glGenBuffers(1, &buffers[bufIndex]);
+      DEBUG_LOG("Buffer " + std::to_string(buffers[bufIndex]) + " created")
+      _d_buffers[bufIndex] = false;
+   }
+   glBindBuffer(bufType, buffers[bufIndex]);
+   glBufferData(bufType, size, data, GL_STATIC_DRAW);
 }
 
 void Renderer3D::bufferData(DataType type, const std::vector<float> &data) {

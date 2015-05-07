@@ -14,7 +14,6 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "vertex_buffer_object.h"
 #include "tiny_obj_loader.h"
 #include "renderer.h"
 #include "GLSL.h"
@@ -23,10 +22,16 @@
 
 class Renderer3D : public Renderer {
 private:
-   VBO b_vertex, b_uv, b_normal, b_index, b_material;
+   const static int NUM_BUFFERS = 5;
+   // Indices at which we keep each buffer
+   const static int b_vertex   = 0;
+   const static int b_uv       = 1;
+   const static int b_normal   = 2;
+   const static int b_index    = 3;
+   const static int b_material = 4;
    
    GLuint elements;
-//   VBO *buffers[NUM_BUFFERS];
+   GLuint buffers[NUM_BUFFERS];
    
    GLuint numMaterials;
    glm::vec3 ambient[MAX_MATERIALS], diffuse[MAX_MATERIALS];
@@ -41,15 +46,17 @@ private:
    void init();
    static GLuint program;
    static GLuint uProj, uModel, uView;
-   static GLuint uWinScale, uLightPos, uCameraPos;
+   static GLuint uWinScale, uLightPos;
    static GLuint uAColor, uDColor;
    static GLuint uSColor, uShine;
    static GLuint aPosition, aNormal;
    static GLuint uTexScale, uTexUnits, uHasTextures;
    
+   /* Dirty bits */
+   bool _d_buffers[NUM_BUFFERS];
+   
 public:
-   Renderer3D();
-   Renderer3D(Renderer3D *clone);
+   Renderer3D(bool clone = false);
    
    // Refers to the number of indices
    void setNumElements(GLuint num) { elements = num; }
