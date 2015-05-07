@@ -81,7 +81,7 @@ if (WIN32)
    else (CMAKE_SIZEOF_VOID_P EQUAL 8)
       set(FMOD_WIN_ARCHITECTURE "x86")
 	  set(FMOD_WIN_LIB "fmod_vc.lib")
-	  set(FMOD_WIN_LIB_DEBUG "fmodL64_vc.lib")
+	  set(FMOD_WIN_LIB_DEBUG "fmodL_vc.lib")
 	  set(FMOD_DLL "fmod.dll")
    endif (CMAKE_SIZEOF_VOID_P EQUAL 8)
 
