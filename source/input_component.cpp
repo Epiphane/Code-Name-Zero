@@ -29,21 +29,34 @@ void PlayerInputComponent::update(GameObject *obj) {
       if (!DEBUG) {
          if (input_keyDown(GLFW_KEY_W)) {
             accel.y -= PLAYER_SPEED;
+            movement->setVelocity(movement->getVelocity() * 1.2);
          }
          if (input_keyDown(GLFW_KEY_S)) {
             accel.y += PLAYER_SPEED;
+            movement->setVelocity(movement->getVelocity() / 1.2);
          }
          if (input_keyDown(GLFW_KEY_A)) {
             accel.x -= PLAYER_SPEED;
+            movement->changeLatPos(-1);
          }
          if (input_keyDown(GLFW_KEY_D)) {
             accel.x += PLAYER_SPEED;
+            movement->changeLatPos(1);
          }
          if (input_keyDown(GLFW_KEY_Q)) {
             accel.z -= 1;
          }
          if (input_keyDown(GLFW_KEY_E)) {
             accel.z += 1;
+         }
+         if (input_keyDown(GLFW_KEY_Z)) {
+            movement->setLatPos(-1);
+         }
+         if (input_keyDown(GLFW_KEY_X)) {
+            movement->setLatPos(0);
+         }
+         if (input_keyDown(GLFW_KEY_C)) {
+            movement->setLatPos(1);
          }
       }
       

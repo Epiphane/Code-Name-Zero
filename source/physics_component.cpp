@@ -13,8 +13,20 @@
 #include "physics_component.h"
 #include "game_object.h"
 #include "state.h"
+#include "track_manager.h"
 
 void MovementComponent::update(GameObject *obj, State *world, float dt) {
+   // Vehicle offsets from track
+   glm::vec3 longOffset = direction * long_position * TRACK_LENGTH;
+   glm::vec3 latOffset = slide * lat_position * 4.0f;
+
+   // Set position based on offsets
+   obj->setPosition(track_position + longOffset + latOffset);
+
+   // Increment longitudinal position
+   long_position += dt * velocity;
+
+   /* Previous physics
    float sp = glm::length(speed) + accel.z;
    glm::vec4 new_speed = glm::vec4(speed, 0);
    new_speed = glm::rotate(accel.y * dt, 1.0f, 0.0f, 0.0f) * new_speed;
@@ -29,6 +41,26 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
    obj->setPosition(new_position);
    
 //   accel = glm::vec3(0);
+*/
+}
+
+void MovementComponent::changeLatPos(float a) {
+   float max = 1.0;
+   float step = 0.1;
+   if (a < 0) {
+      if (lat_position <= -max) {
+         lat_position = -max;
+      }
+      else
+         lat_position -= step;
+   }
+   if (a > 0) {
+      if (lat_position >= max) {
+         lat_position = max;
+      }
+      else
+         lat_position += step;
+   }
 }
 
 void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
@@ -64,7 +96,7 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
 //   }
    
    setSpeed(new_speed);
-   obj->setPosition(new_position);
+   //obj->setPosition(new_position);
 }
 
 //void TrackPhysicsComponent::update(GameObject *obj, State *world, float dt) {

@@ -44,6 +44,12 @@ float GameObject::getRadius() {
 glm::mat4 GameObject::getModel() {
    glm::mat4 model = glm::translate(position);
    
+   // Ryan's curvy track model transforms
+   model *= glm::rotate(rotation.z, 0.0f, 0.0f, 1.0f); // Roll
+   model *= glm::rotate(-rotation.x, 1.0f, 0.0f, 0.0f); // Pitch
+   model *= glm::rotate(rotation.y, 0.0f, 1.0f, 0.0f); // Yaw
+
+   /*
    MovementComponent *movement = dynamic_cast<MovementComponent *>(physics);
    if (movement != nullptr) {
       glm::vec3 speed = glm::normalize(movement->getSpeed());
@@ -53,7 +59,7 @@ glm::mat4 GameObject::getModel() {
       if (speed.z > 0) model *= glm::rotate(180.0f, 0.0f, 0.0f, 1.0f);
       model *= glm::rotate(pitch * RADIANS_TO_DEG, 1.0f, 0.0f, 0.0f);
       model *= glm::rotate(yaw * RADIANS_TO_DEG + 180, 0.0f, 1.0f, 0.0f);
-   }
+   }*/
    
    model *= this->Model;
    

@@ -30,6 +30,7 @@ set(HEADERS
    physics_component.h
    input_component.h
    collision_component.h
+   track_manager.h
 )
 
 # List all .c / .cpp files here
@@ -62,6 +63,7 @@ set(SOURCES
    physics_component.cpp
    input_component.cpp
    collision_component.cpp
+   track_manager.cpp
 )
 
 # List resources to copy to build directory

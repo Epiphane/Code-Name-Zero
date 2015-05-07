@@ -19,6 +19,7 @@
 #include "renderer.h"
 #include "rendererDebug.h"
 #include "main.h"
+#include "track_manager.h"
 
 // Farthest Z value of track
 const float track_piece_length = 30.005f;
@@ -35,8 +36,6 @@ void switchModels() {
 
 InGameState::InGameState() {
    State::State();
-   
-   track_segments.clear();
    
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
@@ -70,16 +69,9 @@ InGameState::InGameState() {
    
    camera_follow(player, glm::vec3(0, 1, 4));
    
-   // NOTE:
-   // 10 Segments of track seems to be the magic number, 27.5 units long
-   for (int i=0; i<15; i++) {
-      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
-      track->setPosition(glm::vec3(0.0f,0.0f,i*-track_piece_length));
-      addObject(track);
-      track_segments.push_back(track);
-      track_length-=track_piece_length;
-   }
-   
+   // Set up track manager
+   track_manager = new TrackManager(this, player);
+
    soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
    soundtrack->play();
    
@@ -98,19 +90,7 @@ void InGameState::update(float dt) {
    
    hud->update(dt, this);
 
-   float player_z = player->getPosition().z;
-//   std::cout << player_z << std::endl;
-   
-   if (player_z <= track_segments[1]->getPosition().z) {
-      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
-      track->setPosition(glm::vec3(0.0f,0.0f,track_length));
-      addObject(track);
-      track_segments.push_back(track);
-      track_length-=track_piece_length;
-      
-      track_segments[0]->die();
-      track_segments.erase(track_segments.begin());
-   }
+   track_manager->update(dt, player->getPosition(), this);
 }
 
 void InGameState::render(float dt) {

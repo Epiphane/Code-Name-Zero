@@ -12,14 +12,15 @@
 #include "audio_manager.h"
 #include "state.h"
 #include "HUD.h"
+#include "track_manager.h"
 
 class InGameState : public State {
 private:
    GameObject *player;
    int target_number;
    Music *soundtrack;
-   std::vector<GameObject*> track_segments;
-   
+   TrackManager *track_manager;
+
    HUD *hud;
    
 public:

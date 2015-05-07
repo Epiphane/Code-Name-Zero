@@ -20,15 +20,35 @@ public:
 
 class MovementComponent : public PhysicsComponent {
 private:
+   float velocity = 1.0f;
+   glm::vec3 track_position;
+   glm::vec3 slide;
+   float lat_position = 0;
+   glm::vec3 direction;
+   float long_position = 0;
    glm::vec3 speed, accel;
-   
+
 public:
-   glm::vec3 getSpeed(){return speed;}
-   glm::vec3 getAccel(){ return accel; }
-   void setSpeed(glm::vec3 s){speed = s;}
-   void setAccel(glm::vec3 a){accel = a;}
-   
+   //virtual void update(GameObject *obj, State *world, float dt, TrackManager track);
    virtual void update(GameObject *obj, State *world, float dt);
+   glm::vec3 getSpeed(){ return speed; }
+   glm::vec3 getAccel(){ return accel; }
+   void setSpeed(glm::vec3 s){ speed = s; }
+   void setAccel(glm::vec3 a){ accel = a; }
+
+   // Ryan's movement stuff - staying on the moving track
+   void setSlide(glm::vec3 a){ slide = a; }
+   void setDirection(glm::vec3 a){ direction = a; }
+   glm::vec3 getDirection(){ return direction; }
+   void setTrackPosition(glm::vec3 a){ track_position = a; }
+   void setLongPos(float a){ long_position = a; }
+   void setLatPos(float a){ lat_position = a; }
+   void changeLatPos(float a);
+   float getLongPos(){ return long_position; }
+   float getLatPos(){ return lat_position; }
+   float getVelocity(){ return velocity; }
+   void setVelocity(float a){ if (velocity < 2000) { velocity = a; } else { velocity = 1800; } };
+
 };
 
 class PlayerPhysicsComponent : public MovementComponent {
