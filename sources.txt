@@ -16,6 +16,8 @@ set(HEADERS
 
    HUD.h
 
+   vertex_buffer.object.h
+
    audio_manager.h
    input_manager.h
 
@@ -46,6 +48,8 @@ set(SOURCES
    shader.cpp
 
    HUD.cpp
+
+   vertex_buffer.object.cpp
 
    audio_manager.cpp
    input_manager.cpp
