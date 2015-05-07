@@ -14,7 +14,7 @@
 #include "renderer3D.h"
 
 GLuint Renderer3D::program, Renderer3D::uWinScale, Renderer3D::uProj;
-GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos;
+GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos, Renderer3D::uCameraPos;
 GLuint Renderer3D::uAColor, Renderer3D::uDColor, Renderer3D::uSColor;
 GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
 GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
@@ -34,6 +34,7 @@ void Renderer3D::init() {
    uTexUnits = glGetUniformLocation(program, "uTexUnits");
    uTexScale = glGetUniformLocation(program, "uTexScale");
    uHasTextures = glGetUniformLocation(program, "uHasTextures");
+   uCameraPos = glGetUniformLocation(program, "uCameraPos");
    
    initialized = true;
 }
@@ -97,8 +98,12 @@ void Renderer3D::render(glm::mat4 Model) {
    
    error = glGetError();
    assert(error == 0);
+
+   glm::vec3 camPos = camera_getPosition();
    
-   glUniform3f(uLightPos, 100, 20, 33);
+//   glUniform3f(uLightPos, 50, 70, -533);
+   glUniform3f(uLightPos, camPos.x + 20, camPos.y + 20, camPos.z - 100 - ((int)camPos.z % 1000));
+   glUniform3f(uCameraPos, camPos.x, camPos.y, camPos.z);
    
    // Bind attributes...
    buffers[b_vertex]->attribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);

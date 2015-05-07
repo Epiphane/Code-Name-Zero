@@ -47,7 +47,7 @@ private:
    void init();
    static GLuint program;
    static GLuint uProj, uModel, uView;
-   static GLuint uWinScale, uLightPos;
+   static GLuint uWinScale, uLightPos, uCameraPos;
    static GLuint uAColor, uDColor;
    static GLuint uSColor, uShine;
    static GLuint aPosition, aNormal;

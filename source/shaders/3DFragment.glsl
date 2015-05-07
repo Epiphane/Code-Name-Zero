@@ -5,7 +5,8 @@ in vec2 vUV;
 in vec3 vNormal;
 in vec4 vWorldSpace;
 
-uniform vec3 uLightPos;
+in vec3 vLightPos;
+in vec3 vCameraVec;
 
 #define MAX_MATERIALS 30
 
@@ -28,7 +29,8 @@ void main() {
    vec3 dColor = vec3(0);
    vec3 sColor = vec3(0);
    float shine = 0;
-   vec3 lightVector = normalize(uLightPos - vWorldSpace.xyz);
+   vec3 lightVector = normalize(vLightPos - vWorldSpace.xyz);
+   vec3 cameraVec = normalize(vCameraVec);
    
    if (vMaterial < 0) {
       // Placeholder: Basic metal
@@ -37,11 +39,11 @@ void main() {
       sColor = vec3(0.14, 0.14, 0.14);
       shine = 76.8;
 	  
-	  float Id = dot(normalize(vNormal), lightVector);
-	  float Is = pow(dot(normalize(vNormal), normalize(lightVector + vWorldSpace.xyz)), shine);
+	  float Id = max(dot(vNormal, lightVector), 0.0f);
+	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
 	  
 	  fragColor = vec4(Is * sColor + Id * dColor + aColor, 1);
-	  fragColor = vec4(Id * dColor + aColor, 1);
+//	  fragColor = vec4(Id * dColor + aColor, 1);
    }
    else {
       aColor = UaColor[vMaterial];
@@ -52,14 +54,20 @@ void main() {
       if (uHasTextures) {
          vec2 UV = vec2(vUV.x * uTexScale[vMaterial].x,
                      vUV.y * uTexScale[vMaterial].y);
-         fragColor = texture(uTexUnits, vec3(UV, vMaterial));
+//         fragColor = texture(uTexUnits, vec3(UV, vMaterial));
+		vec3 textureColor = texture(uTexUnits, vec3(UV, vMaterial)).xyz;
+
+         float Id = max(dot(vNormal, lightVector), 0.0f);
+         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
+         
+         fragColor = vec4(Is * vec3(1) + Id * textureColor + textureColor, 1);
       }
       else {
-         float Id = dot(normalize(vNormal), lightVector);
-         float Is = pow(dot(normalize(vNormal), normalize(lightVector + vWorldSpace.xyz)), shine);
+         float Id = max(dot(vNormal, lightVector), 0.0f);
+         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
          
          fragColor = vec4(Is * sColor + Id * dColor + aColor, 1);
-         fragColor = vec4(Id * dColor + aColor, 1);
+//         fragColor = vec4(Id * dColor + aColor, 1);
       }
       
       if (fragColor.a == 0)
