@@ -38,24 +38,24 @@ void Renderer3D::init() {
    initialized = true;
 }
 
-Renderer3D::Renderer3D(bool isClone) : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
+Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
    if (!initialized)
       init();
    
-   // Set the buffers to dirty, so we don't generate them until necessary
-   for (int i = 0; i < NUM_BUFFERS; i ++) _d_buffers[i] = isClone;
-   if (!isClone)
-      glGenBuffers(NUM_BUFFERS, buffers);
-   
+   buffers[b_vertex]   = new VBO(Vertices);
+   buffers[b_uv]       = new VBO(UVs);
+   buffers[b_normal]   = new VBO(Normals);
+   buffers[b_material] = new VBO(Materials);
+   buffers[b_index]    = new VBO(Indices);
+      
    GLenum error = glGetError();
    assert(error == 0);
 };
 
 Renderer *Renderer3D::clone() {
-   Renderer3D *copy = new Renderer3D(true);
+   Renderer3D *copy = new Renderer3D();
    
    memcpy((void *)copy, (void *)this, sizeof(Renderer3D));
-   for (int i = 0; i < NUM_BUFFERS; i ++) copy->_d_buffers[i] = true;
    
    return copy;
 }
@@ -101,24 +101,13 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniform3f(uLightPos, 100, 20, 33);
    
    // Bind attributes...
-   glEnableVertexAttribArray(LOCATION_POSITION);
-   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_vertex]);
-   glVertexAttribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   
-   glEnableVertexAttribArray(LOCATION_NORMAL);
-   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_normal]);
-   glVertexAttribPointer(LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   
-   glEnableVertexAttribArray(LOCATION_UV);
-   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_uv]);
-   glVertexAttribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
-   
-   glEnableVertexAttribArray(LOCATION_MATERIAL);
-   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_material]);
-   glVertexAttribPointer(LOCATION_MATERIAL, 1, GL_FLOAT, GL_FALSE, 0, 0);
+   buffers[b_vertex]->attribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   buffers[b_normal]->attribPointer(LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   buffers[b_uv]->attribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
+   buffers[b_material]->attribPointer(LOCATION_MATERIAL, 1, GL_FLOAT, GL_FALSE, 0, 0);
    
    // Draw it!
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
+   buffers[b_index]->bind();
    glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0);
    
    if(elements == 0)
@@ -173,27 +162,21 @@ void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::ma
 }
 
 void Renderer3D::bufferData(DataType type, size_t size, void *data) {
-   GLuint bufType;
    int bufIndex;
    
    if(type == Vertices) {
-      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_vertex;
    }
    else if(type == Normals) {
-      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_normal;
    }
    else if(type == UVs) {
-      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_uv;
    }
    else if(type == Materials) {
-      bufType = GL_ARRAY_BUFFER;
       bufIndex = b_material;
    }
    else if(type == Indices) {
-      bufType = GL_ELEMENT_ARRAY_BUFFER;
       bufIndex = b_index;
    }
    else {
@@ -202,13 +185,7 @@ void Renderer3D::bufferData(DataType type, size_t size, void *data) {
    }
    
    // Make sure we're not overwriting a dirty/cloned buffer
-   if (_d_buffers[bufIndex]) {
-      glGenBuffers(1, &buffers[bufIndex]);
-      DEBUG_LOG("Buffer " + std::to_string(buffers[bufIndex]) + " created")
-      _d_buffers[bufIndex] = false;
-   }
-   glBindBuffer(bufType, buffers[bufIndex]);
-   glBufferData(bufType, size, data, GL_STATIC_DRAW);
+   buffers[bufIndex]->bufferData(size, data, GL_STATIC_DRAW);
 }
 
 void Renderer3D::bufferData(DataType type, const std::vector<float> &data) {

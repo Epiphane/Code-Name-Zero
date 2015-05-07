@@ -14,6 +14,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
+#include "vertex_buffer_object.h"
 #include "tiny_obj_loader.h"
 #include "renderer.h"
 #include "GLSL.h"
@@ -31,7 +32,7 @@ private:
    const static int b_material = 4;
    
    GLuint elements;
-   GLuint buffers[NUM_BUFFERS];
+   VBO *buffers[NUM_BUFFERS];
    
    GLuint numMaterials;
    glm::vec3 ambient[MAX_MATERIALS], diffuse[MAX_MATERIALS];
@@ -52,11 +53,8 @@ private:
    static GLuint aPosition, aNormal;
    static GLuint uTexScale, uTexUnits, uHasTextures;
    
-   /* Dirty bits */
-   bool _d_buffers[NUM_BUFFERS];
-   
 public:
-   Renderer3D(bool clone = false);
+   Renderer3D();
    
    // Refers to the number of indices
    void setNumElements(GLuint num) { elements = num; }
