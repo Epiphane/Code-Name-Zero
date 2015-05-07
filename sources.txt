@@ -16,7 +16,7 @@ set(HEADERS
 
    HUD.h
 
-   vertex_buffer.object.h
+   vertex_buffer_object.h
 
    audio_manager.h
    input_manager.h
@@ -49,7 +49,7 @@ set(SOURCES
 
    HUD.cpp
 
-   vertex_buffer.object.cpp
+   vertex_buffer_object.cpp
 
    audio_manager.cpp
    input_manager.cpp

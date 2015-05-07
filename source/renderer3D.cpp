@@ -39,16 +39,25 @@ void Renderer3D::init() {
    initialized = true;
 }
 
-Renderer3D::Renderer3D() : Renderer(0), elements(0), numMaterials(0), hasTextures(false) {
+Renderer3D::Renderer3D(Renderer3D *clone) : Renderer(0), elements(0), numMaterials(0), hasTextures(false), b_vertex(clone->b_vertex), b_uv(clone->b_uv), b_normal(clone->b_normal), b_index(clone->b_index), b_material(clone->b_material) {
    if (!initialized)
       init();
    
-   buffers[b_vertex]   = new VBO(Vertices);
-   buffers[b_uv]       = new VBO(UVs);
-   buffers[b_normal]   = new VBO(Normals);
-   buffers[b_material] = new VBO(Materials);
-   buffers[b_index]    = new VBO(Indices);
-      
+//   if (clone == nullptr) {
+//      buffers[b_vertex]   = new VBO(Vertices);
+//      buffers[b_uv]       = new VBO(UVs);
+//      buffers[b_normal]   = new VBO(Normals);
+//      buffers[b_material] = new VBO(Materials);
+//      buffers[b_index]    = new VBO(Indices);
+//   }
+//   else {
+//      buffers[b_vertex]   = new VBO(Vertices);
+//      buffers[b_uv]       = new VBO(UVs);
+//      buffers[b_normal]   = new VBO(Normals);
+//      buffers[b_material] = new VBO(Materials);
+//      buffers[b_index]    = new VBO(Indices);
+//   }
+   
    GLenum error = glGetError();
    assert(error == 0);
 };

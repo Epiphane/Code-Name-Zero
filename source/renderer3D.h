@@ -23,16 +23,10 @@
 
 class Renderer3D : public Renderer {
 private:
-   const static int NUM_BUFFERS = 5;
-   // Indices at which we keep each buffer
-   const static int b_vertex   = 0;
-   const static int b_uv       = 1;
-   const static int b_normal   = 2;
-   const static int b_index    = 3;
-   const static int b_material = 4;
+   VBO b_vertex, b_uv, b_normal, b_index, b_material;
    
    GLuint elements;
-   VBO *buffers[NUM_BUFFERS];
+//   VBO *buffers[NUM_BUFFERS];
    
    GLuint numMaterials;
    glm::vec3 ambient[MAX_MATERIALS], diffuse[MAX_MATERIALS];
@@ -55,6 +49,7 @@ private:
    
 public:
    Renderer3D();
+   Renderer3D(Renderer3D *clone);
    
    // Refers to the number of indices
    void setNumElements(GLuint num) { elements = num; }

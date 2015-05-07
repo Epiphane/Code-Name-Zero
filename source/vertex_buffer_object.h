@@ -26,4 +26,5 @@ public:
    void bufferData(GLsizei size, void *data, GLuint type);
 };
 
+
 #endif /* defined(__RGBZero__vertex_buffer_object__) */
