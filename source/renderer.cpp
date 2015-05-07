@@ -67,6 +67,7 @@ Renderer *Renderer::clone() {
    std::cerr << "Clone function not implemented for this kind of renderer" << std::endl;
    // Clone function not implemented for this kind of renderer
    assert(0);
+   return NULL;
 }
 
 void setUniforms(GLuint uWinScale, GLuint uPerspective, GLuint uView, GLuint uModel, glm::mat4 MVP) {

@@ -43,7 +43,9 @@ GLuint compileShader(const char *filePath, GLenum shaderType) {
    if(infoLogLength > 0){
       vector<char> errorMessage(infoLogLength+1);
       glGetShaderInfoLog(shaderID, infoLogLength, NULL, &errorMessage[0]);
-      DEBUG_LOG(string(&errorMessage[0]));
+	  if (errorMessage[0] != '\0') {
+		  DEBUG_LOG(string(&errorMessage[0]));
+	  }
    }
    
    return shaderID;
