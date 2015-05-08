@@ -106,12 +106,15 @@ void State::render(float dt) {
    std::vector<GameObject *>::iterator iterator;
    updateRendererQueue();
    
+   INIT_BENCHMARK
    for(iterator = rendererQueue.begin(); iterator < rendererQueue.end(); iterator ++) {
       (*iterator)->render();
-      
+
       if (DEBUG)
          (*iterator)->_debug_render();
    }
+   RendererDebug::instance()->log("Number of elements: " + std::to_string(rendererQueue.size()), false);
+   COMPUTE_BENCHMARK(25, "Element render time: ", true);
 }
 
 void State::send(std::string message, void *data) {

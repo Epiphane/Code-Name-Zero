@@ -12,7 +12,7 @@
 #include "main.h"
 #include <glm/ext.hpp>
 
-#define VISIBLE_TRACKS 200
+#define VISIBLE_TRACKS 90
 
 // Initialization
 TrackManager::TrackManager(State *world, GameObject *player_in) {
@@ -22,7 +22,7 @@ TrackManager::TrackManager(State *world, GameObject *player_in) {
    // Current track is 27.5 units long
    for (int i = 0; i<VISIBLE_TRACKS; i++) {
       TrackPhysicsComponent *track_physics = new TrackPhysicsComponent();
-      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"), track_physics);
+      GameObject *track = new GameObject(ModelRenderer::load("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"), track_physics);
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
       track->setPosition(nextPosition(next_track_number));
       world->addObject(track);
@@ -38,7 +38,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
    if (movement->getLongPos() >= 1.0f || first) {
       first = false;
       TrackPhysicsComponent *track_physics = new TrackPhysicsComponent();
-      GameObject *track = new GameObject(new ModelRenderer("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"), track_physics);
+      GameObject *track = new GameObject(ModelRenderer::load("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"), track_physics);
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
       track->setPosition(nextPosition(next_track_number));
       world->addObject(track);
@@ -111,6 +111,5 @@ glm::mat4 TrackManager::nextRotate(int track_number) {
 glm::vec3 TrackManager::nextSlideDirection(int track_number) {
    glm::vec3 slide = glm::vec3(cos(MATH_PI / 180.0f*nextYawAngle(track_number)), sin(MATH_PI / 180.0f*nextRollAngle(track_number)), sin(MATH_PI / 180.0f*nextYawAngle(track_number)));
 
-   printf("slide direction: (%lf,%lf,%lf) \n", slide.x, slide.y, slide.z);
    return glm::normalize(slide);
 }

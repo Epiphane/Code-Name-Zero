@@ -48,15 +48,15 @@ InGameState::InGameState() {
    // Create player ships
    std::string model;
    model = "models/Red Razelle/";
-   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   ships.push_back(ModelRenderer::load(model + "model.obj", model));
    model = "models/Sonic Phantom/";
-   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   ships.push_back(ModelRenderer::load(model + "model.obj", model));
    model = "models/Wild Boar/";
-   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   ships.push_back(ModelRenderer::load(model + "model.obj", model));
    model = "models/Magic Seagull/";
-   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   ships.push_back(ModelRenderer::load(model + "model.obj", model));
    model = "models/Little Wyvern/";
-   ships.push_back(new ModelRenderer(model + "model.obj", model));
+   ships.push_back(ModelRenderer::load(model + "model.obj", model));
    
    playerObj = player = new GameObject(ships[currentPlayerShip], movement, i, new PlayerCollisionComponent);
    player->setType(OBJECT_PLAYER);
