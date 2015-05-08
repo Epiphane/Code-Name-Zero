@@ -18,6 +18,7 @@ private:
 public:
    VBO(DataType type);
    VBO(DataType type, GLuint buffer);
+   void init();
    
    void bind();
    void attribPointer(GLuint location, GLint count, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer);
