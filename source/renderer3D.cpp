@@ -6,6 +6,9 @@
 //
 //
 
+#include <unordered_map>
+#include <glm/ext.hpp>
+
 #include "main.h"
 #include "shader.hpp"
 #include "camera.h"
@@ -18,6 +21,8 @@ GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos, Renderer3D:
 GLuint Renderer3D::uAColor, Renderer3D::uDColor, Renderer3D::uSColor;
 GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
 GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
+std::unordered_map<Renderer3D *, std::vector<glm::mat4>> Renderer3D::renderers;
+VBO Renderer3D::rendererMatrices(ArrayBuffer);
 
 bool Renderer3D::initialized = false;
 void Renderer3D::init() {
@@ -35,7 +40,14 @@ void Renderer3D::init() {
    uTexScale = glGetUniformLocation(program, "uTexScale");
    uHasTextures = glGetUniformLocation(program, "uHasTextures");
    uCameraPos = glGetUniformLocation(program, "uCameraPos");
-   
+   DEBUG_LOG_VAL(glGetAttribLocation(program, "aPosition"));
+   DEBUG_LOG_VAL(glGetAttribLocation(program, "aMaterial"));
+   DEBUG_LOG_VAL(glGetAttribLocation(program, "aModelMatrix"));
+
+   rendererMatrices.init();
+
+   renderers.clear();
+
    initialized = true;
 }
 
@@ -50,95 +62,116 @@ Renderer3D::Renderer3D(bool isClone) : Renderer(0), elements(0), numMaterials(0)
    
    GLenum error = glGetError();
    assert(error == 0);
+
+   renderers.emplace(this, std::vector<glm::mat4>());
 };
 
-Renderer *Renderer3D::clone() {
-   Renderer3D *copy = new Renderer3D(true);
-   
-   memcpy((void *)copy, (void *)this, sizeof(Renderer3D));
-   for (int i = 0; i < NUM_BUFFERS; i ++) copy->_d_buffers[i] = true;
-   
-   return copy;
+void Renderer3D::update() {
+   std::unordered_map<Renderer3D *, std::vector<glm::mat4>>::iterator it;
+   for (it = renderers.begin(); it != renderers.end(); it++) {
+      it->first->batchRender(it->second);
+      it->second.clear();
+   }
 }
 
 void Renderer3D::render(glm::mat4 Model) {
-   GLenum error = glGetError();
-   assert(error == 0);
-   
+   renderers[this].push_back(renderer_getCurrentModel() * Model);
+}
+
+void Renderer3D::batchRender(std::vector<glm::mat4> models) {
+   if (models.size() == 0)
+      return;
+
    glUseProgram(program);
-   
+
    // Send window scale
-   if(w_width > w_height)
-      glUniform2f(uWinScale, (float) w_height / w_width, 1);
+   if (w_width > w_height)
+      glUniform2f(uWinScale, (float)w_height / w_width, 1);
    else
-      glUniform2f(uWinScale, 1, (float) w_width / w_height);
-   
-   // Send camera projection
-   Model = renderer_getCurrentModel() * Model;
-   
+      glUniform2f(uWinScale, 1, (float)w_width / w_height);
+
    glm::mat4 View = camera_getMatrix();
    glm::mat4 Proj = renderer_getProjection();
-   
-   glUniformMatrix4fv(uModel, 1, GL_FALSE, &Model[0][0]);
-   glUniformMatrix4fv(uView,  1, GL_FALSE, &View [0][0]);
-   glUniformMatrix4fv(uProj,  1, GL_FALSE, &Proj [0][0]);
-   
-   glUniform3fv(uAColor,  numMaterials, (float *)ambient);
-   glUniform3fv(uDColor,  numMaterials, (float *)diffuse);
-   glUniform3fv(uSColor,  numMaterials, (float *)specular);
-   glUniform1fv(uShine,   numMaterials, shine);
+   glUniformMatrix4fv(uView, 1, GL_FALSE, &View[0][0]);
+   glUniformMatrix4fv(uProj, 1, GL_FALSE, &Proj[0][0]);
+
+   glUniform3fv(uAColor, numMaterials, (float *)ambient);
+   glUniform3fv(uDColor, numMaterials, (float *)diffuse);
+   glUniform3fv(uSColor, numMaterials, (float *)specular);
+   glUniform1fv(uShine, numMaterials, shine);
    glUniform1i(uHasTextures, hasTextures);
    if (hasTextures) {
-      glUniform2fv(uTexScale,numMaterials, (float *)textureScale);
-      
+      glUniform2fv(uTexScale, numMaterials, (float *)textureScale);
+
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
       glUniform1i(uTexUnits, 0);
    }
-   
-   error = glGetError();
-   assert(error == 0);
-   
+
    glm::vec3 camPos = camera_getPosition();
 
-//   glUniform3f(uLightPos, 100, 20, 33);
+   //   glUniform3f(uLightPos, 100, 20, 33);
    glUniform3f(uLightPos, 50, 70, -533);
-//   glUniform3f(uLightPos, camPos.x + 20, camPos.y + 20, camPos.z - 100 - ((int)camPos.z % 1000));
+   //   glUniform3f(uLightPos, camPos.x + 20, camPos.y + 20, camPos.z - 100 - ((int)camPos.z % 1000));
    glUniform3f(uCameraPos, camPos.x, camPos.y, camPos.z);
-   
+
    // Bind attributes...
    glEnableVertexAttribArray(LOCATION_POSITION);
    glBindBuffer(GL_ARRAY_BUFFER, buffers[b_vertex]);
    glVertexAttribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   
+
    glEnableVertexAttribArray(LOCATION_NORMAL);
    glBindBuffer(GL_ARRAY_BUFFER, buffers[b_normal]);
    glVertexAttribPointer(LOCATION_NORMAL, 3, GL_FLOAT, GL_FALSE, 0, 0);
-   
+
    glEnableVertexAttribArray(LOCATION_UV);
    glBindBuffer(GL_ARRAY_BUFFER, buffers[b_uv]);
    glVertexAttribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
-   
+
    glEnableVertexAttribArray(LOCATION_MATERIAL);
    glBindBuffer(GL_ARRAY_BUFFER, buffers[b_material]);
    glVertexAttribPointer(LOCATION_MATERIAL, 1, GL_FLOAT, GL_FALSE, 0, 0);
-   
-   // Draw it!
+
+   if (elements == 0)
+      DEBUG_LOG("WARNING: Rendering an object with 0 elements");
+
+   // Send all matrices
+   rendererMatrices.bufferData(sizeof(glm::mat4) * models.size(), (void *)&models[0], GL_STATIC_DRAW);
+   rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX    , 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)0);
+   //glVertexAttribDivisor(3, 1);
+   rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX + 1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * 4));
+   //glVertexAttribDivisor(3, 1);
+   rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX + 2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * 8));
+   //glVertexAttribDivisor(3, 1);
+   rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX + 3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * 12));
+   //glVertexAttribDivisor(3, 1);
+
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
-   glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0);
-   
-   if(elements == 0)
-      std::cerr << "WARNING: Rendering an object with 0 elements" << std::endl;
-   
+   glDrawElementsInstanced(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0, models.size());
+
+   RendererDebug::instance()->log("Drew " + std::to_string(models.size()) + " models in one call", false);
+
+   // Draw the batch!
+   for (int i = models.size(); i < models.size(); i++) {
+      // Send model matrix
+      glm::mat4 Model = models[i];
+
+      glUniformMatrix4fv(uModel, 1, GL_FALSE, &Model[0][0]);
+
+      // Draw it!
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
+      glDrawElementsInstanced(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0, 1);
+   }
+
    // Cleanup
    glDisableVertexAttribArray(LOCATION_POSITION);
    glDisableVertexAttribArray(LOCATION_NORMAL);
    glDisableVertexAttribArray(LOCATION_UV);
    glDisableVertexAttribArray(LOCATION_MATERIAL);
-   
+
    glUseProgram(0);
-   
-   error = glGetError();
+
+   GLenum error = glGetError();
    assert(error == 0);
 }
 

@@ -10,6 +10,7 @@
 #include "main.h"
 #include "camera.h"
 #include "state.h"
+#include "renderer3D.h"
 
 void State::start() {}
 void State::pause() {}
@@ -106,7 +107,8 @@ void State::render(float dt) {
    std::vector<GameObject *>::iterator iterator;
    updateRendererQueue();
    
-   INIT_BENCHMARK
+   // Render all elements. NOTE: They are only added to be batch rendered if they use
+   // Renderer3D stuff.
    for(iterator = rendererQueue.begin(); iterator < rendererQueue.end(); iterator ++) {
       (*iterator)->render();
 
@@ -114,7 +116,9 @@ void State::render(float dt) {
          (*iterator)->_debug_render();
    }
    RendererDebug::instance()->log("Number of elements: " + std::to_string(rendererQueue.size()), false);
-   COMPUTE_BENCHMARK(25, "Element render time: ", true);
+
+   // Render all the batch-ed models
+   Renderer3D::update();
 }
 
 void State::send(std::string message, void *data) {

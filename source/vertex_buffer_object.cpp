@@ -6,7 +6,9 @@
 //
 //
 
+#include <iostream>
 #include <vector>
+#include <cassert>
 
 #include "renderer.h"
 #include "vertex_buffer_object.h"
@@ -34,8 +36,15 @@ VBO::VBO(DataType _type, GLuint _buffer) {
 VBO::VBO(DataType _type) {
    if (_type == Indices) bufferType = GL_ELEMENT_ARRAY_BUFFER;
    else bufferType = GL_ARRAY_BUFFER;
-   
+
+   buffer = GL_FALSE;
+}
+ 
+void VBO::init() {
+   assert(buffer == GL_FALSE);
+
    glGenBuffers(1, &buffer);
+   //std::cout << "Created buffer " << buffer << std::endl;
    set_buffer_reference_1(buffer);
 };
 

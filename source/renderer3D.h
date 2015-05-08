@@ -10,11 +10,13 @@
 #define __RGBZero__renderer_3D__
 
 #include <iostream>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
 
 #include "tiny_obj_loader.h"
+#include "vertex_buffer_object.h"
 #include "renderer.h"
 #include "GLSL.h"
 
@@ -54,6 +56,9 @@ private:
    
    /* Dirty bits */
    bool _d_buffers[NUM_BUFFERS];
+
+   static std::unordered_map<Renderer3D *, std::vector<glm::mat4>> renderers;
+   static VBO rendererMatrices;
    
 public:
    Renderer3D(bool clone = false);
@@ -74,8 +79,8 @@ public:
    
    // Render the data!
    void render(glm::mat4 Model);
-   
-   Renderer *clone();
+   void batchRender(std::vector<glm::mat4> Models);
+   static void update();
 };
 
 #endif /* defined(__RGBZero__renderer_3D__) */
