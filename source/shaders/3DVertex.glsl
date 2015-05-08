@@ -4,7 +4,7 @@ layout(location = 0) in vec4 aPosition;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aUV;
 layout(location = 3) in float aMaterial;
-layout(location = 4) in mat4 aModelMatrix;
+layout(location = 7) in mat4 aModelMatrix;
 
 uniform mat4 uProjMatrix;
 uniform mat4 uViewMatrix;
@@ -24,7 +24,7 @@ out vec3 vLightPos;
 void main()
 {
    vLightPos = uLightPos;
-   vWorldSpace = uModelMatrix * aPosition;
+   vWorldSpace = aModelMatrix * aPosition;
 
    vCameraVec = normalize(uCameraPos - vWorldSpace.xyz);
 
@@ -32,5 +32,5 @@ void main()
    
    vMaterial = int(aMaterial);
    vUV = aUV;
-   vNormal = normalize((uModelMatrix * vec4(aNormal, 0)).xyz);
+   vNormal = normalize((aModelMatrix * vec4(aNormal, 0)).xyz);
 }

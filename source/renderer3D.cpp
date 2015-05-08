@@ -40,9 +40,6 @@ void Renderer3D::init() {
    uTexScale = glGetUniformLocation(program, "uTexScale");
    uHasTextures = glGetUniformLocation(program, "uHasTextures");
    uCameraPos = glGetUniformLocation(program, "uCameraPos");
-   DEBUG_LOG_VAL(glGetAttribLocation(program, "aPosition"));
-   DEBUG_LOG_VAL(glGetAttribLocation(program, "aMaterial"));
-   DEBUG_LOG_VAL(glGetAttribLocation(program, "aModelMatrix"));
 
    rendererMatrices.init();
 
@@ -134,34 +131,20 @@ void Renderer3D::batchRender(std::vector<glm::mat4> models) {
 
    if (elements == 0)
       DEBUG_LOG("WARNING: Rendering an object with 0 elements");
-
+   
    // Send all matrices
    rendererMatrices.bufferData(sizeof(glm::mat4) * models.size(), (void *)&models[0], GL_STATIC_DRAW);
    rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX    , 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)0);
-   //glVertexAttribDivisor(3, 1);
+   glVertexAttribDivisor(LOCATION_MODEL_MATRIX    , 1);
    rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX + 1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * 4));
-   //glVertexAttribDivisor(3, 1);
+   glVertexAttribDivisor(LOCATION_MODEL_MATRIX + 1, 1);
    rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX + 2, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * 8));
-   //glVertexAttribDivisor(3, 1);
+   glVertexAttribDivisor(LOCATION_MODEL_MATRIX + 2, 1);
    rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX + 3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * 12));
-   //glVertexAttribDivisor(3, 1);
+   glVertexAttribDivisor(LOCATION_MODEL_MATRIX + 3, 1);
 
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
    glDrawElementsInstanced(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0, models.size());
-
-   RendererDebug::instance()->log("Drew " + std::to_string(models.size()) + " models in one call", false);
-
-   // Draw the batch!
-   for (int i = models.size(); i < models.size(); i++) {
-      // Send model matrix
-      glm::mat4 Model = models[i];
-
-      glUniformMatrix4fv(uModel, 1, GL_FALSE, &Model[0][0]);
-
-      // Draw it!
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
-      glDrawElementsInstanced(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0, 1);
-   }
 
    // Cleanup
    glDisableVertexAttribArray(LOCATION_POSITION);

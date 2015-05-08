@@ -31,8 +31,10 @@ GLuint compileShader(const char *filePath, GLenum shaderType) {
    int infoLogLength;
    
    // Compile Shader
-   if (DEBUG_SHADER)
-      DEBUG_LOG("Compiling shader: " + string(filePath))
+   if (DEBUG_SHADER) {
+      std::cout << "Compiling shader: " + string(filePath) << std::endl;
+      std::cout << shaderCode << std::endl;
+   }
    const char *sourcePointer = shaderCode.c_str();
    glShaderSource(shaderID, 1, &sourcePointer , NULL);
    glCompileShader(shaderID);
@@ -44,7 +46,7 @@ GLuint compileShader(const char *filePath, GLenum shaderType) {
       vector<char> errorMessage(infoLogLength+1);
       glGetShaderInfoLog(shaderID, infoLogLength, NULL, &errorMessage[0]);
 	  if (errorMessage[0] != '\0') {
-        printf("%s", errorMessage);
+        printf("%s", &errorMessage[0]);
 	  }
    }
    
@@ -70,7 +72,7 @@ GLuint LoadShaders(const char *vertFilePath, const char *geomFilePath, const cha
    
    // Link the program
    if (DEBUG_SHADER)
-      DEBUG_LOG("Linking Program")
+      std::cout << "Linking Program" << std::endl;
    GLuint programID = glCreateProgram();
    glAttachShader(programID, vertexShader);
    if (geomFilePath != NULL) {
