@@ -32,9 +32,11 @@ public:
 };
 
 class ModelRenderer : public GraphicsComponent {
-public:
+private:
    ModelRenderer(std::string filename, std::string baseDir);
-   ModelRenderer(std::string filename);
+
+public:
+   static ModelRenderer *load(std::string filename, std::string baseDir);
 };
 
 class GroundRenderer : public GraphicsComponent {

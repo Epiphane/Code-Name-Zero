@@ -88,7 +88,15 @@ GroundRenderer::GroundRenderer(float size) {
 std::unordered_map<std::string, std::string> baseDirs;
 std::unordered_map<std::string, ModelRenderer *> modelRenderers;
 
-ModelRenderer::ModelRenderer(std::string filename) : ModelRenderer(filename, "") {};
+ModelRenderer *ModelRenderer::load(std::string filename, std::string baseDir) {
+   if (baseDirs[filename] == baseDir) {
+      if (modelRenderers[filename]) {
+         return modelRenderers[filename];
+      }
+   }
+
+   return new ModelRenderer(filename, baseDir);
+}
 
 ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {
    GraphicsComponent::GraphicsComponent();
