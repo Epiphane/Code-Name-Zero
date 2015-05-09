@@ -139,6 +139,7 @@ int main(int argc, char **argv) {
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();
+   INIT_BENCHMARK
    do {
       assert(currentState != NULL);
       
@@ -146,23 +147,23 @@ int main(int argc, char **argv) {
       
       double nextTime = glfwGetTime();
       if (nextTime - clock > SEC_PER_FRAME) {
-         INIT_BENCHMARK
          input_update();
 
          // Update and render the game
          // Use fixed time updating
          if (!DEBUG) {
-            currentState->update(SEC_PER_FRAME);
+            currentState->update(nextTime - clock);
          }
          else {
             currentState->update(0);
          }
+         COMPUTE_BENCHMARK(100, "Update time: ", true)
 
          // Compute FPSf
-         const int fps_sample_rate = 100;
+         const int fps_sample_rate = 1;
          static float samples[fps_sample_rate] = {1};
          static int pos = 0;
-         samples[pos] = glfwGetTime() - clock;
+         samples[pos] = nextTime - clock;
          pos = (pos + 1) % fps_sample_rate;
          float elapsed = 0;
          for (int i = 0; i < fps_sample_rate; i ++)
@@ -173,16 +174,15 @@ int main(int argc, char **argv) {
          RendererDebug::instance()->log("FPS: " + std::to_string(fps), false);
          RendererDebug::instance()->log("Time since last frame: " + std::to_string(elapsed), false);
          
-//         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
          currentState->render(glfwGetTime() - clock);
          
-         COMPUTE_BENCHMARK(100, "Render time: ", true)
          if (showDebugLog)
             RendererDebug::instance()->renderLog();
          else
             RendererDebug::instance()->clearLog();
 
-         clock = nextTime;
+         COMPUTE_BENCHMARK(100, "Render time: ", true)
+            clock = nextTime;
       }
       GLenum error = glGetError();
       assert(error == 0);
