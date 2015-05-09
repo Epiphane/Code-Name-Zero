@@ -16,18 +16,23 @@ void State::start() {}
 void State::pause() {}
 
 void State::update(float dt) {
+   INIT_BENCHMARK
    std::vector<GameObject *>::iterator iterator = objects.begin();
    while(iterator < objects.end()) {
-      (*iterator)->update(this, dt);
-      // TODO: FOUND THE CULPRIT
-      //this->collide(*iterator);
-      if ((*iterator)->isDead())
+      GameObject *obj = *iterator;
+      obj->update(this, dt);
+      if (obj->getCollision())
+         this->collide(*iterator);
+      
+      if (obj->isDead())
          iterator = objects.erase(iterator);
       else
          iterator ++;
    }
    
    camera_update(dt);
+   
+   COMPUTE_BENCHMARK(25, "Update time: ", true);
 }
 
 void normalizePlane(Plane &plane) {

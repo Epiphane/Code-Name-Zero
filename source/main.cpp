@@ -147,20 +147,8 @@ int main(int argc, char **argv) {
       
       double nextTime = glfwGetTime();
       if (nextTime - clock > SEC_PER_FRAME) {
-         input_update();
-
-         // Update and render the game
-         // Use fixed time updating
-         if (!DEBUG) {
-            currentState->update(nextTime - clock);
-         }
-         else {
-            currentState->update(0);
-         }
-         COMPUTE_BENCHMARK(100, "Update time: ", true)
-
-         // Compute FPSf
-         const int fps_sample_rate = 1;
+         // Compute FPS
+         const int fps_sample_rate = 100;
          static float samples[fps_sample_rate] = {1};
          static int pos = 0;
          samples[pos] = nextTime - clock;
@@ -171,25 +159,41 @@ int main(int argc, char **argv) {
          elapsed = elapsed / fps_sample_rate;
          
          float fps = 1 / elapsed;
-         RendererDebug::instance()->log("FPS: " + std::to_string(fps), false);
-         RendererDebug::instance()->log("Time since last frame: " + std::to_string(elapsed), false);
+         if (fps >= FRAMES_PER_SEC * 29.0f / 30.0f)
+            RendererDebug::instance()->log("FPS: " + std::to_string((int) FRAMES_PER_SEC) + " \2", false);
+         else {
+            std::string msg = "FPS: " + std::to_string((int) fps);
+            RendererDebug::instance()->log(msg, false);
+            RendererDebug::instance()->log("Time since last frame: " + std::to_string(elapsed), false);
+         }
          
+         input_update();
+
+         // Update and render the game
+         // Use fixed time updating
+         if (!DEBUG) {
+            currentState->update(nextTime - clock);
+         }
+         else {
+            currentState->update(0);
+         }
+
          currentState->render(glfwGetTime() - clock);
          
          if (showDebugLog)
             RendererDebug::instance()->renderLog();
          else
             RendererDebug::instance()->clearLog();
-
-         COMPUTE_BENCHMARK(100, "Render time: ", true)
-            clock = nextTime;
-      }
-      GLenum error = glGetError();
-      assert(error == 0);
+         
+         GLenum error = glGetError();
+         assert(error == 0);
       
-      // Swap buffers
-      glfwSwapBuffers(window);
-      glfwPollEvents();
+         // Swap buffers
+         glfwSwapBuffers(window);
+         glfwPollEvents();
+         
+         clock = nextTime;
+      }
    } // Check if the ESC key was pressed or the window was closed
    while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS && glfwWindowShouldClose(window) == 0 );
 
