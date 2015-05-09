@@ -16,17 +16,23 @@ void State::start() {}
 void State::pause() {}
 
 void State::update(float dt) {
+   INIT_BENCHMARK
    std::vector<GameObject *>::iterator iterator = objects.begin();
    while(iterator < objects.end()) {
-      (*iterator)->update(this, dt);
-      this->collide(*iterator);
-      if ((*iterator)->isDead())
+      GameObject *obj = *iterator;
+      obj->update(this, dt);
+      if (obj->getCollision())
+         this->collide(*iterator);
+      
+      if (obj->isDead())
          iterator = objects.erase(iterator);
       else
          iterator ++;
    }
    
    camera_update(dt);
+   
+   COMPUTE_BENCHMARK(25, "Update time: ", true);
 }
 
 void normalizePlane(Plane &plane) {
@@ -115,7 +121,6 @@ void State::render(float dt) {
       if (DEBUG)
          (*iterator)->_debug_render();
    }
-   RendererDebug::instance()->log("Number of elements: " + std::to_string(rendererQueue.size()), false);
 
    // Render all the batch-ed models
    Renderer3D::update();

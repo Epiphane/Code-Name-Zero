@@ -124,7 +124,7 @@ void InGameState::render(float dt) {
    COMPUTE_BENCHMARK(25, "Blur time: ", true)
    
    // Render non-blurred elements
-   hud->render(dt);
+   //hud->render(dt);
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }

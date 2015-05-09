@@ -57,7 +57,9 @@ private:
    /* Dirty bits */
    bool _d_buffers[NUM_BUFFERS];
 
-   static std::unordered_map<Renderer3D *, std::vector<glm::mat4>> renderers;
+   std::vector<glm::mat4> batch;
+
+   static std::vector<Renderer3D *> renderers;
    static VBO rendererMatrices;
    
 public:
@@ -79,7 +81,7 @@ public:
    
    // Render the data!
    void render(glm::mat4 Model);
-   void batchRender(std::vector<glm::mat4> Models);
+   void batchRender();
    static void update();
 };
 

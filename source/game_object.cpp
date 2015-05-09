@@ -42,6 +42,7 @@ float GameObject::getRadius() {
 }
 
 glm::mat4 GameObject::getModel() {
+   //return this->Model;
    glm::mat4 model = glm::translate(position);
    
    // Ryan's curvy track model transforms

@@ -12,7 +12,7 @@
 #include "main.h"
 #include <glm/ext.hpp>
 
-#define VISIBLE_TRACKS 90
+#define VISIBLE_TRACKS 200
 
 // Initialization
 TrackManager::TrackManager(State *world, GameObject *player_in) {
@@ -21,8 +21,7 @@ TrackManager::TrackManager(State *world, GameObject *player_in) {
    // NOTE:
    // Current track is 27.5 units long
    for (int i = 0; i<VISIBLE_TRACKS; i++) {
-      TrackPhysicsComponent *track_physics = new TrackPhysicsComponent();
-      GameObject *track = new GameObject(ModelRenderer::load("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"), track_physics);
+      GameObject *track = new GameObject(ModelRenderer::load("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
       track->setPosition(nextPosition(next_track_number));
       world->addObject(track);
@@ -37,8 +36,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
    // If entering the next track segment
    if (movement->getLongPos() >= 1.0f || first) {
       first = false;
-      TrackPhysicsComponent *track_physics = new TrackPhysicsComponent();
-      GameObject *track = new GameObject(ModelRenderer::load("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"), track_physics);
+      GameObject *track = new GameObject(ModelRenderer::load("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
       track->setPosition(nextPosition(next_track_number));
       world->addObject(track);

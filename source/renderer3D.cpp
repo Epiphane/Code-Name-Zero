@@ -21,7 +21,7 @@ GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos, Renderer3D:
 GLuint Renderer3D::uAColor, Renderer3D::uDColor, Renderer3D::uSColor;
 GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
 GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
-std::unordered_map<Renderer3D *, std::vector<glm::mat4>> Renderer3D::renderers;
+std::vector<Renderer3D *> Renderer3D::renderers;
 VBO Renderer3D::rendererMatrices(ArrayBuffer);
 
 bool Renderer3D::initialized = false;
@@ -60,24 +60,25 @@ Renderer3D::Renderer3D(bool isClone) : Renderer(0), elements(0), numMaterials(0)
    GLenum error = glGetError();
    assert(error == 0);
 
-   renderers.emplace(this, std::vector<glm::mat4>());
+   renderers.push_back(this);
+   batch.clear();
 };
 
 void Renderer3D::update() {
-   std::unordered_map<Renderer3D *, std::vector<glm::mat4>>::iterator it;
+   std::vector<Renderer3D *>::iterator it;
    for (it = renderers.begin(); it != renderers.end(); it++) {
-      it->first->batchRender(it->second);
-      it->second.clear();
+      (*it)->batchRender();
    }
 }
 
 void Renderer3D::render(glm::mat4 Model) {
-   renderers[this].push_back(renderer_getCurrentModel() * Model);
+   batch.push_back(renderer_getCurrentModel() * Model);
 }
 
-void Renderer3D::batchRender(std::vector<glm::mat4> models) {
-   if (models.size() == 0)
+void Renderer3D::batchRender() {
+   if (batch.size() == 0) {
       return;
+   }
 
    glUseProgram(program);
 
@@ -133,7 +134,7 @@ void Renderer3D::batchRender(std::vector<glm::mat4> models) {
       DEBUG_LOG("WARNING: Rendering an object with 0 elements");
    
    // Send all matrices
-   rendererMatrices.bufferData(sizeof(glm::mat4) * models.size(), (void *)&models[0], GL_STATIC_DRAW);
+   rendererMatrices.bufferData(sizeof(glm::mat4) * batch.size(), (void *)&batch[0], GL_STREAM_DRAW);
    rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX    , 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)0);
    glVertexAttribDivisor(LOCATION_MODEL_MATRIX    , 1);
    rendererMatrices.attribPointer(LOCATION_MODEL_MATRIX + 1, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *)(sizeof(float) * 4));
@@ -144,18 +145,25 @@ void Renderer3D::batchRender(std::vector<glm::mat4> models) {
    glVertexAttribDivisor(LOCATION_MODEL_MATRIX + 3, 1);
 
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[b_index]);
-   glDrawElementsInstanced(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0, models.size());
+   glDrawElementsInstanced(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0, batch.size());
 
    // Cleanup
    glDisableVertexAttribArray(LOCATION_POSITION);
    glDisableVertexAttribArray(LOCATION_NORMAL);
    glDisableVertexAttribArray(LOCATION_UV);
    glDisableVertexAttribArray(LOCATION_MATERIAL);
+   glDisableVertexAttribArray(LOCATION_MODEL_MATRIX    );
+   glDisableVertexAttribArray(LOCATION_MODEL_MATRIX + 1);
+   glDisableVertexAttribArray(LOCATION_MODEL_MATRIX + 2);
+   glDisableVertexAttribArray(LOCATION_MODEL_MATRIX + 3);
 
+   
    glUseProgram(0);
 
-   GLenum error = glGetError();
-   assert(error == 0);
+   //GLenum error = glGetError();
+   //assert(error == 0);
+
+   batch.clear();
 }
 
 void Renderer3D::setMaterials(std::string baseDir, const std::vector<tinyobj::material_t>& data) {
