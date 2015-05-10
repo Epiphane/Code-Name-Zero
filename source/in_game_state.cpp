@@ -111,10 +111,14 @@ void InGameState::render(float dt) {
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
    static int blurRate = 0;
+   static float playerPreviousSpeed = 0;
 
    if (!DEBUG) {
       MovementComponent *playMove = (MovementComponent *)player->getPhysics();
-	  blurRate = (glm::length(playMove->getSpeed()) / 10.0f + playMove->getAccel().z * 60.0f + 9 * blurRate) / 10;
+	  blurRate = (playMove->getVelocity() / 50.0f + (playMove->getVelocity() - playerPreviousSpeed) * 1.0f + 9 * blurRate) / 10;
+	  playerPreviousSpeed = playMove->getVelocity();
+	  // Old vector based blur rate
+//	  blurRate = (glm::length(playMove->getSpeed()) / 10.0f + playMove->getAccel().z * 60.0f + 9 * blurRate) / 10;
    }
    else {
       blurRate = 0;
