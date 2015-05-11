@@ -15,7 +15,7 @@
 GameObject::GameObject(GraphicsComponent *g) : GameObject(g, NULL, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p) : GameObject(g, p, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i) : GameObject(g, p, i, NULL) {};
-GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : remove(false), position(glm::vec3(0, 0, 0)), scale(glm::vec3(0, 0, 0)), rotation(glm::vec3(0, 0, 0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c) {
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : remove(false), position(glm::vec3(0, 0, 0)), scale(glm::vec3(1, 1, 1)), rotation(glm::vec3(0, 0, 0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c) {
    children.clear();
 
    setBounds(g->getBounds());
@@ -50,6 +50,7 @@ glm::mat4 GameObject::getModel() {
    model *= glm::rotate(-rotation.x, 1.0f, 0.0f, 0.0f); // Pitch
    model *= glm::rotate(rotation.y, 0.0f, 1.0f, 0.0f); // Yaw
 
+   model *= glm::scale(getScale());
    /*
    MovementComponent *movement = dynamic_cast<MovementComponent *>(physics);
    if (movement != nullptr) {
