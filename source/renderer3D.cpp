@@ -109,7 +109,7 @@ void Renderer3D::batchRender() {
    glm::vec3 camPos = camera_getPosition();
 
 //   glUniform3f(uLightPos, 50, 70, -533);
-   glUniform3f(uLightPos, camPos.x + 10, camPos.y + 20, camPos.z + 100);
+   glUniform3f(uLightPos, camPos.x + 10, camPos.y + 70, camPos.z + 100);
    glUniform3f(uCameraPos, camPos.x, camPos.y, camPos.z);
 
    // Bind attributes...
