@@ -14,9 +14,12 @@
 #include "HUD.h"
 #include "track_manager.h"
 
+class ShadowMap;
+
 class InGameState : public State {
 private:
    GameObject *player;
+   ShadowMap *shadowMap;
    int target_number;
    Music *soundtrack;
    TrackManager *track_manager;
@@ -25,6 +28,7 @@ private:
    
 public:
    InGameState();
+   ~InGameState();
    
    GameObject *getPlayer() { return player; }
    Music *getSoundtrack() { return soundtrack; }
@@ -38,5 +42,7 @@ public:
    
    void beat(Beat *beat);
 };
+
+glm::vec3 getPlayerPosition();
 
 #endif /* defined(__Project__in_game_state__) */

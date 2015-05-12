@@ -53,6 +53,7 @@ private:
    static GLuint uSColor, uShine;
    static GLuint aPosition, aNormal;
    static GLuint uTexScale, uTexUnits, uHasTextures;
+   static GLuint uShadowView, uShadowProj, uShadowMap;
    
    /* Dirty bits */
    bool _d_buffers[NUM_BUFFERS];

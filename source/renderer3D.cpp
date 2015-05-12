@@ -15,12 +15,17 @@
 #include "texture.h"
 #include "renderer.h"
 #include "renderer3D.h"
+#include "in_game_state.h"
+
+#include <glm/gtc/type_ptr.hpp>
 
 GLuint Renderer3D::program, Renderer3D::uWinScale, Renderer3D::uProj;
 GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos, Renderer3D::uCameraPos;
 GLuint Renderer3D::uAColor, Renderer3D::uDColor, Renderer3D::uSColor;
 GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
 GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
+// TODO Make Shadows have its own Renderer so these aren't necessary
+GLuint Renderer3D::uShadowView, Renderer3D::uShadowProj, Renderer3D::uShadowMap;
 std::vector<Renderer3D *> Renderer3D::renderers;
 VBO Renderer3D::rendererMatrices(ArrayBuffer);
 
@@ -40,6 +45,9 @@ void Renderer3D::init() {
    uTexScale = glGetUniformLocation(program, "uTexScale");
    uHasTextures = glGetUniformLocation(program, "uHasTextures");
    uCameraPos = glGetUniformLocation(program, "uCameraPos");
+   uShadowProj = glGetUniformLocation(program, "uShadowProj");
+   uShadowView = glGetUniformLocation(program, "uShadowView");
+   uShadowMap = glGetUniformLocation(program, "uShadowMap");
 
    rendererMatrices.init();
 
@@ -87,9 +95,37 @@ void Renderer3D::batchRender() {
       glUniform2f(uWinScale, (float)w_height / w_width, 1);
    else
       glUniform2f(uWinScale, 1, (float)w_width / w_height);
+   
+   // LIGHT POSITION. HARDCODED. YEE BREH
+   glm::vec3 camPos = camera_getPosition();
+   glm::vec3 playerPos = getPlayerPosition();
+   glm::vec3 lightPos = glm::vec3(playerPos.x -5.0f, playerPos.y + 10.0f, playerPos.z);
+   
+   glm::mat4 shadowView = glm::lookAt(lightPos + playerPos, glm::vec3(playerPos), glm::vec3(0.0f, 1.0f, 0.0f));
+   /*(left, right, bottom, top, zNear, zFar) changes 'dimensions' of shadow map*/
+   glm::mat4 shadowProj = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, -20.0f, 20.0f);
+   // Bias matrix to make window coordinates and texture coordinates cooperate.
+   glm::mat4 biasMatrix(0.5, 0.0, 0.0, 0.0,
+                        0.0, 0.5, 0.0, 0.0,
+                        0.0, 0.0, 0.5, 0.0,
+                        0.5, 0.5, 0.5, 1.0);
 
    glm::mat4 View = camera_getMatrix();
    glm::mat4 Proj = renderer_getProjection();
+   
+   if (isShadowMapRender) {
+      View = shadowView;
+      Proj = shadowProj;
+   } else {
+      shadowProj = biasMatrix * shadowProj;
+   }
+   
+   // Learn matrix pointers from the pro, scrub
+   glUniformMatrix4fv(uShadowView, 1, GL_FALSE, glm::value_ptr(shadowView));
+   glUniformMatrix4fv(uShadowProj, 1, GL_FALSE, glm::value_ptr(shadowProj));
+   // Shadow Texture, dedicated to 1
+   glUniform1i(uShadowMap, 1);
+   
    glUniformMatrix4fv(uView, 1, GL_FALSE, &View[0][0]);
    glUniformMatrix4fv(uProj, 1, GL_FALSE, &Proj[0][0]);
 
@@ -105,11 +141,8 @@ void Renderer3D::batchRender() {
       glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
       glUniform1i(uTexUnits, 0);
    }
-
-   glm::vec3 camPos = camera_getPosition();
-
-//   glUniform3f(uLightPos, 50, 70, -533);
-   glUniform3f(uLightPos, camPos.x + 10, camPos.y + 20, camPos.z + 100);
+   
+   glUniform3f(uLightPos, lightPos.x, lightPos.y, lightPos.z);
    glUniform3f(uCameraPos, camPos.x, camPos.y, camPos.z);
 
    // Bind attributes...
@@ -156,7 +189,6 @@ void Renderer3D::batchRender() {
    glDisableVertexAttribArray(LOCATION_MODEL_MATRIX + 2);
    glDisableVertexAttribArray(LOCATION_MODEL_MATRIX + 3);
 
-   
    glUseProgram(0);
 
    //GLenum error = glGetError();

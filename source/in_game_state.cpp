@@ -20,6 +20,7 @@
 #include "rendererDebug.h"
 #include "main.h"
 #include "track_manager.h"
+#include "shadowMap.h"
 
 // Farthest Z value of track
 const float track_piece_length = 30.005f;
@@ -28,6 +29,10 @@ float track_length = 0.0f;
 GameObject *playerObj;
 int currentPlayerShip = 0;
 std::vector<GraphicsComponent *> ships;
+
+glm::vec3 getPlayerPosition() {
+   return playerObj->getPosition();
+}
 
 void switchModels() {
    currentPlayerShip = (currentPlayerShip + 1) % ships.size();
@@ -76,6 +81,12 @@ InGameState::InGameState() {
    soundtrack->play();
    
    hud = new HUD();
+   shadowMap = new ShadowMap;
+   shadowMap->init(1024);
+}
+
+InGameState::~InGameState() {
+   delete shadowMap;
 }
 
 void InGameState::send(std::string message, void *data) {
@@ -95,6 +106,17 @@ void InGameState::update(float dt) {
 
 void InGameState::render(float dt) {
    INIT_BENCHMARK
+   
+   // Render Shadows
+   shadowMap->enable();
+   isShadowMapRender = true;
+   State::render(dt);
+   isShadowMapRender = false;
+   shadowMap->disable();
+   
+   // Bind Shadow map texture as active
+   glActiveTexture(GL_TEXTURE1);
+   glBindTexture(GL_TEXTURE_2D, shadowMap->getTexID());
 
    // Turn on frame buffer
    glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());

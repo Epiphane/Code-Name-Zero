@@ -23,6 +23,9 @@ uniform int uShadeModel;
 uniform int uShowNormal;
 
 out vec4 fragColor;
+in vec4 vShadowCoord;
+
+uniform sampler2DShadow uShadowMap;
 
 void main() {
    vec3 aColor = vec3(0);
@@ -32,6 +35,13 @@ void main() {
    vec3 lightVector = normalize(vLightPos - vWorldSpace.xyz);
    vec3 cameraVec = normalize(vCameraVec);
    
+   float Id = max(dot(vNormal, lightVector), 0.0f);
+   
+   // Calculate a visibility value
+   float bias = 0.005 * tan(acos(Id));
+   bias = clamp(bias, 0.0, 0.01);
+   float visibility = texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias));
+   
    if (vMaterial < 0) {
       // Placeholder: Basic metal
       aColor = vec3(0.15, 0.15, 0.15);
@@ -39,10 +49,9 @@ void main() {
       sColor = vec3(0.14, 0.14, 0.14);
       shine = 76.8;
 	  
-	  float Id = max(dot(vNormal, lightVector), 0.0f);
 	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
 	  
-	  fragColor = vec4(Is * sColor + Id * dColor + aColor, 1);
+	  fragColor = vec4(Is * sColor + Id * dColor * visibility + aColor, 1);
 //	  fragColor = vec4(Id * dColor + aColor, 1);
    }
    else {
@@ -57,16 +66,16 @@ void main() {
 //         fragColor = texture(uTexUnits, vec3(UV, vMaterial));
 		vec3 textureColor = texture(uTexUnits, vec3(UV, vMaterial)).xyz;
 
-         float Id = max(dot(vNormal, lightVector), 0.0f);
+         //float Id = max(dot(vNormal, lightVector), 0.0f);
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
          
-         fragColor = vec4(Is * vec3(1) + Id * textureColor + textureColor, 1);
+         fragColor = vec4(Is * vec3(1) + Id * textureColor * visibility + textureColor, 1);
       }
       else {
-         float Id = max(dot(vNormal, lightVector), 0.0f);
+         //float Id = max(dot(vNormal, lightVector), 0.0f);
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
          
-         fragColor = vec4(Is * sColor + Id * dColor + aColor, 1);
+         fragColor = vec4(Is * sColor + Id * dColor * visibility + aColor, 1);
 //         fragColor = vec4(Id * dColor + aColor, 1);
       }
       

@@ -11,6 +11,9 @@ uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform vec3 uCameraPos;
 uniform vec3 uLightPos;
+// Shadow pass things
+uniform mat4 uShadowView;
+uniform mat4 uShadowProj;
 
 flat out int vMaterial;
 out vec2 vUV;
@@ -18,6 +21,8 @@ out vec3 vNormal;
 out vec4 vWorldSpace;
 out vec3 vCameraVec;
 out vec3 vLightPos;
+// Shadow pass things
+out vec4 vShadowCoord;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -33,4 +38,6 @@ void main()
    vMaterial = int(aMaterial);
    vUV = aUV;
    vNormal = normalize((aModelMatrix * vec4(aNormal, 0)).xyz);
+   
+   vShadowCoord = uShadowProj * uShadowView * uModelMatrix * aPosition;
 }

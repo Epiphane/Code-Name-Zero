@@ -13,6 +13,7 @@ set(HEADERS
    renderer.h
    texture.h
    shader.hpp
+   shadowMap.h
 
    HUD.h
 
@@ -47,6 +48,7 @@ set(SOURCES
    renderer.cpp
    texture.cpp
    shader.cpp
+   shadowMap.cpp
 
    HUD.cpp
 
@@ -88,4 +90,6 @@ set(SHADERS
    TextVertex.glsl
    PostProcFragment.glsl
    PostProcVertex.glsl
+   ShadowMapFragment.glsl
+   ShadowMapVertex.glsl
 )

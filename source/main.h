@@ -55,6 +55,7 @@
    }
 
 extern bool DEBUG;
+extern bool isShadowMapRender;
 const extern int w_width;
 const extern int w_height;
 
@@ -67,6 +68,7 @@ State *getCurrentState();
 
 extern float randFloat(float l, float h);
 extern glm::vec3 randPoint(float r);
+
 
 void resize_obj(std::vector<tinyobj::shape_t> &shapes);
 

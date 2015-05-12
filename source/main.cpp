@@ -36,6 +36,7 @@ void toggleDebug() {
 }
 
 bool showDebugLog = true;
+bool isShadowMapRender = false;
 void setDebugLog(bool enabled) { showDebugLog = enabled; }
 
 State *currentState = NULL;
