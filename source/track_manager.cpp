@@ -39,7 +39,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
    // Get a reference to the movement component
    MovementComponent *movement = dynamic_cast<MovementComponent *>(player->getPhysics());
    // If entering the next track segment
-   if (movement->getLongPos() >= 1.0f || first) {
+   while (movement->getLongPos() >= 1.0f || first) {
       first = false;
       GameObject *track = new GameObject(ModelRenderer::load("models/Track/RGB_TrackOnly_Curved.obj", "models/Track/"));
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
@@ -66,7 +66,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
       movement->setDirection(nextDirection(curTrack));
       glm::vec3 carOffset = glm::normalize(glm::cross(nextSlideDirection(curTrack),nextDirection(curTrack)));
       movement->setTrackPosition(nextPosition(curTrack) + carOffset);
-      movement->setLongPos(-1.0f);
+      movement->setLongPos(movement->getLongPos()-1.0f);
       player->setRotation(glm::vec3(nextPitchAngle(curTrack), nextYawAngle(curTrack), nextRollAngle(curTrack)));
 
       next_track_number++;
@@ -75,7 +75,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
 
 // This function defines the track with functions for the x, y, and z component of the track.  Functions must be smoothe and continuous.
 glm::vec3 TrackManager::nextPosition(int track_number) {
-   float curviness = 0.5;
+   float curviness = 0.0;
    float x = TRACK_LENGTH * curviness * cos(track_number * 0.1f) + TRACK_LENGTH * curviness * cos(track_number * 0.15f + 0.5f);
    float y = TRACK_LENGTH * curviness * sin(track_number * 0.05f) + TRACK_LENGTH * curviness * sin(track_number * 0.1f);
    float z = TRACK_LENGTH * -track_number; // Fine if track is mostly straigh, otherwise need to actually do math;

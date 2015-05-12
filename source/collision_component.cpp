@@ -14,20 +14,19 @@
 #include "game_object.h"
 
 
-#define ACCELERATION_AMT 10.0f
-#define DECELERATION_AMT 8.0f
+#define ACCELERATION_AMT 0.4f
 
 void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    ObstacleCollisionComponent *occ = dynamic_cast<ObstacleCollisionComponent *>(other->getCollision());
    
-   MovementComponent *playerMovement = dynamic_cast<MovementComponent *>(player->getPhysics());
+   PlayerPhysicsComponent *playerMovement = dynamic_cast<PlayerPhysicsComponent *>(player->getPhysics());
    
    if (!occ->hasBeenHit()) {
       if (occ->shouldAcceleratePlayer()) {
-         playerMovement->setVelocity(playerMovement->getVelocity() + ACCELERATION_AMT);
+         playerMovement->accelerate(ACCELERATION_AMT);
          printf("Accelerated!");
       } else {
-         playerMovement->setVelocity(std::max(playerMovement->getVelocity() - DECELERATION_AMT, 10.0f));
+         playerMovement->decelerate(ACCELERATION_AMT);
          printf("Decelerated.");
       }
       printf(" New velocity: %f\n", playerMovement->getVelocity());
