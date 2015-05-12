@@ -236,9 +236,9 @@ void InGameState::cleanupObstacles() {
 
 //internal only helper function
 Track getTrackFromLatPos(float latPos) {
-   if (latPos < -0.3f) {
+   if (latPos < -0.4f) {
       return BLUE;
-   } else if (latPos >= -0.3f && latPos <= 0.3f) {
+   } else if (latPos >= -0.4f && latPos <= 0.4f) {
       return GREEN;
    } else {
       return RED;
