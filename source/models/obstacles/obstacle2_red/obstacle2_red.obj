@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib obstacle2.mtl
+mtllib obstacle2_red.mtl
 v 0.000000 -0.493844 -0.078217
 v 0.024170 -0.493844 -0.074389
 v 0.045975 -0.493844 -0.063279
