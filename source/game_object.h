@@ -50,6 +50,9 @@ public:
    GameObject(GraphicsComponent  *graphics, 
               PhysicsComponent   *physics);
    GameObject(GraphicsComponent  *graphics);
+   //for stationary objects
+   GameObject(GraphicsComponent *graphics,
+              CollisionComponent *collision);
    
    bool isDead() { return remove; }
    void die()    { remove = true; }
@@ -82,7 +85,7 @@ public:
       memcpy(&bounds, _b, sizeof(Bounds));
    }
    
-   void collide(GameObject *other);
+   //void collide(GameObject *other);
    void update(State *world, float dt);
    void render();
    void _debug_render();

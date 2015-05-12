@@ -14,28 +14,15 @@
 #include "game_object.h"
 
 void PlayerCollisionComponent::collide(GameObject *obj, GameObject *other) {
-   /*
-   MovementComponent *movement = dynamic_cast<MovementComponent *>(other->getPhysics());
-   if (movement != NULL) {
-      glm::vec3 direction = movement->getDirection();
-      
-      float angle = MATH_PI / 2;
-      if (direction.z != 0) {
-         angle = atan(direction.x / direction.z);
-         if (direction.z <= 0)
-            angle += MATH_PI;
+   
+}
+
+void ObstacleCollisionComponent::collide(GameObject *thisObj, GameObject *otherObj) {
+   //if other object is a player object (if its CollisionComponent is a PlayerCollisionComponent)
+   //then set this as hit
+   if (otherObj->getCollision() != nullptr) {
+      if (dynamic_cast<PlayerCollisionComponent *>(otherObj->getCollision())) {
+         printf("I'm an ObjectCollisionComponent and I just collided with a player\n");
       }
-      
-      other->transform(glm::rotate(angle * RADIANS_TO_DEG, glm::vec3(0, 1, 0)));
    }
-   
-   other->setCollision(NULL);
-   other->setPhysics(NULL);
-   other->setInput(NULL);
-   other->getGraphics()->getRenderer(0)->mat = MATERIAL_GRASS;
-   
-   audio_play_sound("./audio/goal.mp3");
-   
-   score ++;
-   */
 }

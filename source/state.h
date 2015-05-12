@@ -37,7 +37,8 @@ public:
    
    void addObject(GameObject *obj);
    void removeObject(GameObject *obj);
-   void collide(GameObject *obj);
+   //InGameState defines collide
+   virtual void collide(GameObject *obj, GameObject *other) {};
 };
 
 #endif /* defined(__Project__state__) */

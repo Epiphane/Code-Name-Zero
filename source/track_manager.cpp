@@ -6,13 +6,15 @@
 //
 //
 
+#include <glm/ext.hpp>
+
 #include "track_manager.h"
 #include "game_object.h"
 #include "state.h"
 #include "main.h"
-#include <glm/ext.hpp>
 
 #define VISIBLE_TRACKS 200
+
 
 // Initialization
 TrackManager::TrackManager(State *world, GameObject *player_in) {
@@ -31,6 +33,8 @@ TrackManager::TrackManager(State *world, GameObject *player_in) {
 }
 
 void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
+   static int tracksSinceSpawn = 0;
+   
    // Get a reference to the movement component
    MovementComponent *movement = dynamic_cast<MovementComponent *>(player->getPhysics());
    // If entering the next track segment
@@ -40,6 +44,14 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
       track->setPosition(nextPosition(next_track_number));
       world->addObject(track);
+      
+      //add an object every few tracks
+      if (tracksSinceSpawn++ == 25) {
+         addRandomObstacle(dynamic_cast<InGameState *>(world), track->getPosition());
+         tracksSinceSpawn = 0;
+      }
+      
+      
       track_segments.push_back(track);
 
       // Killing old segments 
@@ -111,3 +123,18 @@ glm::vec3 TrackManager::nextSlideDirection(int track_number) {
 
    return glm::normalize(slide);
 }
+
+//internal-only helper funct
+Track getRandomTrack() {
+   int res = rand() % 3;
+   return Track(res);
+}
+
+//add an obstacle with random color in one of the three Tracks
+void TrackManager::addRandomObstacle(InGameState *world, glm::vec3 trackPos) {
+   Track location = getRandomTrack();
+   
+   GameObject *obstacle = world->addObstacle(trackPos + glm::vec3((location - 1) * 3.8f, 1.0, 0), getRandomTrack(), getRandomTrack());
+   obstacle->transform(nextRotate(next_track_number) * glm::scale(1.5f, 1.5f, 1.5f));
+}
+

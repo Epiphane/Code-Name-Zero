@@ -22,6 +22,8 @@
 #include "track_manager.h"
 #include "shadowMap.h"
 
+#define Z_EPSILON 5.0
+
 // Farthest Z value of track
 const float track_piece_length = 30.005f;
 float track_length = 0.0f;
@@ -38,6 +40,7 @@ float getPlayerLatPosition() {
    MovementComponent *movement = dynamic_cast<MovementComponent *>(playerObj->getPhysics());
    return movement->getLatPos();
 }
+
 
 void switchModels() {
    currentPlayerShip = (currentPlayerShip + 1) % ships.size();
@@ -69,8 +72,8 @@ InGameState::InGameState() {
    ships.push_back(ModelRenderer::load(model + "model.obj", model));
    
    playerObj = player = new GameObject(ships[currentPlayerShip], movement, i, new PlayerCollisionComponent);
-   player->setType(OBJECT_PLAYER);
-   player->addCollision(OBJECT_TARGET);
+  // player->setType(OBJECT_PLAYER);
+   //player->addCollision(OBJECT_TARGET);
    player->setPosition(glm::vec3(0, 0, 0));
    movement->setSpeed(camera_getLookAt()*100.0f);
    addObject(player);
@@ -86,12 +89,20 @@ InGameState::InGameState() {
    soundtrack->play();
    
    hud = new HUD();
+   
+   //initialize the lists of obstacles
+   obstacleLists = std::vector<std::list<GameObject *>>();
+   for (int i = 0; i < NUM_TRACKS; i++) {
+      obstacleLists.push_back(std::list<GameObject *>());
+   }
    shadowMap = new ShadowMap;
    shadowMap->init(1024);
 }
 
 InGameState::~InGameState() {
    delete shadowMap;
+   
+
 }
 
 void InGameState::send(std::string message, void *data) {
@@ -107,6 +118,8 @@ void InGameState::update(float dt) {
    hud->update(dt, this);
 
    track_manager->update(dt, player->getPosition(), this);
+   
+   cleanupObstacles();
 }
 
 void InGameState::render(float dt) {
@@ -159,4 +172,52 @@ void InGameState::render(float dt) {
    //hud->render(dt);
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
+}
+
+//make stuff happen here
+void InGameState::collide(GameObject *player, GameObject *other) {
+   printf("i'm doing something\n");
+}
+
+//add an obstacle to the world.
+//params: a vec3 for its position, which Track it's on, and which color it is
+GameObject *InGameState::addObstacle(glm::vec3 position, Track track, Track color) {
+   std::string extension;
+   //set up a new obstacle object
+   //todo: give it a collision component (and physics component)?
+   
+   //Switching materials is pretty difficult, so load 3 meshes instead
+   switch (color) {
+      case BLUE:
+         extension = "blue";
+         break;
+      case GREEN:
+         extension = "green";
+         break;
+      case RED:
+         extension = "red";
+         break;
+   }
+   std::string baseDir = "models/obstacles/obstacle2_" + extension + "/";
+   GameObject *obstacle = new GameObject(ModelRenderer::load(baseDir + "obstacle2_" + extension + ".obj", baseDir), new ObstacleCollisionComponent());
+
+   //set its position and let the world know it exists
+   addObject(obstacle);
+   obstacle->setPosition(position);
+   
+   obstacleLists[track].push_back(obstacle);
+   
+   return obstacle;
+}
+
+//clear the lists of any obstacles behind the player
+void InGameState::cleanupObstacles() {
+   for (int i = 0; i < NUM_TRACKS; i++) {
+      if (!obstacleLists[i].empty()) {
+         if (obstacleLists[i].front()->getPosition().z > player->getPosition().z + Z_EPSILON) {
+            obstacleLists[i].front()->die();
+            obstacleLists[i].pop_front();
+         }
+      }
+   }
 }

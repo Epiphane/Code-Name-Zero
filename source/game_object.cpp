@@ -15,6 +15,7 @@
 GameObject::GameObject(GraphicsComponent *g) : GameObject(g, NULL, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p) : GameObject(g, p, NULL, NULL) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i) : GameObject(g, p, i, NULL) {};
+GameObject::GameObject(GraphicsComponent *g, CollisionComponent *c) : GameObject (g, NULL, NULL, c) {};
 GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : remove(false), position(glm::vec3(0, 0, 0)), scale(glm::vec3(1, 1, 1)), rotation(glm::vec3(0, 0, 0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c) {
    children.clear();
 
@@ -67,7 +68,7 @@ glm::mat4 GameObject::getModel() {
    
    return model;
 }
-
+/*
 void GameObject::collide(GameObject *other) {
    if ((collidesWith & other->type) == 0)
       return;
@@ -85,7 +86,7 @@ void GameObject::collide(GameObject *other) {
       // Collided
       collision->collide(this, other);
    }
-}
+}*/
 
 void GameObject::update(State *world, float dt) {
    if (input)
@@ -93,9 +94,6 @@ void GameObject::update(State *world, float dt) {
 
    if (physics)
       physics->update(this, world, dt);
-
-   if (collision)
-      world->collide(this);
 }
 
 void GameObject::render() {

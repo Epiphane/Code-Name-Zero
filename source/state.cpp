@@ -17,18 +17,20 @@ void State::pause() {}
 
 void State::update(float dt) {
    INIT_BENCHMARK
+   //call each object's update method and clean up dead objects
+   
    std::vector<GameObject *>::iterator iterator = objects.begin();
    while(iterator < objects.end()) {
       GameObject *obj = *iterator;
       obj->update(this, dt);
-      if (obj->getCollision())
-         this->collide(*iterator);
-      
       if (obj->isDead())
          iterator = objects.erase(iterator);
       else
          iterator ++;
    }
+   
+   //REMOVE THIS
+   std::cout << "Number of objects total is " << objects.size() << std::endl;
    
    camera_update(dt);
    
@@ -136,13 +138,4 @@ void State::addObject(GameObject *obj) {
 
 void State::removeObject(GameObject *obj) {
    obj->die();
-}
-
-void State::collide(GameObject *obj) {
-   std::vector<GameObject *>::iterator iterator;
-   for(iterator = objects.begin(); iterator < objects.end(); iterator ++) {
-      if (*iterator != obj) {
-         obj->collide(*iterator);
-      }
-   }
 }

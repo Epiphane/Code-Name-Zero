@@ -22,7 +22,19 @@ public:
    PlayerCollisionComponent() : score(0) {};
    
    int score;
-   void collide(GameObject *obj, GameObject *other);
+   void collide(GameObject *thisObj, GameObject *other);
+};
+
+
+class ObstacleCollisionComponent : public CollisionComponent {
+private:
+   bool hit;
+public:
+   ObstacleCollisionComponent() : hit(false) {};
+   
+   void setHit(bool hasBeenHit) { hit = hasBeenHit; };
+   bool hasBeenHit() { return hit; };
+   void collide(GameObject *thisObj, GameObject *other);
 };
 
 #endif /* defined(__Project__collision_component__) */

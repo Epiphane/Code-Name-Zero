@@ -13,9 +13,15 @@
 #include <glm/ext.hpp>
 
 #include "game_object.h"
+#include "in_game_state.h"
 
 #define TRACK_SCALE 0.2f
 #define TRACK_LENGTH 27.5f * TRACK_SCALE
+
+#define TRACK_OFFSET_BLUE -3.8
+#define TRACK_OFFSET_GREEN 0
+#define TRACK_OFFSET_RED 3.8
+
 
 class TrackManager {
 private:
@@ -25,6 +31,8 @@ private:
    int next_track_number = 0;
    glm::vec3 slide_direction;
    bool first = true;
+   //add a random obstacle based on the position of a track
+   void addRandomObstacle(InGameState *world, glm::vec3 trackPos);
 
 public:
    TrackManager(State *world, GameObject *player_in);
