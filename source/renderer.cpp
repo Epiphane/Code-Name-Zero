@@ -91,7 +91,7 @@ void shaders_init() {
    glGenVertexArrays(1, &VertexArrayID);
    glBindVertexArray(VertexArrayID);
    
-   Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 3600.0f);
+   Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 400.0f);
    currentMVP = glm::mat4(1.0f);
    MatrixStack.empty();
    

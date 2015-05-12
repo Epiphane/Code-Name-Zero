@@ -163,6 +163,7 @@ void Renderer3D::batchRender() {
       glBindTexture(GL_TEXTURE_2D_ARRAY, texture);
       glUniform1i(uTexUnits, 0);
    }
+   
    glUniform3f(uLightPos, lightPos.x, lightPos.y, lightPos.z);
    glUniform3f(uCameraPos, camPos.x, camPos.y, camPos.z);
 

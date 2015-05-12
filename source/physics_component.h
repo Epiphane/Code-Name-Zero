@@ -20,10 +20,10 @@ public:
 
 class MovementComponent : public PhysicsComponent {
 private:
-   float velocity = 10.0f;
+   float velocity = 1.0f;
    glm::vec3 track_position;
    glm::vec3 slide;
-   float lat_position = 0, lat_destination = 0;
+   float lat_position = 0;
    glm::vec3 direction;
    float long_position = 0;
    glm::vec3 speed, accel;
@@ -42,24 +42,18 @@ public:
    glm::vec3 getDirection(){ return direction; }
    void setTrackPosition(glm::vec3 a){ track_position = a; }
    void setLongPos(float a){ long_position = a; }
-   void setLatPos(float pos, bool instant);
+   void setLatPos(float a){ lat_position = a; }
+   void changeLatPos(float a);
    float getLongPos(){ return long_position; }
    float getLatPos(){ return lat_position; }
    float getVelocity(){ return velocity; }
-#define MAX_VELOCITY 1000
-   void setVelocity(float a){ if (velocity < MAX_VELOCITY) { velocity = a; } else { velocity = MAX_VELOCITY; } };
+   void setVelocity(float a){ if (velocity < 2000) { velocity = a; } else { velocity = 1800; } };
 
 };
 
 class PlayerPhysicsComponent : public MovementComponent {
-private:
-   float accel, decel;
-   
 public:
    virtual void update(GameObject *obj, State *world, float dt);
-   
-   void accelerate(float length) { accel = length; }
-   void decelerate(float length) { decel = length; }
 };
 
 class TrackPhysicsComponent : public PhysicsComponent {

@@ -28,20 +28,20 @@ void PlayerInputComponent::update(GameObject *obj) {
       accel = glm::vec3(0);
       if (!DEBUG) {
          if (input_keyDown(GLFW_KEY_W)) {
-             accel.y -= PLAYER_SPEED;
-             accel.z += 1;
+            accel.y -= PLAYER_SPEED;
+            movement->setVelocity(movement->getVelocity() * 1.2);
          }
          if (input_keyDown(GLFW_KEY_S)) {
-             accel.y += PLAYER_SPEED;
-             accel.z -= 1;
+            accel.y += PLAYER_SPEED;
+            movement->setVelocity(movement->getVelocity() / 1.2);
          }
          if (input_keyDown(GLFW_KEY_A)) {
             accel.x -= PLAYER_SPEED;
-            movement->setLatPos(movement->getLatPos() - 1, false);
+            movement->changeLatPos(-1);
          }
          if (input_keyDown(GLFW_KEY_D)) {
             accel.x += PLAYER_SPEED;
-            movement->setLatPos(movement->getLatPos() + 1, false);
+            movement->changeLatPos(1);
          }
          if (input_keyDown(GLFW_KEY_Q)) {
             accel.z -= 1;
@@ -50,13 +50,13 @@ void PlayerInputComponent::update(GameObject *obj) {
             accel.z += 1;
          }
          if (input_keyDown(GLFW_KEY_Z)) {
-            movement->setLatPos(-1, false);
+            movement->setLatPos(-1);
          }
          if (input_keyDown(GLFW_KEY_X)) {
-            movement->setLatPos(0, false);
+            movement->setLatPos(0);
          }
          if (input_keyDown(GLFW_KEY_C)) {
-            movement->setLatPos(1, false);
+            movement->setLatPos(1);
          }
       }
       

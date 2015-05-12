@@ -16,9 +16,6 @@
 #include "track_manager.h"
 
 void MovementComponent::update(GameObject *obj, State *world, float dt) {
-   velocity += accel.z * 100 * dt;
-   if (velocity > 800) velocity = 800;
-   
    // Vehicle offsets from track
    glm::vec3 longOffset = direction * long_position * TRACK_LENGTH;
    glm::vec3 latOffset = slide * lat_position * 4.0f;
@@ -27,49 +24,81 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
    obj->setPosition(track_position + longOffset + latOffset);
 
    // Increment longitudinal position
-   long_position += dt * velocity / 10.0f;
+   long_position += dt * velocity;
 
-   // Update lateral position if we're easing to a new place
-   if (lat_position != lat_destination) {
-      lat_position += (lat_destination - lat_position) / 4.0f;
-   }
+   /* Previous physics
+   float sp = glm::length(speed) + accel.z;
+   glm::vec4 new_speed = glm::vec4(speed, 0);
+   new_speed = glm::rotate(accel.y * dt, 1.0f, 0.0f, 0.0f) * new_speed;
+   new_speed = glm::rotate(accel.x * dt, 0.0f, -1.0f, 0.0f) * new_speed;
+   speed = glm::normalize(glm::vec3(new_speed));
+   speed *= sp;
+   
+//   speed += accel * dt;
+   
+   glm::vec3 new_position = obj->getPosition() + speed * dt;
+   
+   obj->setPosition(new_position);
+   
+//   accel = glm::vec3(0);
+*/
 }
 
-void MovementComponent::setLatPos(float pos, bool instant) {
-   // Refine bounds
-   if (pos < -1.0f)
-      pos = -1.0f;
-   else if (pos > 1.0f)
-      pos = 1.0f;
-
-   if (instant) {
-      lat_position = lat_destination = pos;
+void MovementComponent::changeLatPos(float a) {
+   float max = 1.0;
+   float step = 0.1;
+   if (a < 0) {
+      if (lat_position <= -max) {
+         lat_position = -max;
+      }
+      else
+         lat_position -= step;
    }
-   else {
-      lat_destination = pos;
+   if (a > 0) {
+      if (lat_position >= max) {
+         lat_position = max;
+      }
+      else
+         lat_position += step;
    }
 }
 
 void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
-   if (accel > 0) {
-      accel -= dt;
-      setAccel(getAccel() + glm::vec3(0, 0, 1));
-   }
-   if (decel > 0) {
-      decel -= dt;
-      setAccel(getAccel() - glm::vec3(0, 0, 1));
-   }
-   
    MovementComponent::update(obj, world, dt);
    
    glm::vec3 new_position = obj->getPosition();
    glm::vec3 new_speed = getSpeed();
    
    // check if ship is going to go outside of track bounds
+//   if (new_position.x > 3.0f) {
+//      new_position.x = 3.0f;
+//   }
+//   if (new_position.x < -3.0f) {
+//      new_position.x = -3.0f;
+//   }
    if (new_position.y < 0.0f) {
       new_position.y = 0.0f;
       new_speed.y = 0;
    }
    
+//   float SPEED_LIMIT = 20;
+//   if (new_speed.x < -SPEED_LIMIT) {
+//      new_speed.x = -SPEED_LIMIT;
+//   }
+//   if (new_speed.x > SPEED_LIMIT) {
+//      new_speed.x = SPEED_LIMIT;
+//   }
+//   if (new_speed.y < -SPEED_LIMIT) {
+//      new_speed.y = -SPEED_LIMIT;
+//   }
+//   if (new_speed.y > SPEED_LIMIT) {
+//      new_speed.y = SPEED_LIMIT;
+//   }
+   
    setSpeed(new_speed);
+   //obj->setPosition(new_position);
 }
+
+//void TrackPhysicsComponent::update(GameObject *obj, State *world, float dt) {
+   
+//}

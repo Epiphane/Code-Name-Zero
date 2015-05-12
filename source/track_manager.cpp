@@ -66,7 +66,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
       movement->setDirection(nextDirection(curTrack));
       glm::vec3 carOffset = glm::normalize(glm::cross(nextSlideDirection(curTrack),nextDirection(curTrack)));
       movement->setTrackPosition(nextPosition(curTrack) + carOffset);
-      movement->setLongPos(movement->getLongPos()-0.5f);
+      movement->setLongPos(-0.5f);
       player->setRotation(glm::vec3(nextPitchAngle(curTrack), nextYawAngle(curTrack), nextRollAngle(curTrack)));
 
       next_track_number++;
@@ -75,7 +75,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
 
 // This function defines the track with functions for the x, y, and z component of the track.  Functions must be smoothe and continuous.
 glm::vec3 TrackManager::nextPosition(int track_number) {
-   float curviness = 0.0;
+   float curviness = 0.5;
    float x = TRACK_LENGTH * curviness * cos(track_number * 0.1f) + TRACK_LENGTH * curviness * cos(track_number * 0.15f + 0.5f);
    float y = TRACK_LENGTH * curviness * sin(track_number * 0.05f) + TRACK_LENGTH * curviness * sin(track_number * 0.1f);
    float z = TRACK_LENGTH * -track_number; // Fine if track is mostly straigh, otherwise need to actually do math;

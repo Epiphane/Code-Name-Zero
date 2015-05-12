@@ -101,7 +101,7 @@ void camera_update(float dt) {
       if (movement != NULL) {
          // Shake camera
          t += 0.01f;
-         double freq = movement->getVelocity() / 100.0f;
+         double freq = glm::length(movement->getSpeed()) / 100.0f;
          if (freq > 10.0f) freq = 10.0f;
          shake.SetFrequency(freq);
       }
