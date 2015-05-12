@@ -131,7 +131,8 @@ void Renderer3D::batchRender() {
    
    // Send Ship tint to shaders
    float lane = getPlayerLatPosition();
-   float colorIntensity = 0.4;
+   bool isShip = false; //TODO - figure out how to see if we're rendering the ship.
+   float colorIntensity = isShip ? 0.4f : 0.0f;
    float laneOffset = 0.40;
    
    if (lane <= -laneOffset) {
