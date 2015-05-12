@@ -44,5 +44,6 @@ public:
 };
 
 glm::vec3 getPlayerPosition();
+float getPlayerLatPosition();
 
 #endif /* defined(__Project__in_game_state__) */

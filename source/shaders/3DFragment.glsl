@@ -22,6 +22,8 @@ uniform sampler2DArray uTexUnits;
 uniform int uShadeModel;
 uniform int uShowNormal;
 
+uniform vec3 uShipTint;
+
 out vec4 fragColor;
 in vec4 vShadowCoord;
 
@@ -52,6 +54,7 @@ void main() {
 	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
 	  
 	  fragColor = vec4(Is * sColor + Id * dColor * visibility + aColor, 1);
+     fragColor += vec4(uShipTint, 1.0);
 //	  fragColor = vec4(Id * dColor + aColor, 1);
    }
    else {
@@ -70,12 +73,14 @@ void main() {
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
          
          fragColor = vec4(Is * vec3(1) + Id * textureColor * visibility + textureColor, 1);
+         fragColor += vec4(uShipTint, 1.0);
       }
       else {
          //float Id = max(dot(vNormal, lightVector), 0.0f);
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
          
          fragColor = vec4(Is * sColor + Id * dColor * visibility + aColor, 1);
+         fragColor += vec4(uShipTint, 1.0);
 //         fragColor = vec4(Id * dColor + aColor, 1);
       }
       

@@ -26,6 +26,8 @@ GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
 GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
 // TODO Make Shadows have its own Renderer so these aren't necessary
 GLuint Renderer3D::uShadowView, Renderer3D::uShadowProj, Renderer3D::uShadowMap;
+// Color GLuint for ship tint.
+GLuint Renderer3D::uShipTint;
 std::vector<Renderer3D *> Renderer3D::renderers;
 VBO Renderer3D::rendererMatrices(ArrayBuffer);
 
@@ -48,6 +50,7 @@ void Renderer3D::init() {
    uShadowProj = glGetUniformLocation(program, "uShadowProj");
    uShadowView = glGetUniformLocation(program, "uShadowView");
    uShadowMap = glGetUniformLocation(program, "uShadowMap");
+   uShipTint = glGetUniformLocation(program, "uShipTint");
 
    rendererMatrices.init();
 
@@ -125,6 +128,24 @@ void Renderer3D::batchRender() {
    glUniformMatrix4fv(uShadowProj, 1, GL_FALSE, glm::value_ptr(shadowProj));
    // Shadow Texture, dedicated to 1
    glUniform1i(uShadowMap, 1);
+   
+   // Send Ship tint to shaders
+   float lane = getPlayerLatPosition();
+   float colorIntensity = 0.4;
+   float laneOffset = 0.40;
+   
+   if (lane <= -laneOffset) {
+      // In left lane, blue is active color
+      glUniform3f(uShipTint, 0.0, 0.0, colorIntensity);
+   }
+   else if (lane >= laneOffset) {
+      // In right lane, red is active color
+      glUniform3f(uShipTint, colorIntensity, 0.0, 0.0);
+   }
+   else {
+      // In middle lane, green is active color
+      glUniform3f(uShipTint, 0.0, colorIntensity,0.0);
+   }
    
    glUniformMatrix4fv(uView, 1, GL_FALSE, &View[0][0]);
    glUniformMatrix4fv(uProj, 1, GL_FALSE, &Proj[0][0]);

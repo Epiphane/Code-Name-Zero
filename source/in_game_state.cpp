@@ -34,6 +34,11 @@ glm::vec3 getPlayerPosition() {
    return playerObj->getPosition();
 }
 
+float getPlayerLatPosition() {
+   MovementComponent *movement = dynamic_cast<MovementComponent *>(playerObj->getPhysics());
+   return movement->getLatPos();
+}
+
 void switchModels() {
    currentPlayerShip = (currentPlayerShip + 1) % ships.size();
    playerObj->setGraphics(ships[currentPlayerShip]);
@@ -110,6 +115,7 @@ void InGameState::render(float dt) {
    // Render Shadows
    shadowMap->enable();
    isShadowMapRender = true;
+   glClear(GL_DEPTH_BUFFER_BIT);
    State::render(dt);
    isShadowMapRender = false;
    shadowMap->disable();

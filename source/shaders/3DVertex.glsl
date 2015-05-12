@@ -14,6 +14,8 @@ uniform vec3 uLightPos;
 // Shadow pass things
 uniform mat4 uShadowView;
 uniform mat4 uShadowProj;
+// Ship tint
+uniform vec3 uShipTint;
 
 flat out int vMaterial;
 out vec2 vUV;
