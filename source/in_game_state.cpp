@@ -33,15 +33,10 @@ int currentPlayerShip = 0;
 std::vector<GraphicsComponent *> ships;
 
 
-glm::vec3 getPlayerPosition() {
-   return playerObj->getPosition();
-}
 
-float getPlayerLatPosition() {
-   MovementComponent *movement = dynamic_cast<MovementComponent *>(playerObj->getPhysics());
-   return movement->getLatPos();
-}
 
+glm::vec3 getPlayerPosition();
+float getPlayerLatPosition();
 Track getTrackFromLatPos(float latPos);
 
 void switchModels() {
@@ -248,4 +243,13 @@ Track getTrackFromLatPos(float latPos) {
    } else {
       return RED;
    }
+}
+
+float getPlayerLatPosition() {
+   MovementComponent *movement = dynamic_cast<MovementComponent *>(playerObj->getPhysics());
+   return movement->getLatPos();
+}
+
+glm::vec3 getPlayerPosition() {
+   return playerObj->getPosition();
 }
