@@ -32,6 +32,7 @@ GameObject *playerObj;
 int currentPlayerShip = 0;
 std::vector<GraphicsComponent *> ships;
 
+
 glm::vec3 getPlayerPosition() {
    return playerObj->getPosition();
 }
@@ -41,6 +42,7 @@ float getPlayerLatPosition() {
    return movement->getLatPos();
 }
 
+Track getTrackFromLatPos(float latPos);
 
 void switchModels() {
    currentPlayerShip = (currentPlayerShip + 1) % ships.size();
@@ -120,6 +122,11 @@ void InGameState::update(float dt) {
    track_manager->update(dt, player->getPosition(), this);
    
    cleanupObstacles();
+   
+   float latPos = dynamic_cast<MovementComponent *>(player->getPhysics())->getLatPos();
+   if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
+      collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
+   }
 }
 
 void InGameState::render(float dt) {
@@ -174,9 +181,17 @@ void InGameState::render(float dt) {
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }
 
-//make stuff happen here
+//this only checks if the player and object overlap in the z-dimension
+//in the player's current lane
 void InGameState::collide(GameObject *player, GameObject *other) {
-   printf("i'm doing something\n");
+   if (other->getCollision()) {
+      float playerMinZ = player->getPosition().z + player->getGraphics()->getBounds()->min_z;
+      float otherMaxZ = other->getPosition().z + other->getGraphics()->getBounds()->max_z;
+      if (playerMinZ < otherMaxZ) {
+         player->getCollision()->collide(player, other);
+         other->getCollision()->collide(other, player);
+      }
+   }
 }
 
 //add an obstacle to the world.
@@ -199,11 +214,13 @@ GameObject *InGameState::addObstacle(glm::vec3 position, Track track, Track colo
          break;
    }
    std::string baseDir = "models/obstacles/obstacle2_" + extension + "/";
-   GameObject *obstacle = new GameObject(ModelRenderer::load(baseDir + "obstacle2_" + extension + ".obj", baseDir), new ObstacleCollisionComponent());
+   ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color);
+   GameObject *obstacle = new GameObject(ModelRenderer::load(baseDir + "obstacle2_" + extension + ".obj", baseDir), occ);
 
    //set its position and let the world know it exists
    addObject(obstacle);
    obstacle->setPosition(position);
+   
    
    obstacleLists[track].push_back(obstacle);
    
@@ -219,5 +236,16 @@ void InGameState::cleanupObstacles() {
             obstacleLists[i].pop_front();
          }
       }
+   }
+}
+
+//internal only helper function
+Track getTrackFromLatPos(float latPos) {
+   if (latPos < -0.3f) {
+      return BLUE;
+   } else if (latPos >= -0.3f && latPos <= 0.3f) {
+      return GREEN;
+   } else {
+      return RED;
    }
 }

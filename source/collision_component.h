@@ -9,6 +9,8 @@
 #ifndef __Project__collision_component__
 #define __Project__collision_component__
 
+#include "track_enum.h"
+
 class GameObject;
 
 /* Collision Components react to collision between objects */
@@ -29,8 +31,14 @@ public:
 class ObstacleCollisionComponent : public CollisionComponent {
 private:
    bool hit;
+   
 public:
    ObstacleCollisionComponent() : hit(false) {};
+   ObstacleCollisionComponent(Track loc, Track clr);
+   
+   bool shouldAcceleratePlayer() { return location == color; };
+   Track location;
+   Track color;
    
    void setHit(bool hasBeenHit) { hit = hasBeenHit; };
    bool hasBeenHit() { return hit; };

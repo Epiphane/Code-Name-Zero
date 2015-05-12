@@ -29,8 +29,6 @@ void State::update(float dt) {
          iterator ++;
    }
    
-   //REMOVE THIS
-   std::cout << "Number of objects total is " << objects.size() << std::endl;
    
    camera_update(dt);
    

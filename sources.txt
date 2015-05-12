@@ -32,6 +32,7 @@ set(HEADERS
    input_component.h
    collision_component.h
    track_manager.h
+   track_enum.h
 )
 
 # List all .c / .cpp files here

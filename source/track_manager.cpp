@@ -12,6 +12,7 @@
 #include "game_object.h"
 #include "state.h"
 #include "main.h"
+#include "track_enum.h"
 
 #define VISIBLE_TRACKS 200
 
@@ -134,7 +135,7 @@ Track getRandomTrack() {
 void TrackManager::addRandomObstacle(InGameState *world, glm::vec3 trackPos) {
    Track location = getRandomTrack();
    
-   GameObject *obstacle = world->addObstacle(trackPos + glm::vec3((location - 1) * 3.8f, 1.0, 0), getRandomTrack(), getRandomTrack());
+   GameObject *obstacle = world->addObstacle(trackPos + glm::vec3((location - 1) * TRACK_OFFSET_RED, 1.0, 0), location, getRandomTrack());
    obstacle->transform(nextRotate(next_track_number) * glm::scale(1.5f, 1.5f, 1.5f));
 }
 

@@ -15,10 +15,12 @@
 #include "state.h"
 #include "HUD.h"
 #include "track_manager.h"
+#include "track_enum.h"
 
 #define NUM_TRACKS 3
 
 class ShadowMap;
+//circular dependencies are silly
 class TrackManager;
 
 
