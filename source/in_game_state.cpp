@@ -158,10 +158,10 @@ void InGameState::render(float dt) {
 
    if (!DEBUG) {
       MovementComponent *playMove = (MovementComponent *)player->getPhysics();
-	  blurRate = (playMove->getVelocity() / 50.0f + (playMove->getVelocity() - playerPreviousSpeed) * 1.0f + 9 * blurRate) / 10;
-	  playerPreviousSpeed = playMove->getVelocity();
+//	  blurRate = (playMove->getVelocity() / 50.0f + (playMove->getVelocity() - playerPreviousSpeed) * 1.0f + 9 * blurRate) / 10;
+//	  playerPreviousSpeed = playMove->getVelocity();
 	  // Old vector based blur rate
-//	  blurRate = (glm::length(playMove->getSpeed()) / 10.0f + playMove->getAccel().z * 60.0f + 9 * blurRate) / 10;
+	  blurRate = (playMove->getVelocity() / 10.0f + playMove->getAccel().z * 60.0f + 9 * blurRate) / 10;
    }
    else {
       blurRate = 0;
@@ -171,7 +171,7 @@ void InGameState::render(float dt) {
    COMPUTE_BENCHMARK(25, "Blur time: ", true)
    
    // Render non-blurred elements
-   //hud->render(dt);
+   hud->render(dt);
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }

@@ -63,7 +63,7 @@ void HUD::update(float dt, InGameState *state) {
    MovementComponent *movement = dynamic_cast<MovementComponent *>(state->getPlayer()->getPhysics());
    assert(movement != nullptr);
    
-   this->speed = glm::length(movement->getSpeed());
+   this->speed = movement->getVelocity();
    int speed = this->speed;
    score = 21000;
    

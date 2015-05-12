@@ -16,6 +16,9 @@
 #include "track_manager.h"
 
 void MovementComponent::update(GameObject *obj, State *world, float dt) {
+   velocity += accel.z * 100 * dt;
+   if (velocity > 800) velocity = 800;
+   
    // Vehicle offsets from track
    glm::vec3 longOffset = direction * long_position * TRACK_LENGTH;
    glm::vec3 latOffset = slide * lat_position * 4.0f;
@@ -24,7 +27,7 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
    obj->setPosition(track_position + longOffset + latOffset);
 
    // Increment longitudinal position
-   long_position += dt * velocity;
+   long_position += dt * velocity / 10.0f;
 
    /* Previous physics
    float sp = glm::length(speed) + accel.z;
@@ -64,6 +67,17 @@ void MovementComponent::changeLatPos(float a) {
 }
 
 void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
+   if (accel > 0) {
+      accel -= dt;
+      setAccel(getAccel() + glm::vec3(0, 0, 1));
+      DEBUG_LOG_VAL(accel);
+   }
+   if (decel > 0) {
+      decel -= dt;
+      setAccel(getAccel() - glm::vec3(0, 0, 1));
+      DEBUG_LOG_VAL(decel);
+   }
+   
    MovementComponent::update(obj, world, dt);
    
    glm::vec3 new_position = obj->getPosition();

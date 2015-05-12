@@ -28,12 +28,12 @@ void PlayerInputComponent::update(GameObject *obj) {
       accel = glm::vec3(0);
       if (!DEBUG) {
          if (input_keyDown(GLFW_KEY_W)) {
-            accel.y -= PLAYER_SPEED;
-            movement->setVelocity(movement->getVelocity() * 1.2);
+             accel.y -= PLAYER_SPEED;
+             accel.z += 1;
          }
          if (input_keyDown(GLFW_KEY_S)) {
-            accel.y += PLAYER_SPEED;
-            movement->setVelocity(movement->getVelocity() / 1.2);
+             accel.y += PLAYER_SPEED;
+             accel.z -= 1;
          }
          if (input_keyDown(GLFW_KEY_A)) {
             accel.x -= PLAYER_SPEED;
