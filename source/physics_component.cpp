@@ -31,7 +31,7 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
 
    // Update lateral position if we're easing to a new place
    if (lat_position != lat_destination) {
-      lat_position += (lat_destination - lat_position) / 10.0f;
+      lat_position += (lat_destination - lat_position) / 4.0f;
    }
 }
 
@@ -54,12 +54,10 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    if (accel > 0) {
       accel -= dt;
       setAccel(getAccel() + glm::vec3(0, 0, 1));
-      DEBUG_LOG_VAL(accel);
    }
    if (decel > 0) {
       decel -= dt;
       setAccel(getAccel() - glm::vec3(0, 0, 1));
-      DEBUG_LOG_VAL(decel);
    }
    
    MovementComponent::update(obj, world, dt);
