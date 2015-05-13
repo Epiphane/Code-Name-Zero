@@ -18,7 +18,10 @@ private:
 public:
    VBO(DataType type);
    VBO(DataType type, GLuint buffer);
+   VBO(const VBO& other);
    void init();
+   
+   VBO& operator=(const VBO& other);
    
    void bind();
    void attribPointer(GLuint location, GLint count, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid *pointer);

@@ -39,6 +39,21 @@ VBO::VBO(DataType _type) {
 
    buffer = GL_FALSE;
 }
+
+VBO::VBO(const VBO& other) {
+   *this = other;
+}
+
+VBO& VBO::operator=(const VBO &other) {
+   buffer = other.buffer;
+   bufferType = other.bufferType;
+   
+   buffer_references[buffer] ++;
+   
+   std::cout << "Buffer " << buffer << " copied. Refs: " << buffer_references[buffer] << std::endl;
+   
+   return *this;
+}
  
 void VBO::init() {
    assert(buffer == GL_FALSE);
