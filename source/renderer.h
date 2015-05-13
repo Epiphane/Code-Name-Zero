@@ -50,45 +50,29 @@ typedef struct Program {
     void(* render)(Renderer *p, glm::mat4 Model);
 } Program;
 
-extern Program *ProgramText;
 extern Program *ProgramPostProc;
 
 // Renderers
 
 class Renderer {
-private:
-    unsigned int *buffers;
+protected:
     unsigned long elements;
     
-    int numBuffers;
-    
 public:
-   Renderer(int numBuffers);
-    ~Renderer();
+   Renderer();
+   ~Renderer();
     
-    unsigned int getNumElements() { return elements; }
-    void setNumElements(unsigned long num) { elements = num; }
+   unsigned int getNumElements() { return elements; }
+   void setNumElements(unsigned long num) { elements = num; }
     
-    unsigned int getBuffer(int num) { return buffers[num]; }
+   /* Rendering functions */
+   virtual void render(glm::mat4 Model);
     
-    /* Rendering functions */
-    Program *program;
-    void bufferData(int type, long num, void *data) { program->bufferData(this, type, num, data); }
-    virtual void render(glm::mat4 Model) { program->render(this, Model); }
-    
-    static void pushMatrix(glm::mat4 matrix);
-    static void popMatrix();
+   static void pushMatrix(glm::mat4 matrix);
+   static void popMatrix();
    
    /* Cloning functions */
    virtual Renderer *clone();
-};
-
-class TexRenderer : public Renderer {
-public:
-    TexRenderer() : Renderer(2) {};
-    unsigned int texID;
-    
-    void loadTexture(char *filename);
 };
 
 void ProgramPostProcrender(int blur);

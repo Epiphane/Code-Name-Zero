@@ -121,9 +121,6 @@ void State::render(float dt) {
       if (DEBUG)
          (*iterator)->_debug_render();
    }
-
-   // Render all the batch-ed models
-   Renderer3D::update();
 }
 
 void State::send(std::string message, void *data) {

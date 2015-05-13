@@ -24,16 +24,7 @@
 
 class Renderer3D : public Renderer {
 private:
-   const static int NUM_BUFFERS = 5;
-   // Indices at which we keep each buffer
-   const static int b_vertex   = 0;
-   const static int b_uv       = 1;
-   const static int b_normal   = 2;
-   const static int b_index    = 3;
-   const static int b_material = 4;
-   
-   GLuint elements;
-   GLuint buffers[NUM_BUFFERS];
+   VBO b_vertex, b_uv, b_normal, b_material, b_index;
    
    GLuint numMaterials;
    glm::vec3 ambient[MAX_MATERIALS], diffuse[MAX_MATERIALS];
@@ -56,19 +47,9 @@ private:
    static GLuint uShadowView, uShadowProj, uShadowMap;
    static GLuint uShipTint;
    
-   /* Dirty bits */
-   bool _d_buffers[NUM_BUFFERS];
-
-   std::vector<glm::mat4> batch;
-
-   static std::vector<Renderer3D *> renderers;
-   static VBO rendererMatrices;
-   
 public:
-   Renderer3D(bool clone = false);
-   
-   // Refers to the number of indices
-   void setNumElements(GLuint num) { elements = num; }
+   Renderer3D(bool isClone = false);
+   Renderer3D(Renderer3D *clone);
    
    // Send data to the GPU
    void bufferData(DataType type, size_t size, void *data);
@@ -83,8 +64,6 @@ public:
    
    // Render the data!
    void render(glm::mat4 Model);
-   void batchRender();
-   static void update();
 };
 
 #endif /* defined(__RGBZero__renderer_3D__) */

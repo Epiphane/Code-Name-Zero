@@ -29,7 +29,7 @@ void RendererDebug::init() {
    initialized = true;
 }
 
-RendererDebug::RendererDebug() : Renderer(0) {
+RendererDebug::RendererDebug() : Renderer() {
    if (!initialized)
       init();
    

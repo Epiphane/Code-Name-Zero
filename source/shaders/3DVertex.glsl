@@ -4,7 +4,6 @@ layout(location = 0) in vec4 aPosition;
 layout(location = 1) in vec3 aNormal;
 layout(location = 2) in vec2 aUV;
 layout(location = 3) in float aMaterial;
-layout(location = 7) in mat4 aModelMatrix;
 
 uniform mat4 uProjMatrix;
 uniform mat4 uViewMatrix;
@@ -31,7 +30,7 @@ out vec4 vShadowCoord;
 void main()
 {
    vLightPos = uLightPos;
-   vWorldSpace = aModelMatrix * aPosition;
+   vWorldSpace = uModelMatrix * aPosition;
 
    vCameraVec = normalize(uCameraPos - vWorldSpace.xyz);
 
@@ -39,7 +38,7 @@ void main()
    
    vMaterial = int(aMaterial);
    vUV = aUV;
-   vNormal = normalize((aModelMatrix * vec4(aNormal, 0)).xyz);
+   vNormal = normalize((uModelMatrix * vec4(aNormal, 0)).xyz);
    
    vShadowCoord = uShadowProj * uShadowView * uModelMatrix * aPosition;
 }

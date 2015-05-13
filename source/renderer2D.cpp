@@ -31,7 +31,7 @@ void Renderer2D::init() {
    initialized = true;
 }
 
-Renderer2D::Renderer2D(std::string textureName, float z) : Renderer(0), z(z) {
+Renderer2D::Renderer2D(std::string textureName, float z) : Renderer(), z(z) {
    if (!initialized)
       init();
    
