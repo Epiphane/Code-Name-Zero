@@ -71,11 +71,6 @@ void setUniforms(GLuint uWinScale, GLuint uPerspective, GLuint uView, GLuint uMo
     glUniformMatrix4fv(uPerspective, 1, GL_FALSE, &Projection[0][0]);
 }
 
-// Empty function... C++?? Why not A++??
-void Renderer::render(glm::mat4 Model) {
-
-}
-
 void shaders_init() {
    GLuint VertexArrayID;
    glGenVertexArrays(1, &VertexArrayID);
