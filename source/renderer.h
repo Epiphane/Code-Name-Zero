@@ -50,8 +50,6 @@ typedef struct Program {
     void(* render)(Renderer *p, glm::mat4 Model);
 } Program;
 
-extern Program *ProgramPostProc;
-
 // Renderers
 
 class Renderer {
@@ -74,8 +72,5 @@ public:
    /* Cloning functions */
    virtual Renderer *clone();
 };
-
-void ProgramPostProcrender(int blur);
-unsigned int get_fbo();
 
 #endif

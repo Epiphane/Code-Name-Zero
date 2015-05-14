@@ -17,6 +17,7 @@
 #include "in_game_state.h"
 #include "camera.h"
 #include "renderer.h"
+#include "rendererPostProcess.h"
 #include "rendererDebug.h"
 #include "main.h"
 #include "track_manager.h"
@@ -94,6 +95,8 @@ InGameState::InGameState() {
    }
    shadowMap = new ShadowMap;
    shadowMap->init(1024);
+
+   RendererPostProcess::shaders_init();
 }
 
 InGameState::~InGameState() {
@@ -140,7 +143,8 @@ void InGameState::render(float dt) {
    glBindTexture(GL_TEXTURE_2D, shadowMap->getTexID());
 
    // Turn on frame buffer
-   glBindFramebuffer(GL_FRAMEBUFFER, get_fbo());
+//   glBindFramebuffer(GL_FRAMEBUFFER, RendererPostProcess::get_fbo());
+   RendererPostProcess::capture();
    
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -151,7 +155,8 @@ void InGameState::render(float dt) {
    COMPUTE_BENCHMARK(25, "Render elements time: ", true)
    
    // Turn off frame buffer, and render frame buffer to screen
-   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+   RendererPostProcess::endCapture();
 
    static int blurRate = 0;
    static float playerPreviousSpeed = 0;
@@ -167,7 +172,7 @@ void InGameState::render(float dt) {
       blurRate = 0;
    }
    
-   ProgramPostProcrender(blurRate);
+   RendererPostProcess::render(blurRate);
    COMPUTE_BENCHMARK(25, "Blur time: ", true)
    
    // Render non-blurred elements

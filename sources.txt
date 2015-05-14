@@ -11,6 +11,7 @@ set(HEADERS
    renderer2D.h
    renderer3D.h
    renderer.h
+   rendererPostProcess.h
    texture.h
    shader.hpp
    shadowMap.h
@@ -47,6 +48,7 @@ set(SOURCES
    renderer2D.cpp
    renderer3D.cpp
    renderer.cpp
+   rendererPostProcess.cpp
    texture.cpp
    shader.cpp
    shadowMap.cpp
