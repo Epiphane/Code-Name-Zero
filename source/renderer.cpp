@@ -114,7 +114,6 @@ GLfloat fbo_vertices[] = {
 
 Renderer *ProgramPostProccreate() {
 	Renderer *prog = new Renderer();
-	prog->program = ProgramPostProc;
 
 	glGenBuffers(1, &vbo_fbo_vertices);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo_fbo_vertices);

@@ -66,7 +66,7 @@ public:
    void setNumElements(unsigned long num) { elements = num; }
     
    /* Rendering functions */
-   virtual void render(glm::mat4 Model);
+   virtual void render(glm::mat4 Model) {};
     
    static void pushMatrix(glm::mat4 matrix);
    static void popMatrix();
