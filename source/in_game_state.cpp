@@ -83,7 +83,7 @@ InGameState::InGameState() {
    // Set up track manager
    track_manager = new TrackManager(this, player);
 
-   soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
+   soundtrack = audio_load_music("./audio/RGB_Persistance.mp3", 200);
    soundtrack->play();
    
    hud = new HUD();
@@ -94,7 +94,7 @@ InGameState::InGameState() {
       obstacleLists.push_back(std::list<GameObject *>());
    }
    shadowMap = new ShadowMap;
-   shadowMap->init(1024);
+   shadowMap->init(2048);
 
    RendererPostProcess::shaders_init();
 }

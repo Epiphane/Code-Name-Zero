@@ -44,6 +44,8 @@ void main() {
    bias = clamp(bias, 0.0, 0.01);
    float visibility = texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias));
    
+   
+   
    if (vMaterial < 0) {
       // Placeholder: Basic metal
       aColor = vec3(0.15, 0.15, 0.15);
@@ -53,7 +55,7 @@ void main() {
 	  
 	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
 	  
-	  fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + aColor, 1);
+	  fragColor = vec4(Is * sColor * visibility + Id * dColor * (visibility+0.2) + (aColor*1.2), 1);
      fragColor += vec4(uShipTint, 1.0);
 //	  fragColor = vec4(Id * dColor + aColor, 1);
    }
@@ -72,14 +74,14 @@ void main() {
          //float Id = max(dot(vNormal, lightVector), 0.0f);
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
          
-         fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * visibility + textureColor, 1);
+         fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * (visibility+0.2) + (textureColor*1.2), 1);
          fragColor += vec4(uShipTint, 1.0);
       }
       else {
          //float Id = max(dot(vNormal, lightVector), 0.0f);
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
          
-         fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + aColor, 1);
+         fragColor = vec4(Is * sColor * visibility + Id * dColor * (visibility+0.2) + (aColor*1.2), 1);
          fragColor += vec4(uShipTint, 1.0);
 //         fragColor = vec4(Id * dColor + aColor, 1);
       }
