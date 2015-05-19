@@ -22,11 +22,12 @@
 #include "main.h"
 #include "track_manager.h"
 #include "shadowMap.h"
+#include "beatEventListener.h"
 
 #define Z_EPSILON 5.0
 
 // Farthest Z value of track
-const float track_piece_length = 30.005f;
+// const float track_piece_length = 30.005f;
 float track_length = 0.0f;
 
 GameObject *playerObj;
@@ -84,6 +85,8 @@ InGameState::InGameState() {
    track_manager = new TrackManager(this, player);
 
    soundtrack = audio_load_music("./audio/RGB_Persistance.mp3", 200);
+   event_listener = new BeatEventListener;
+   event_listener->init("./beatmaps/RGB_Persistance.beatmap");
    soundtrack->play();
    
    hud = new HUD();
@@ -121,6 +124,8 @@ void InGameState::update(float dt) {
    
    cleanupObstacles();
    
+   event_listener->update(dt, soundtrack->getBeat(), dynamic_cast<MovementComponent *>(playerObj->getPhysics())->getVelocity());
+   
    float latPos = dynamic_cast<MovementComponent *>(player->getPhysics())->getLatPos();
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
       collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
@@ -137,6 +142,8 @@ void InGameState::render(float dt) {
    State::render(dt);
    isShadowMapRender = false;
    shadowMap->disable();
+   
+   COMPUTE_BENCHMARK(25, "Shadowmap time: ", true)
    
    // Bind Shadow map texture as active
    glActiveTexture(GL_TEXTURE1);
