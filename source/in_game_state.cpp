@@ -52,9 +52,7 @@ InGameState::InGameState() {
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
    
-   target_number = 0;
-   
-   MovementComponent *movement = new MovementComponent();
+   MovementComponent *movement = new PlayerPhysicsComponent();
    InputComponent *i = new PlayerInputComponent();
    
    // Create player ships
@@ -86,6 +84,8 @@ InGameState::InGameState() {
 
    soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
    soundtrack->play();
+   
+   visualizer = new AudioVisualizer(soundtrack);
    
    hud = new HUD();
    
@@ -122,6 +122,8 @@ void InGameState::update(float dt) {
    State::update(dt);
    
    hud->update(dt, this);
+   
+   visualizer->update(dt);
 
    track_manager->update(dt, player->getPosition(), this);
    
@@ -187,6 +189,7 @@ void InGameState::render(float dt) {
    
    // Render non-blurred elements
    hud->render(dt);
+   visualizer->render();
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }

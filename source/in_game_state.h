@@ -12,6 +12,7 @@
 #include <list>
 
 #include "audio_manager.h"
+#include "audio_visualizer.h"
 #include "state.h"
 #include "HUD.h"
 #include "track_manager.h"
@@ -29,10 +30,10 @@ class InGameState : public State {
 private:
    GameObject *player;
    ShadowMap *shadowMap;
-   int target_number;
    Music *soundtrack;
    TrackManager *track_manager;
    BeatEventListener *event_listener;
+   AudioVisualizer *visualizer;
 
    HUD *hud;
    std::vector<std::list<GameObject *>> obstacleLists;
@@ -48,7 +49,6 @@ public:
    Music *getSoundtrack() { return soundtrack; }
    TrackManager *getTrackManager() {return track_manager;};
    
-   int getTotalTargets() { return target_number; }
    void collide(GameObject *player, GameObject *other);
    void update(float dt);
    void render(float dt);

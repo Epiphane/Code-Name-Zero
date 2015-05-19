@@ -67,6 +67,8 @@ void audio_init() {
       return;
    }
    
+   check(audio_system->setDSPBufferSize(1024, 10), "buffer size set");
+   
    if (!check(audio_system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, nullptr), "audio system initialization", Fatal)) {
       audio_release();
       return;
@@ -161,6 +163,10 @@ void audio_play_sound(const char *fileName) {
 
 Music::Music(FMOD::Sound *s, Beat _bpm) : channel(nullptr), sound(s), beat(0), bpm(_bpm) {
    check(s->getLength(&length, FMOD_TIMEUNIT_MS), "length get");
+   
+   check(audio_system->createDSPByType(FMOD_DSP_TYPE_FFT, &dsp), "DSP creation");
+   check(dsp->setParameterInt(FMOD_DSP_FFT_WINDOWTYPE, FMOD_DSP_FFT_WINDOW_RECT), "window type setting");
+   check(dsp->setParameterInt(FMOD_DSP_FFT_WINDOWSIZE, 4096), "window size setting");
 };
 
 float Music::getProgress() {
@@ -180,8 +186,78 @@ void Music::update() {
       
       getCurrentState()->send("beat", &beat);
    }
+   
+   // Compute frequency spectrum
+   float val;
+   char s[256];
+   unsigned int len;
+   FMOD_DSP_PARAMETER_FFT *data = 0;
+   int rate;
+   check(audio_system->getSoftwareFormat(&rate , 0, 0), "get software format");
+   check(dsp->getParameterFloat(FMOD_DSP_FFT_DOMINANT_FREQ, &val, 0, 0), "get dominant");
+   check(dsp->getParameterData(FMOD_DSP_FFT_SPECTRUMDATA, (void **)&data, &len, s, 256), "get spectrum");
+   
+   int average_samples = data->length / data->numchannels / MAX_SPECTRA;
+   int index = 0;
+   for (int s = 0; s < MAX_SPECTRA; s ++) {
+      spectrum[s][currentSpectrum] = 0;
+      
+      int ds = average_samples * s * 2 / MAX_SPECTRA;
+      for (int i = 0; i < ds; i ++) {
+         for (int chan = 0; chan < data->numchannels; chan ++) {
+            // arbitrary cutoff to filter out noise
+            if (data->spectrum[chan][index] > 0.0001f) {
+               spectrum[s][currentSpectrum] += data->spectrum[chan][index];
+            }
+         }
+         
+         index ++;
+      }
+      
+      if (spectrum[s][currentSpectrum] < 0.001f) {
+         spectrum[s][currentSpectrum] = 0;
+      }
+   }
+   
+   currentSpectrum = (currentSpectrum + 1) % SAMPLES_PER_SPECTRUM;
+}
+
+float Music::getSample(int index, int totalSpectra) {
+   assert(totalSpectra <= MAX_SPECTRA);
+   assert(index < totalSpectra);
+   
+   float avg = 0;
+   // Consolidate spectrum groups
+   int scale = MAX_SPECTRA / totalSpectra;
+   for (int s = scale * index; s < scale * (index + 1); s ++) {
+      for (int i = 0; i < SAMPLES_PER_SPECTRUM; i ++) {
+         avg += spectrum[s][i];
+      }
+   }
+   
+   return avg / (scale * SAMPLES_PER_SPECTRUM / 3);
+}
+
+void Music::getSamples(float *samples, int number) {
+   assert(number <= MAX_SPECTRA);
+   
+   // Zero the memory
+   memset(samples, 0, sizeof(float) * number);
+   
+   // Consolidate spectrum groups
+   int scale = MAX_SPECTRA / number;
+   for (int s = 0; s < MAX_SPECTRA; s ++) {
+      for (int i = 0; i < SAMPLES_PER_SPECTRUM; i ++) {
+         samples[s * number / MAX_SPECTRA] += spectrum[s][i];
+      }
+   }
+   
+   for (int s = 0; s < number; s ++)
+      samples[s] /= scale * SAMPLES_PER_SPECTRUM / 3;
 }
 
 void Music::play() {
    audio_play_music(this);
+   check(channel->addDSP(0, dsp), "DSP chaining");
+   check(dsp->setActive(true), "DSP activation");
 }
