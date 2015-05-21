@@ -77,10 +77,9 @@ InGameState::InGameState(std::string levelname, int player_ship) : level(levelna
    shadowMap->init(4096);
    
    RendererPostProcess::shaders_init();
-   
    skyRender = new SkyRenderer;
    
-   ps = ParticleSystem()
+   ps = new ParticleSystem();
    ps->InitParticleSystem(glm::vec3(0, 0, 0));
 }
 
