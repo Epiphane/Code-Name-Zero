@@ -42,8 +42,9 @@ void main()
             Type1 = PARTICLE_TYPE_SHELL;
             Position1 = Position0[0];
             vec3 Dir = GetRandomDir(gTime/1000.0);
-            Dir.x = max(Dir.x, 0.5);
-            Dir.z = max(Dir.z, 0.5);
+            Dir.y = max(Dir.y, 0.5);
+            Dir.x = min(Dir.x, -0.1);
+            Dir.z = min(Dir.z, -0.5);
             Velocity1 = normalize(Dir) * 10;
             Age1 = 0.0;
             EmitVertex();

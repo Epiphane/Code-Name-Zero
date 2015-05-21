@@ -107,7 +107,7 @@ void RendererPostProcess::render(int blur) {
 	glDisableVertexAttribArray(PostProc_v_coord);
 
 	glUseProgram(0);
-
+   
 }
 
 void RendererPostProcess::capture() {

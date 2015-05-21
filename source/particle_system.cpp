@@ -65,8 +65,8 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
     m_updateTechnique.SetRandomTextureUnit(3);
     
     //Times are set in milliseconds
-    m_updateTechnique.SetLauncherLifetime(100.0f);
-    m_updateTechnique.SetShellLifetime(1000.0f);
+    m_updateTechnique.SetLauncherLifetime(8.0f);
+    m_updateTechnique.SetShellLifetime(500.0f);
     //m_updateTechnique.SetSecondaryShellLifetime(2500.0f);
     
     if (!m_randomTexture.InitRandomTexture(1000)) {
@@ -87,7 +87,7 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
     m_billboardTechnique.SetColorTextureUnit(0);
     m_billboardTechnique.SetBillboardSize(.05f);
     
-    m_pTexture = new Texture(GL_TEXTURE_2D, "./textures/red_particle.png");
+    m_pTexture = new Texture(GL_TEXTURE_2D, "./textures/smoke1.png");
     
     if (!m_pTexture->Load()) {
         fprintf(stderr, "textures failed in particle_system");
@@ -150,8 +150,6 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
     m_billboardTechnique.setView(View);
     m_billboardTechnique.setProjection(Projection);
     m_pTexture->Bind(GL_TEXTURE0);
-    
-    glDisable(GL_RASTERIZER_DISCARD);
     
     glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[m_currTFB]);
     
