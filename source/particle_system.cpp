@@ -97,19 +97,6 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
     return true;
 }
 
-void ParticleSystem::Render(int DeltaTimeMillis, const glm::mat4 &View, const glm::mat4 &Projection, const glm::vec3 &CameraPos)
-{
-    UpdateParticles(DeltaTimeMillis);
-    GLenum error = glGetError();
-    assert(error == 0);
-    
-    RenderParticles(View, Projection, CameraPos);
-    
-    //Switch buffers every Render call
-    m_currVB = m_currTFB;
-    m_currTFB = (m_currTFB + 1) & 0x1;
-}
-
 void ParticleSystem::UpdateParticles(int DeltaTimeMillis)
 {
     m_time += DeltaTimeMillis;
@@ -175,6 +162,10 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
     glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
     
     glDisableVertexAttribArray(0);
+    
+    //Switch buffers every Render call
+    m_currVB = m_currTFB;
+    m_currTFB = (m_currTFB + 1) & 0x1;
 }
 
 

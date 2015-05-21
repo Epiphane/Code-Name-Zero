@@ -17,6 +17,7 @@
 #include "HUD.h"
 #include "track_manager.h"
 #include "track_enum.h"
+#include "particle_system.h"
 
 #define NUM_TRACKS 3
 
@@ -44,6 +45,7 @@ private:
    TrackManager *track_manager;
    BeatEventListener *event_listener;
    AudioVisualizer *visualizer;
+   ParticleSystem *ps;
 
    HUD *hud;
    std::vector<std::list<GameObject *>> obstacleLists;

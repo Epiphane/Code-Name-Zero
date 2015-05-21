@@ -79,6 +79,9 @@ InGameState::InGameState(std::string levelname, int player_ship) : level(levelna
    RendererPostProcess::shaders_init();
    
    skyRender = new SkyRenderer;
+   
+   ps = ParticleSystem()
+   ps->InitParticleSystem(glm::vec3(0, 0, 0));
 }
 
 void InGameState::start() {
@@ -88,8 +91,6 @@ void InGameState::start() {
 
 InGameState::~InGameState() {
    delete shadowMap;
-   
-
 }
 
 void InGameState::send(std::string message, void *data) {
@@ -117,6 +118,8 @@ void InGameState::update(float dt) {
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
       collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
    }
+   
+   ps->UpdateParticles(dt * 1000);
 }
 
 void InGameState::render(float dt) {
@@ -135,7 +138,7 @@ void InGameState::render(float dt) {
    // Bind Shadow map texture as active
    glActiveTexture(GL_TEXTURE1);
    glBindTexture(GL_TEXTURE_2D, shadowMap->getTexID());
-
+   
    // Turn on frame buffer
    RendererPostProcess::capture();
    
@@ -157,7 +160,7 @@ void InGameState::render(float dt) {
    
    // Turn off frame buffer, and render frame buffer to screen
    RendererPostProcess::endCapture();
-
+   
    static int blurRate = 0;
 
    if (!DEBUG) {
@@ -175,6 +178,10 @@ void InGameState::render(float dt) {
    //visualizer->render();
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
+   
+   glm::vec3 carPos = player->getPosition();
+   glm::mat4 transform = glm::translate(carPos.x, carPos.y, carPos.z);
+   ps->RenderParticles(renderer_getProjection() * camera_getMatrix() * transform, glm::mat4(1.0f), glm::vec3(1.0));
 }
 
 //this only checks if the player and object overlap in the z-dimension
