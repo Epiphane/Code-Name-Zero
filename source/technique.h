@@ -1,48 +1,48 @@
-//  texture.h
+//
+//  technique.h
 //  RGBZero
 //
-//  Created by Thomas Steinke on 4/23/15.
+//  Created by Jonathan Pae on 4/28/15.
 //
 //
 
-#ifndef __RGBZero__texture__
-#define __RGBZero__texture__
+#ifndef __RGBZero__technique__
+#define __RGBZero__technique__
 
-#include <glm/glm.hpp>
-#include "GLSL.h"
-#include <string>
+#include <list>
+#include <GL/glew.h>
 
-#define MAX_TEXTURE_SIZE 512
+#define INVALID_UNIFORM_LOCATION 0xffffffff
 
-GLvoid texture_load(std::string filename, int texture);
-GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *width, int *height);
-
-class RandomTexture {
-public:
-    RandomTexture();
-    
-    ~RandomTexture();
-    
-    bool InitRandomTexture(unsigned int Size);
-    
-    void Bind(GLenum TextureUnit);
-    
-private:
-    GLuint m_textureObj;
-};
-class Texture
+class Technique
 {
 public:
-    Texture(GLenum TextureTarget, const std::string& FileName);
     
-    bool Load();
+    Technique();
     
-    void Bind(GLenum TextureUnit);
+    virtual ~Technique();
+    
+    virtual bool Init();
+    
+    void Enable();
+    
+protected:
+    
+    bool AddShader(GLenum ShaderType, const char* pFilename);
+    
+    bool Finalize();
+    
+    GLint GetUniformLocation(const char* pUniformName);
+    
+    GLint GetProgramParam(GLint param);
+    
+    GLuint m_shaderProg;
     
 private:
-    std::string m_fileName;
-    GLenum m_textureTarget;
-    GLuint m_textureObj;
+    
+    typedef std::list<GLuint> ShaderObjList;
+    ShaderObjList m_shaderObjList;
 };
 
-#endif /* defined(__RGBZero__texture__) */
+
+#endif /* defined(__RGBZero__technique__) */
