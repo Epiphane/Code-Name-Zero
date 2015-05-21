@@ -37,6 +37,11 @@ set(HEADERS
    collision_component.h
    track_manager.h
    track_enum.h
+
+   technique.h
+   billboard_technique.h
+   ps_update_technique.h
+   particle_system.h
 )
 
 # List all .c / .cpp files here
@@ -75,6 +80,11 @@ set(SOURCES
    input_component.cpp
    collision_component.cpp
    track_manager.cpp
+
+   technique.cpp
+   billboard_technique.cpp
+   ps_update_technique.cpp
+   particle_system.cpp
 )
 
 # List resources to copy to build directory
@@ -107,4 +117,11 @@ set(SHADERS
    AudioVisualizerVertex.glsl
    SkyShaderFragment.glsl
    SkyShaderVertex.glsl
+   ps_updateFragment.glsl
+   ps_updateVertex.glsl
+   ps_updateGeometry.glsl
+   billboardFragment.glsl
+   billboardVertex.glsl
+   billboardGeometry.glsl
+   billboardGeometryTest.glsl
 )
