@@ -15,6 +15,26 @@
 #include "state.h"
 #include "track_manager.h"
 
+void ObstaclePhysicsComponent::init(int spawn_time, int hit_time, int spawn_lane) {
+   spawn_ms = spawn_time;
+   hit_ms = hit_time;
+   lane = spawn_lane;
+}
+
+void ObstaclePhysicsComponent::update(GameObject *obj, State *world, float dt) {
+   //MovementComponent::update(obj, world, dt);
+   spawn_ms += dt;
+   if (spawn_ms < hit_ms) {
+      std::cout << "updating obstacle position" << std::endl;
+      InGameState* igs = dynamic_cast<InGameState*>(world);
+      float player_z = igs->getPlayer()->getPosition().z;
+      float new_obj_z = (spawn_ms/hit_ms) * player_z;
+      glm::vec3 new_pos = igs->getTrackManager()->getPosOnTrack(new_obj_z, lane);
+      obj->setPosition(new_pos);
+   }
+   
+}
+
 void MovementComponent::update(GameObject *obj, State *world, float dt) {
    // Vehicle offsets from track
    glm::vec3 longOffset = direction * long_position * TRACK_LENGTH;

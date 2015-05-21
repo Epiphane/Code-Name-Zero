@@ -89,7 +89,7 @@ void Renderer3D::render(glm::mat4 Model) {
    glm::vec3 camPos = camera_getPosition();
    glm::vec3 playerPos = getPlayerPosition();
    glm::vec3 shadowLightPos = glm::vec3(playerPos.x+10.0f,playerPos.y+20.0f,playerPos.z);
-   glm::vec3 lightPos = glm::vec3(playerPos.x, playerPos.y + 40.0f, playerPos.z);
+   glm::vec3 lightPos = glm::vec3(playerPos.x+10.0f, playerPos.y + 40.0f, playerPos.z);
    
    glm::mat4 shadowView = glm::lookAt(shadowLightPos, glm::vec3(playerPos.x, playerPos.y, playerPos.z), glm::vec3(0.0f, 1.0f, 0.0f));
    /*(left, right, bottom, top, zNear, zFar) changes 'dimensions' of shadow map*/

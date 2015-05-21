@@ -16,6 +16,7 @@ class State;
 class PhysicsComponent {
 public:
    virtual void update(GameObject *obj, State *world, float dt) {};
+   void init();
 };
 
 class MovementComponent : public PhysicsComponent {
@@ -47,6 +48,7 @@ public:
    float getLongPos(){ return long_position; }
    float getLatPos(){ return lat_position; }
    float getVelocity(){ return velocity; }
+   glm::vec3 getSlide(){ return slide;};
    void setVelocity(float a){ if (velocity < 2000) { velocity = a; } else { velocity = 1800; } };
 
 };
@@ -59,6 +61,17 @@ public:
 class TrackPhysicsComponent : public PhysicsComponent {
 public:
    virtual void update(GameObject *obj, State *world, float dt) {};
+};
+
+class ObstaclePhysicsComponent : public MovementComponent {
+private:
+   int spawn_ms;
+   int hit_ms;
+   float z_position;
+   int lane;
+public:
+   void init(int spawn_time, int hit_time, int spawn_lane);
+   virtual void update(GameObject *obj, State *world, float dt);
 };
 
 #endif /* defined(__Project__physics_component__) */

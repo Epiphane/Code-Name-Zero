@@ -55,8 +55,8 @@ void main() {
 	  
 	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
 	  
-	  fragColor = vec4(Is * sColor * visibility + Id * dColor * (visibility+0.2) + (aColor*1.2), 1);
-     fragColor += vec4(uShipTint, 1.0);
+	  fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
+     //fragColor += vec4(uShipTint, 1.0);
 //	  fragColor = vec4(Id * dColor + aColor, 1);
    }
    else {
@@ -74,15 +74,15 @@ void main() {
          //float Id = max(dot(vNormal, lightVector), 0.0f);
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
          
-         fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * (visibility+0.2) + (textureColor*1.2), 1);
-         fragColor += vec4(uShipTint, 1.0);
+         fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * visibility + (textureColor*1.5), 1);
+         //fragColor += vec4(uShipTint, 1.0);
       }
       else {
          //float Id = max(dot(vNormal, lightVector), 0.0f);
          float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
          
-         fragColor = vec4(Is * sColor * visibility + Id * dColor * (visibility+0.2) + (aColor*1.2), 1);
-         fragColor += vec4(uShipTint, 1.0);
+         fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
+         //fragColor += vec4(uShipTint, 1.0);
 //         fragColor = vec4(Id * dColor + aColor, 1);
       }
       

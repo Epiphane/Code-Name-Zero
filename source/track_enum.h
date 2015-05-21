@@ -15,4 +15,11 @@ enum Track {
    RED = 2
 };
 
+const int TOTAL_OBSTACLES = 3;
+enum Obstacles {
+   METEOR = 0,
+   WALL = 1,
+   SPIKE = 2
+};
+
 #endif

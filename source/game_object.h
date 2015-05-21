@@ -47,6 +47,9 @@ public:
    GameObject(GraphicsComponent  *graphics, 
               PhysicsComponent   *physics,
               InputComponent     *input);
+   GameObject(GraphicsComponent  *graphics,
+              PhysicsComponent   *physics,
+              CollisionComponent *collision);
    GameObject(GraphicsComponent  *graphics, 
               PhysicsComponent   *physics);
    GameObject(GraphicsComponent  *graphics);

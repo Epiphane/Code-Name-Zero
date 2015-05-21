@@ -12,18 +12,11 @@
 #include <stdio.h>
 #include <unordered_map>
 #include "main.h"
+#include "in_game_state.h"
+#include "track_manager.h"
+#include "state.h"
 
-const int OBJ_WALL = 1;
-const int OBJ_METEOR = 2;
-const int OBJ_SPIKE = 3;
-
-const int RIGHT_LANE = 1;
-const int MID_LANE = 2;
-const int LEFT_LANE = 3;
-
-const int BLUE_COLOR = 1;
-const int GREEN_COLOR = 2;
-const int RED_COLOR = 3;
+const int SPAWN_OFFSET = 4;
 
 typedef struct {
    int object;
@@ -41,7 +34,7 @@ public:
    virtual ~BeatEventListener();
    
    void init(std::string filename);
-   void update(float dt, unsigned int currBeat, float player_velocity);
+   void update(float dt, int currBeat, State* world, TrackManager* tm);
 };
 
 #endif /* defined(__RGBZero__beatEventListener__) */

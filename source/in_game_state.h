@@ -42,8 +42,11 @@ public:
    InGameState();
    ~InGameState();
    
+   void start();
+   
    GameObject *getPlayer() { return player; }
    Music *getSoundtrack() { return soundtrack; }
+   TrackManager *getTrackManager() {return track_manager;};
    
    int getTotalTargets() { return target_number; }
    void collide(GameObject *player, GameObject *other);
@@ -52,7 +55,7 @@ public:
    
    void send(std::string message, void *data);
    
-   GameObject *addObstacle(glm::vec3 position, Track track, Track color);
+   GameObject *addObstacle(glm::vec3 position, int track_num, Track track, Track color, int obj, int spawntime, int hittime);
 };
 
 glm::vec3 getPlayerPosition();

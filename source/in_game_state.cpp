@@ -84,9 +84,7 @@ InGameState::InGameState() {
    // Set up track manager
    track_manager = new TrackManager(this, player);
 
-   soundtrack = audio_load_music("./audio/RGB_Persistance.mp3", 200);
-   event_listener = new BeatEventListener;
-   event_listener->init("./beatmaps/RGB_Persistance.beatmap");
+   soundtrack = audio_load_music("./audio/RGB_MuteCity.mp3", 200);
    soundtrack->play();
    
    hud = new HUD();
@@ -100,6 +98,11 @@ InGameState::InGameState() {
    shadowMap->init(2048);
 
    RendererPostProcess::shaders_init();
+}
+
+void InGameState::start() {
+   event_listener = new BeatEventListener;
+   event_listener->init("./beatmaps/RGB_MuteCity.beatmap");
 }
 
 InGameState::~InGameState() {
@@ -124,7 +127,7 @@ void InGameState::update(float dt) {
    
    cleanupObstacles();
    
-   event_listener->update(dt, soundtrack->getBeat(), dynamic_cast<MovementComponent *>(playerObj->getPhysics())->getVelocity());
+   event_listener->update(dt, soundtrack->getBeat(), this, track_manager);
    
    float latPos = dynamic_cast<MovementComponent *>(player->getPhysics())->getLatPos();
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
@@ -203,12 +206,12 @@ void InGameState::collide(GameObject *player, GameObject *other) {
 
 //add an obstacle to the world.
 //params: a vec3 for its position, which Track it's on, and which color it is
-GameObject *InGameState::addObstacle(glm::vec3 position, Track track, Track color) {
+GameObject *InGameState::addObstacle(glm::vec3 position, int track_num, Track track, Track color, int obj, int spawntime, int hittime) {
    std::string extension;
+   std::string obstacle;
    //set up a new obstacle object
-   //todo: give it a collision component (and physics component)?
    
-   //Switching materials is pretty difficult, so load 3 meshes instead
+   // Based on color, load different mesh
    switch (color) {
       case BLUE:
          extension = "blue";
@@ -220,18 +223,34 @@ GameObject *InGameState::addObstacle(glm::vec3 position, Track track, Track colo
          extension = "red";
          break;
    }
-   std::string baseDir = "models/obstacles/obstacle2_" + extension + "/";
+
+   switch (obj) {
+      case METEOR:
+         obstacle = "meteor";
+         break;
+      case WALL:
+         obstacle = "wall";
+         break;
+      default:
+         obstacle = "obstacle2";
+         break;
+   }
+   
+   std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
+   std::cout << obstacle+ "_" + extension << " spawning in lane " << track << " with color " << color << std::endl;
    ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color);
-   GameObject *obstacle = new GameObject(ModelRenderer::load(baseDir + "obstacle2_" + extension + ".obj", baseDir), occ);
+   ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
+   opc->init(spawntime, hittime, track);
+   GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle+ "_" + extension + ".obj", baseDir), opc, occ);
 
    //set its position and let the world know it exists
-   addObject(obstacle);
-   obstacle->setPosition(position);
+   addObject(ob);
+   ob->setPosition(position);
    
    
-   obstacleLists[track].push_back(obstacle);
+   obstacleLists[track].push_back(ob);
    
-   return obstacle;
+   return ob;
 }
 
 //clear the lists of any obstacles behind the player

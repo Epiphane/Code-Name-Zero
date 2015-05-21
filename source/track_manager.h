@@ -22,6 +22,7 @@
 #define TRACK_OFFSET_GREEN 0
 #define TRACK_OFFSET_RED 3.8
 
+#define VISIBLE_TRACKS 200
 
 class TrackManager {
 private:
@@ -31,8 +32,6 @@ private:
    int next_track_number = 0;
    glm::vec3 slide_direction;
    bool first = true;
-   //add a random obstacle based on the position of a track
-   void addRandomObstacle(InGameState *world, glm::vec3 trackPos);
 
 public:
    TrackManager(State *world, GameObject *player_in);
@@ -46,12 +45,19 @@ public:
    glm::mat4 nextRoll(int track_number);
    float nextYawAngle(int track_number);
    glm::mat4 nextYaw(int track_number);
-   
 
    glm::mat4 nextRotate(int track_number);
    glm::vec3 nextSlideDirection(int track_number);
+   std::vector<GameObject*> getSegments(){return track_segments;};
 
    glm::vec3 getSlideDirection() { return slide_direction; };
+   
+   //add a random obstacle based on the position of a track
+   void addRandomObstacle(InGameState *world, glm::vec3 trackPos);
+   void addObstacle(InGameState *world, glm::vec3 trackPos, int track_num, int track, int color, int obj, int spawntime, int hittime);
+   int nextTrack_number() {return next_track_number;};
+   glm::vec3 getPosOnTrack(float zpos, int lane);
+   int getTrackAtZ(float zpos);
 };
 
 #endif /* defined(__Project__track__) */
