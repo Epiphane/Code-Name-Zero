@@ -29,6 +29,42 @@ in vec4 vShadowCoord;
 
 uniform sampler2DShadow uShadowMap;
 
+// Specular with cook-torrance calculation
+float specular(in vec3 rd, in vec3 norm, in vec3 lightDir, float roughness, float fresnel) {
+
+    float NdotL = dot(norm, lightDir);
+    float NdotV = dot(norm, -rd);
+
+    float spe = 0.0;
+    if (NdotL > 0.0 && NdotV > 0.0) {
+
+        vec3 h = normalize(-rd + lightDir);
+
+        float NdotH = max(dot(norm, h), 0.0);
+        float VdotH = max(dot(-rd, h), 0.000001);
+        float LdotH = max(dot(lightDir, h), 0.000001);
+
+        // Beckmann distrib
+        float cos2a = NdotH * NdotH;
+        float tan2a = (cos2a - 1.0) / cos2a;
+        float r = max(roughness, 0.01);
+        float r2 = r * r;
+        float D = exp(tan2a / r2) / (r2 * cos2a * cos2a);
+
+        // Fresnel term - Schlick approximation
+        float F = fresnel + (1.0 - fresnel) * pow(1.0 - VdotH, 5.0);
+
+        // Geometric attenuation term
+        float G = min(1.0, (2.0 * NdotH / VdotH) * min(NdotV, NdotL));
+
+        // Cook Torrance
+        spe = D * F * G / (4.0 * NdotV * NdotL);
+    }
+
+    return spe;
+}
+
+
 void main() {
    vec3 aColor = vec3(0);
    vec3 dColor = vec3(0);
@@ -51,7 +87,8 @@ void main() {
       sColor = vec3(0.14, 0.14, 0.14);
       shine = 76.8;
 	  
-	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
+//	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
+	  float Is = specular(cameraVec, vNormal, lightVector, 0.4f, 0.3f);
 	  
 	  fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + aColor, 1);
      fragColor += vec4(uShipTint, 1.0);
@@ -69,15 +106,15 @@ void main() {
 //         fragColor = texture(uTexUnits, vec3(UV, vMaterial));
 		vec3 textureColor = texture(uTexUnits, vec3(UV, vMaterial)).xyz;
 
-         //float Id = max(dot(vNormal, lightVector), 0.0f);
-         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
+//         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
+		float Is = specular(cameraVec, vNormal, lightVector, 0.35f, 0.2f);
          
          fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * visibility + textureColor, 1);
          fragColor += vec4(uShipTint, 1.0);
       }
       else {
-         //float Id = max(dot(vNormal, lightVector), 0.0f);
-         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
+//         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
+   		 float Is = specular(cameraVec, vNormal, lightVector, 0.5f, 0.01f);
          
          fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + aColor, 1);
          fragColor += vec4(uShipTint, 1.0);
