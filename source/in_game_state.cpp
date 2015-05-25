@@ -84,7 +84,7 @@ InGameState::InGameState() {
    // Set up track manager
    track_manager = new TrackManager(this, player);
 
-   soundtrack = audio_load_music("./audio/RGB_MuteCity.mp3", 200);
+   soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
    soundtrack->play();
    
    hud = new HUD();
@@ -102,7 +102,7 @@ InGameState::InGameState() {
 
 void InGameState::start() {
    event_listener = new BeatEventListener;
-   event_listener->init("./beatmaps/RGB_MuteCity.beatmap");
+   event_listener->init("./beatmaps/RGB_Harcore.beatmap");
 }
 
 InGameState::~InGameState() {
@@ -247,8 +247,14 @@ GameObject *InGameState::addObstacle(glm::vec3 position, int track_num, Track tr
    addObject(ob);
    ob->setPosition(position);
    
-   
-   obstacleLists[track].push_back(ob);
+   if (obj == WALL) {
+      obstacleLists[0].push_back(ob);
+      obstacleLists[1].push_back(ob);
+      obstacleLists[2].push_back(ob);
+   }
+   else {
+      obstacleLists[track].push_back(ob);
+   }
    
    return ob;
 }

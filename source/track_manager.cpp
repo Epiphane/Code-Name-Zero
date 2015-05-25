@@ -154,6 +154,7 @@ int TrackManager::getTrackAtZ(float zpos) {
 // Lane input is 0,1,2
 glm::vec3 TrackManager::getPosOnTrack(float zpos, int lane) {
    int track_number = getTrackAtZ(zpos);
+   std::cout<< "track number we're moving to: " << track_number << std::endl;
    glm::vec3 track_center = nextPosition(track_number);
    float lat_offset = lane - 1;
    float long_offset = track_center.z - zpos;//might be wrong

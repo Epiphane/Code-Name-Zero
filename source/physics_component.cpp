@@ -25,12 +25,16 @@ void ObstaclePhysicsComponent::update(GameObject *obj, State *world, float dt) {
    //MovementComponent::update(obj, world, dt);
    spawn_ms += dt;
    if (spawn_ms < hit_ms) {
-      std::cout << "updating obstacle position" << std::endl;
       InGameState* igs = dynamic_cast<InGameState*>(world);
       float player_z = igs->getPlayer()->getPosition().z;
-      float new_obj_z = (spawn_ms/hit_ms) * player_z;
-      glm::vec3 new_pos = igs->getTrackManager()->getPosOnTrack(new_obj_z, lane);
-      obj->setPosition(new_pos);
+      float new_obj_z = float(spawn_ms)/float(hit_ms) * player_z;
+      TrackManager* tm = igs->getTrackManager();
+      std::cout << "Player Z = " << player_z << std::endl;
+      std::cout << "track number player is on: " << tm->getTrackAtZ(player_z) << std::endl;
+      std::cout << "New Z = " << new_obj_z << std::endl;
+      glm::vec3 new_pos = tm->getPosOnTrack(new_obj_z, lane);
+      std::cout << "New Position = " << new_pos << std::endl;
+      //obj->setPosition(new_pos);
    }
    
 }
