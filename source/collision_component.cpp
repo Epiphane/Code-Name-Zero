@@ -21,7 +21,6 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    ObstacleCollisionComponent *occ = dynamic_cast<ObstacleCollisionComponent *>(other->getCollision());
    
    MovementComponent *playerMovement = dynamic_cast<MovementComponent *>(player->getPhysics());
-   ObstaclePhysicsComponent *getRidOfThis = dynamic_cast<ObstaclePhysicsComponent *>(other->getPhysics());
    
    if (!occ->hasBeenHit()) {
       if (occ->shouldAcceleratePlayer()) {
@@ -30,8 +29,6 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
       } else {
          playerMovement->setVelocity(std::max(playerMovement->getVelocity() - DECELERATION_AMT, 10.0f));
       }
-      
-      std::cout << getRidOfThis->getDebug() << std::endl;
    }
 }
 

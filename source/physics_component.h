@@ -71,7 +71,6 @@ private:
    float msec_left;
    int lane;
 public:
-   float getDebug() { return msec_left; }
    void init(int spawn_time, int hit_time, int spawn_lane);
    virtual void update(GameObject *obj, State *world, float dt);
 };
