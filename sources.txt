@@ -18,6 +18,7 @@ set(HEADERS
    beatEventListener.h
 
    HUD.h
+   audio_visualizer.h
 
    vertex_buffer_object.h
 
@@ -56,6 +57,7 @@ set(SOURCES
    beatEventListener.cpp
 
    HUD.cpp
+   audio_visualizer.cpp
 
    vertex_buffer_object.cpp
 
@@ -98,4 +100,7 @@ set(SHADERS
    PostProcVertex.glsl
    ShadowMapFragment.glsl
    ShadowMapVertex.glsl
+   AudioVisualizerFragment.glsl
+   AudioVisualizerGeometry.glsl
+   AudioVisualizerVertex.glsl
 )

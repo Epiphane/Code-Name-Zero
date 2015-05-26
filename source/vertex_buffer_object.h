@@ -10,6 +10,7 @@
 #define __RGBZero__vertex_buffer_object__
 
 #include "GLSL.h"
+#include "renderer.h"
 
 class VBO {
 private:
