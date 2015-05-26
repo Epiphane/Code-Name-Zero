@@ -46,7 +46,7 @@ public:
    float getLatPos(){ return lat_position; }
    float getVelocity(){ return velocity; }
 #define MAX_VELOCITY 1000
-   void setVelocity(float a){ if (velocity < MAX_VELOCITY) { velocity = a; } else { velocity = MAX_VELOCITY; } };
+   void setVelocity(float a){ if (a < MAX_VELOCITY) { velocity = a; } else { velocity = MAX_VELOCITY; } };
 
 };
 
