@@ -16,49 +16,63 @@ class State;
 class PhysicsComponent {
 public:
    virtual void update(GameObject *obj, State *world, float dt) {};
+   void init();
 };
 
 class MovementComponent : public PhysicsComponent {
 private:
-   float velocity = 1.0f;
+   float velocity = 100.0f;
    glm::vec3 track_position;
    glm::vec3 slide;
-   float lat_position = 0;
+   float lat_position = 0, lat_destination = 0;
    glm::vec3 direction;
    float long_position = 0;
-   glm::vec3 speed, accel;
+   glm::vec3 accel;
 
 public:
    //virtual void update(GameObject *obj, State *world, float dt, TrackManager track);
    virtual void update(GameObject *obj, State *world, float dt);
-   glm::vec3 getSpeed(){ return speed; }
    glm::vec3 getAccel(){ return accel; }
-   void setSpeed(glm::vec3 s){ speed = s; }
    void setAccel(glm::vec3 a){ accel = a; }
-
+   
    // Ryan's movement stuff - staying on the moving track
    void setSlide(glm::vec3 a){ slide = a; }
    void setDirection(glm::vec3 a){ direction = a; }
    glm::vec3 getDirection(){ return direction; }
    void setTrackPosition(glm::vec3 a){ track_position = a; }
    void setLongPos(float a){ long_position = a; }
-   void setLatPos(float a){ lat_position = a; }
-   void changeLatPos(float a);
+   void setLatPos(float pos, bool instant);
    float getLongPos(){ return long_position; }
    float getLatPos(){ return lat_position; }
    float getVelocity(){ return velocity; }
-   void setVelocity(float a){ if (velocity < 2000) { velocity = a; } else { velocity = 1800; } };
+#define MAX_VELOCITY 1000
+   void setVelocity(float a){ if (velocity < MAX_VELOCITY) { velocity = a; } else { velocity = MAX_VELOCITY; } };
 
 };
 
 class PlayerPhysicsComponent : public MovementComponent {
+private:
+   float accel, decel;
+   
 public:
    virtual void update(GameObject *obj, State *world, float dt);
+   
+   void accelerate(float length) { accel = length; }
+   void decelerate(float length) { decel = length; }
 };
 
 class TrackPhysicsComponent : public PhysicsComponent {
 public:
    virtual void update(GameObject *obj, State *world, float dt) {};
+};
+
+class ObstaclePhysicsComponent : public MovementComponent {
+private:
+   float msec_left;
+   int lane;
+public:
+   void init(int spawn_time, int hit_time, int spawn_lane);
+   virtual void update(GameObject *obj, State *world, float dt);
 };
 
 #endif /* defined(__Project__physics_component__) */

@@ -22,11 +22,12 @@
 #include "main.h"
 #include "track_manager.h"
 #include "shadowMap.h"
+#include "beatEventListener.h"
 
 #define Z_EPSILON 5.0
 
 // Farthest Z value of track
-const float track_piece_length = 30.005f;
+// const float track_piece_length = 30.005f;
 float track_length = 0.0f;
 
 GameObject *playerObj;
@@ -53,7 +54,7 @@ InGameState::InGameState() {
    
    target_number = 0;
    
-   MovementComponent *movement = new PlayerPhysicsComponent();
+   MovementComponent *movement = new MovementComponent();
    InputComponent *i = new PlayerInputComponent();
    
    // Create player ships
@@ -73,7 +74,7 @@ InGameState::InGameState() {
   // player->setType(OBJECT_PLAYER);
    //player->addCollision(OBJECT_TARGET);
    player->setPosition(glm::vec3(0, 0, 0));
-   movement->setSpeed(camera_getLookAt()*100.0f);
+   movement->setVelocity(50.0f);
    addObject(player);
    
    input_set_callback(GLFW_KEY_P, switchModels);
@@ -83,7 +84,7 @@ InGameState::InGameState() {
    // Set up track manager
    track_manager = new TrackManager(this, player);
 
-   soundtrack = audio_load_music("./audio/RGB_Happy_Electro.mp3", 120);
+   soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
    soundtrack->play();
    
    hud = new HUD();
@@ -94,9 +95,14 @@ InGameState::InGameState() {
       obstacleLists.push_back(std::list<GameObject *>());
    }
    shadowMap = new ShadowMap;
-   shadowMap->init(1024);
+   shadowMap->init(2048);
 
    RendererPostProcess::shaders_init();
+}
+
+void InGameState::start() {
+   event_listener = new BeatEventListener;
+   event_listener->init("./beatmaps/RGB_Harcore.beatmap");
 }
 
 InGameState::~InGameState() {
@@ -121,6 +127,8 @@ void InGameState::update(float dt) {
    
    cleanupObstacles();
    
+   event_listener->update(dt, soundtrack->getBeat(), this, track_manager);
+   
    float latPos = dynamic_cast<MovementComponent *>(player->getPhysics())->getLatPos();
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
       collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
@@ -137,6 +145,8 @@ void InGameState::render(float dt) {
    State::render(dt);
    isShadowMapRender = false;
    shadowMap->disable();
+   
+   COMPUTE_BENCHMARK(25, "Shadowmap time: ", true)
    
    // Bind Shadow map texture as active
    glActiveTexture(GL_TEXTURE1);
@@ -176,7 +186,7 @@ void InGameState::render(float dt) {
    COMPUTE_BENCHMARK(25, "Blur time: ", true)
    
    // Render non-blurred elements
-   //hud->render(dt);
+   hud->render(dt);
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }
@@ -196,12 +206,12 @@ void InGameState::collide(GameObject *player, GameObject *other) {
 
 //add an obstacle to the world.
 //params: a vec3 for its position, which Track it's on, and which color it is
-GameObject *InGameState::addObstacle(glm::vec3 position, Track track, Track color) {
+GameObject *InGameState::addObstacle(glm::vec3 position, int track_num, Track track, Track color, int obj, int spawntime, int hittime) {
    std::string extension;
+   std::string obstacle;
    //set up a new obstacle object
-   //todo: give it a collision component (and physics component)?
    
-   //Switching materials is pretty difficult, so load 3 meshes instead
+   // Based on color, load different mesh
    switch (color) {
       case BLUE:
          extension = "blue";
@@ -213,18 +223,41 @@ GameObject *InGameState::addObstacle(glm::vec3 position, Track track, Track colo
          extension = "red";
          break;
    }
-   std::string baseDir = "models/obstacles/obstacle2_" + extension + "/";
+
+   switch (obj) {
+      case METEOR:
+         obstacle = "meteor";
+         break;
+      case WALL:
+         obstacle = "wall";
+         break;
+      default:
+         obstacle = "obstacle2";
+         position += glm::vec3(0, 2, 0);
+         break;
+   }
+   
+   std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
+//   std::cout << obstacle+ "_" + extension << " spawning in lane " << track << " with color " << color << std::endl;
    ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color);
-   GameObject *obstacle = new GameObject(ModelRenderer::load(baseDir + "obstacle2_" + extension + ".obj", baseDir), occ);
+   ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
+   opc->init(spawntime, hittime, track);
+   GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle+ "_" + extension + ".obj", baseDir), opc, occ);
 
    //set its position and let the world know it exists
-   addObject(obstacle);
-   obstacle->setPosition(position);
+   addObject(ob);
+   ob->setPosition(position);
    
+   if (obj == WALL) {
+      obstacleLists[0].push_back(ob);
+      obstacleLists[1].push_back(ob);
+      obstacleLists[2].push_back(ob);
+   }
+   else {
+      obstacleLists[track].push_back(ob);
+   }
    
-   obstacleLists[track].push_back(obstacle);
-   
-   return obstacle;
+   return ob;
 }
 
 //clear the lists of any obstacles behind the player

@@ -40,7 +40,8 @@ public:
    
    FMOD::Channel *getChannel() { return channel; }
    FMOD::Sound *getSound() { return sound; }
-   unsigned int getBeat()  { return beat; }
+   Beat getBeat()  { return beat; }
+   Beat getBPM() { return bpm; }
    
    void setChannel(FMOD::Channel *c) { channel = c; }
 };

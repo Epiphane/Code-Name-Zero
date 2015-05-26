@@ -25,12 +25,10 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    if (!occ->hasBeenHit()) {
       if (occ->shouldAcceleratePlayer()) {
          playerMovement->setVelocity(playerMovement->getVelocity() + ACCELERATION_AMT);
-         printf("Accelerated!");
+         std::cout << "Accelerated" << std::endl;
       } else {
          playerMovement->setVelocity(std::max(playerMovement->getVelocity() - DECELERATION_AMT, 10.0f));
-         printf("Decelerated.");
       }
-      printf(" New velocity: %f\n", playerMovement->getVelocity());
    }
 }
 

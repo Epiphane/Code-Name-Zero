@@ -22,6 +22,7 @@
 class ShadowMap;
 //circular dependencies are silly
 class TrackManager;
+class BeatEventListener;
 
 
 class InGameState : public State {
@@ -31,6 +32,7 @@ private:
    int target_number;
    Music *soundtrack;
    TrackManager *track_manager;
+   BeatEventListener *event_listener;
 
    HUD *hud;
    std::vector<std::list<GameObject *>> obstacleLists;
@@ -40,8 +42,11 @@ public:
    InGameState();
    ~InGameState();
    
+   void start();
+   
    GameObject *getPlayer() { return player; }
    Music *getSoundtrack() { return soundtrack; }
+   TrackManager *getTrackManager() {return track_manager;};
    
    int getTotalTargets() { return target_number; }
    void collide(GameObject *player, GameObject *other);
@@ -50,9 +55,7 @@ public:
    
    void send(std::string message, void *data);
    
-   GameObject *addObstacle(glm::vec3 position, Track track, Track color);
-   
-   void beat(Beat *beat);
+   GameObject *addObstacle(glm::vec3 position, int track_num, Track track, Track color, int obj, int spawntime, int hittime);
 };
 
 glm::vec3 getPlayerPosition();
