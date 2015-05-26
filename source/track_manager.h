@@ -56,8 +56,7 @@ public:
    void addRandomObstacle(InGameState *world, glm::vec3 trackPos);
    void addObstacle(InGameState *world, glm::vec3 trackPos, int track_num, int track, int color, int obj, int spawntime, int hittime);
    int nextTrack_number() {return next_track_number;};
-   glm::vec3 getPosOnTrack(float zpos, int lane);
-   int getTrackAtZ(float zpos);
+   glm::vec3 getPosOnTrack(float longitude, int lane);
 };
 
 #endif /* defined(__Project__track__) */

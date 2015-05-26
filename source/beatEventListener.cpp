@@ -84,7 +84,7 @@ void BeatEventListener::update(float dt, int currBeat, State* world, TrackManage
       Event curr_event = events[currBeat+SPAWN_OFFSET];
       
       // Spawn object 50 track pieces away (visible tracks/4)
-      std::cout << "Spawning object to hit on beat " << currBeat+SPAWN_OFFSET << " " << curr_event.lane << std::endl;
+      std::cout << "Beat " << (currBeat+SPAWN_OFFSET) % 4 << "!!" << std::endl;
       // InGameState *world, glm::vec3 trackPos, int track, int color, int obj, int spawntime, int hittime
       InGameState* igs = dynamic_cast<InGameState *>(world);
 
@@ -92,8 +92,8 @@ void BeatEventListener::update(float dt, int currBeat, State* world, TrackManage
       int hitms = (1.0f/(igs->getSoundtrack()->getBPM()/60.0f) * 1000)*(currBeat+SPAWN_OFFSET);
       
       tm->addObstacle(igs,
-                      tm->nextPosition(tm->nextTrack_number() - VISIBLE_TRACKS*0.80),
-                      tm->nextTrack_number() - VISIBLE_TRACKS*0.80,
+                      tm->nextPosition(tm->nextTrack_number()),
+                      tm->nextTrack_number(),
                       curr_event.lane,
                       curr_event.color,
                       curr_event.object,

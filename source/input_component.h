@@ -23,9 +23,4 @@ public:
    void update(GameObject *obj);
 };
 
-class WheelInputComponent : public InputComponent {
-public:
-   void update(GameObject *obj);
-};
-
 #endif /* defined(__Project__input_component__) */

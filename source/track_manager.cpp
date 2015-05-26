@@ -38,7 +38,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
    // Get a reference to the movement component
    MovementComponent *movement = dynamic_cast<MovementComponent *>(player->getPhysics());
    // If entering the next track segment
-   if (movement->getLongPos() >= 0.5f || first) {
+   while (movement->getLongPos() >= 1.0f || first) {
       first = false;
       GameObject *track = new GameObject(ModelRenderer::load("models/Track/track.obj", "models/Track/"));
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
@@ -66,7 +66,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
       movement->setDirection(nextDirection(curTrack));
       glm::vec3 carOffset = glm::normalize(glm::cross(nextSlideDirection(curTrack),nextDirection(curTrack)));
       movement->setTrackPosition(nextPosition(curTrack) + carOffset);
-      movement->setLongPos(-0.5f);
+      movement->setLongPos(movement->getLongPos()-1.0f);
       player->setRotation(glm::vec3(nextPitchAngle(curTrack), nextYawAngle(curTrack), nextRollAngle(curTrack)));
 
       next_track_number++;
@@ -75,7 +75,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
 
 // This function defines the track with functions for the x, y, and z component of the track.  Functions must be smoothe and continuous.
 glm::vec3 TrackManager::nextPosition(int track_number) {
-   float curviness = 0.5;
+   float curviness = 0.1;
    float x = TRACK_LENGTH * curviness * cos(track_number * 0.1f) + TRACK_LENGTH * curviness * cos(track_number * 0.15f + 0.5f);
    float y = TRACK_LENGTH * curviness * sin(track_number * 0.05f) + TRACK_LENGTH * curviness * sin(track_number * 0.1f);
    float z = TRACK_LENGTH * -track_number; // Fine if track is mostly straigh, otherwise need to actually do math;
@@ -147,20 +147,17 @@ void TrackManager::addObstacle(InGameState *world, glm::vec3 trackPos, int track
    obstacle->transform(nextRotate(next_track_number) * glm::scale(1.5f, 1.5f, 1.5f));
 }
 
-int TrackManager::getTrackAtZ(float zpos) {
-   return round(-zpos / TRACK_LENGTH); // Fine if track is mostly straigh, otherwise need to actually do math;
-}
-
 // Lane input is 0,1,2
-glm::vec3 TrackManager::getPosOnTrack(float zpos, int lane) {
-   int track_number = getTrackAtZ(zpos);
-   std::cout<< "track number we're moving to: " << track_number << std::endl;
+glm::vec3 TrackManager::getPosOnTrack(float longitude, int lane) {
+   int track_number = next_track_number + longitude - VISIBLE_TRACKS;
+   
    glm::vec3 track_center = nextPosition(track_number);
+   
    float lat_offset = lane - 1;
-   float long_offset = track_center.z - zpos;//might be wrong
+   float long_offset = longitude - track_number;
    glm::vec3 longOffset = nextDirection(track_number) * long_offset * TRACK_LENGTH;
    glm::vec3 latOffset = nextSlideDirection(track_number) * lat_offset * 4.0f;
    
    // Set position based on offsets
-   return track_center + longOffset + latOffset;
+   return track_center;// + longOffset + latOffset;
 }

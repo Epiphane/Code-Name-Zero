@@ -54,7 +54,7 @@ InGameState::InGameState() {
    
    target_number = 0;
    
-   MovementComponent *movement = new PlayerPhysicsComponent();
+   MovementComponent *movement = new MovementComponent();
    InputComponent *i = new PlayerInputComponent();
    
    // Create player ships
@@ -74,7 +74,7 @@ InGameState::InGameState() {
   // player->setType(OBJECT_PLAYER);
    //player->addCollision(OBJECT_TARGET);
    player->setPosition(glm::vec3(0, 0, 0));
-   movement->setSpeed(camera_getLookAt()*100.0f);
+   movement->setVelocity(50.0f);
    addObject(player);
    
    input_set_callback(GLFW_KEY_P, switchModels);
@@ -186,7 +186,7 @@ void InGameState::render(float dt) {
    COMPUTE_BENCHMARK(25, "Blur time: ", true)
    
    // Render non-blurred elements
-   //hud->render(dt);
+   hud->render(dt);
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }
@@ -233,11 +233,12 @@ GameObject *InGameState::addObstacle(glm::vec3 position, int track_num, Track tr
          break;
       default:
          obstacle = "obstacle2";
+         position += glm::vec3(0, 2, 0);
          break;
    }
    
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
-   std::cout << obstacle+ "_" + extension << " spawning in lane " << track << " with color " << color << std::endl;
+//   std::cout << obstacle+ "_" + extension << " spawning in lane " << track << " with color " << color << std::endl;
    ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color);
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
    opc->init(spawntime, hittime, track);

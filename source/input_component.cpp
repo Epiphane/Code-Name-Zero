@@ -16,32 +16,26 @@
 
 const float PLAYER_SPEED = 100;
 
-void WheelInputComponent::update(GameObject *obj) {
-   //Moved to physics_component.cpp : MovementComponent
-}
-
 void PlayerInputComponent::update(GameObject *obj) {
    MovementComponent *movement = dynamic_cast<MovementComponent *>(obj->getPhysics());
    if (movement != NULL) {
-      glm::vec3 accel = movement->getSpeed();
-      accel.x = accel.y = 0.0f;
-      accel = glm::vec3(0);
+      glm::vec3 accel = glm::vec3(0);
       if (!DEBUG) {
          if (input_keyDown(GLFW_KEY_W)) {
             accel.y -= PLAYER_SPEED;
-            movement->setVelocity(movement->getVelocity() * 1.2);
+            accel.z += 1;
          }
          if (input_keyDown(GLFW_KEY_S)) {
             accel.y += PLAYER_SPEED;
-            movement->setVelocity(movement->getVelocity() / 1.2);
+            accel.z -= 1;
          }
          if (input_keyDown(GLFW_KEY_A)) {
             accel.x -= PLAYER_SPEED;
-            movement->changeLatPos(-1);
+            movement->setLatPos(movement->getLatPos() - 1, false);
          }
          if (input_keyDown(GLFW_KEY_D)) {
             accel.x += PLAYER_SPEED;
-            movement->changeLatPos(1);
+            movement->setLatPos(movement->getLatPos() + 1, false);
          }
          if (input_keyDown(GLFW_KEY_Q)) {
             accel.z -= 1;
@@ -50,13 +44,13 @@ void PlayerInputComponent::update(GameObject *obj) {
             accel.z += 1;
          }
          if (input_keyDown(GLFW_KEY_Z)) {
-            movement->setLatPos(-1);
+            movement->setLatPos(-1, false);
          }
          if (input_keyDown(GLFW_KEY_X)) {
-            movement->setLatPos(0);
+            movement->setLatPos(0, false);
          }
          if (input_keyDown(GLFW_KEY_C)) {
-            movement->setLatPos(1);
+            movement->setLatPos(1, false);
          }
       }
       

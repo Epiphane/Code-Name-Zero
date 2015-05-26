@@ -16,111 +16,82 @@
 #include "track_manager.h"
 
 void ObstaclePhysicsComponent::init(int spawn_time, int hit_time, int spawn_lane) {
-   spawn_ms = spawn_time;
-   hit_ms = hit_time;
+   msec_left = float(hit_time - spawn_time) / 1000; // Milliseconds between spawn and hit
    lane = spawn_lane;
 }
 
 void ObstaclePhysicsComponent::update(GameObject *obj, State *world, float dt) {
    //MovementComponent::update(obj, world, dt);
-   spawn_ms += dt;
-   if (spawn_ms < hit_ms) {
-      InGameState* igs = dynamic_cast<InGameState*>(world);
-      float player_z = igs->getPlayer()->getPosition().z;
-      float new_obj_z = float(spawn_ms)/float(hit_ms) * player_z;
-      TrackManager* tm = igs->getTrackManager();
-      std::cout << "Player Z = " << player_z << std::endl;
-      std::cout << "track number player is on: " << tm->getTrackAtZ(player_z) << std::endl;
-      std::cout << "New Z = " << new_obj_z << std::endl;
-      glm::vec3 new_pos = tm->getPosOnTrack(new_obj_z, lane);
-      std::cout << "New Position = " << new_pos << std::endl;
-      //obj->setPosition(new_pos);
+   msec_left -= dt;
+   if (msec_left >= 0) {
+      InGameState* game = dynamic_cast<InGameState*>(world);
+      assert(game != nullptr);
+      
+      TrackManager* tm   = game->getTrackManager();
+      GameObject *player = game->getPlayer();
+      MovementComponent *movement = dynamic_cast<MovementComponent *>(player->getPhysics());
+      assert(movement != nullptr);
+      
+      float player_long     = movement->getLongPos();
+      float player_velocity = movement->getVelocity();
+      
+      float new_obj_long = player_long + msec_left * player_velocity / 5;
+      
+      glm::vec3 new_pos = tm->getPosOnTrack(new_obj_long, lane);
+//      if (msec_left >= 0.2f) {
+         obj->setPosition(new_pos);
+//      }
    }
    
 }
 
 void MovementComponent::update(GameObject *obj, State *world, float dt) {
+   velocity += accel.z * 100 * dt;
+   if (velocity > 1000) velocity = 1000;
+   
    // Vehicle offsets from track
    glm::vec3 longOffset = direction * long_position * TRACK_LENGTH;
    glm::vec3 latOffset = slide * lat_position * 4.0f;
-
+   
    // Set position based on offsets
    obj->setPosition(track_position + longOffset + latOffset);
-
+   
    // Increment longitudinal position
-   long_position += dt * velocity;
-
-   /* Previous physics
-   float sp = glm::length(speed) + accel.z;
-   glm::vec4 new_speed = glm::vec4(speed, 0);
-   new_speed = glm::rotate(accel.y * dt, 1.0f, 0.0f, 0.0f) * new_speed;
-   new_speed = glm::rotate(accel.x * dt, 0.0f, -1.0f, 0.0f) * new_speed;
-   speed = glm::normalize(glm::vec3(new_speed));
-   speed *= sp;
+   long_position += dt * velocity / 10.0f;
    
-//   speed += accel * dt;
-   
-   glm::vec3 new_position = obj->getPosition() + speed * dt;
-   
-   obj->setPosition(new_position);
-   
-//   accel = glm::vec3(0);
-*/
+   // Update lateral position if we're easing to a new place
+   if (lat_position != lat_destination) {
+      lat_position += (lat_destination - lat_position) / 4.0f;
+   }
 }
 
-void MovementComponent::changeLatPos(float a) {
-   float max = 1.0;
-   float step = 0.1;
-   if (a < 0) {
-      if (lat_position <= -max) {
-         lat_position = -max;
-      }
-      else
-         lat_position -= step;
+void MovementComponent::setLatPos(float pos, bool instant) {
+   // Refine bounds
+   if (pos < -1.0f)
+      pos = -1.0f;
+   else if (pos > 1.0f)
+      pos = 1.0f;
+   
+   if (instant) {
+      lat_position = lat_destination = pos;
    }
-   if (a > 0) {
-      if (lat_position >= max) {
-         lat_position = max;
-      }
-      else
-         lat_position += step;
+   else {
+      lat_destination = pos;
    }
 }
 
 void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
-   MovementComponent::update(obj, world, dt);
-   
-   glm::vec3 new_position = obj->getPosition();
-   glm::vec3 new_speed = getSpeed();
-   
-   // check if ship is going to go outside of track bounds
-//   if (new_position.x > 3.0f) {
-//      new_position.x = 3.0f;
-//   }
-//   if (new_position.x < -3.0f) {
-//      new_position.x = -3.0f;
-//   }
-   if (new_position.y < 0.0f) {
-      new_position.y = 0.0f;
-      new_speed.y = 0;
+   if (decel > 0) {
+      decel -= dt;
+      accel = 0;
+      setAccel(getAccel() - glm::vec3(0, 0, 1));
+   }
+   else if (accel > 0) {
+      accel -= dt;
+      setAccel(getAccel() + glm::vec3(0, 0, 0.8));
    }
    
-//   float SPEED_LIMIT = 20;
-//   if (new_speed.x < -SPEED_LIMIT) {
-//      new_speed.x = -SPEED_LIMIT;
-//   }
-//   if (new_speed.x > SPEED_LIMIT) {
-//      new_speed.x = SPEED_LIMIT;
-//   }
-//   if (new_speed.y < -SPEED_LIMIT) {
-//      new_speed.y = -SPEED_LIMIT;
-//   }
-//   if (new_speed.y > SPEED_LIMIT) {
-//      new_speed.y = SPEED_LIMIT;
-//   }
-   
-   setSpeed(new_speed);
-   //obj->setPosition(new_position);
+   MovementComponent::update(obj, world, dt);
 }
 
 //void TrackPhysicsComponent::update(GameObject *obj, State *world, float dt) {
