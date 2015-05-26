@@ -82,7 +82,7 @@ InGameState::InGameState() {
    // Set up track manager
    track_manager = new TrackManager(this, player);
 
-   soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
+   soundtrack = audio_load_music("./audio/RGB_MuteCity.mp3", 200);
    soundtrack->play();
    
    visualizer = new AudioVisualizer(soundtrack);

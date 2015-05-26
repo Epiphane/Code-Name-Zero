@@ -36,7 +36,7 @@ private:
    unsigned int length;
    
    int currentSpectrum = 0;
-   float spectrum[MAX_SPECTRA][SAMPLES_PER_SPECTRUM] = {{0}};
+   float spectrum[MAX_SPECTRA][SAMPLES_PER_SPECTRUM];
    
 public:
    Music(FMOD::Sound *s, Beat _bpm);

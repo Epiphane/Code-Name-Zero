@@ -44,6 +44,11 @@ void main()
    vMaterial = int(aMaterial);
    vUV = aUV;
    vNormal = normalize((uModelMatrix * vec4(aNormal, 0)).xyz);
-   
+
+   // and now Ryan makes up normals...
+   // This makes normals behave with the upward curve of the track
+   vNormal.z += 0.000001f * offset * offset;
+   vNormal = normalize(vNormal);
+
    vShadowCoord = uShadowProj * uShadowView * uModelMatrix * aPosition;
 }
