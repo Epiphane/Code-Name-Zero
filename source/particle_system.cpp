@@ -87,7 +87,7 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
     m_billboardTechnique.SetColorTextureUnit(0);
     m_billboardTechnique.SetBillboardSize(.05f);
     
-    m_pTexture = new Texture(GL_TEXTURE_2D, "./textures/smoke1.png");
+    m_pTexture = new Texture(GL_TEXTURE_2D, "./textures/red_particle.png");
     
     if (!m_pTexture->Load()) {
         fprintf(stderr, "textures failed in particle_system");
