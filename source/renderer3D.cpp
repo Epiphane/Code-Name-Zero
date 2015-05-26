@@ -28,6 +28,8 @@ GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
 GLuint Renderer3D::uShadowView, Renderer3D::uShadowProj, Renderer3D::uShadowMap;
 // Color GLuint for ship tint.
 GLuint Renderer3D::uShipTint;
+// GLuint for vehicle position
+GLuint Renderer3D::uShipPos;
 
 bool Renderer3D::initialized = false;
 void Renderer3D::init() {
@@ -49,6 +51,7 @@ void Renderer3D::init() {
    uShadowView = glGetUniformLocation(program, "uShadowView");
    uShadowMap = glGetUniformLocation(program, "uShadowMap");
    uShipTint = glGetUniformLocation(program, "uShipTint");
+   uShipPos = glGetUniformLocation(program, "uShipPos");
 
    initialized = true;
 }
@@ -116,6 +119,9 @@ void Renderer3D::render(glm::mat4 Model) {
    // Shadow Texture, dedicated to 1
    glUniform1i(uShadowMap, 1);
    
+   // Sent Ship position to shaders
+   glUniform3f(uShipPos, playerPos.x, playerPos.y, playerPos.z);
+
    // Send Ship tint to shaders
    float lane = getPlayerLatPosition();
    bool isShip = false; //TODO - figure out how to see if we're rendering the ship.

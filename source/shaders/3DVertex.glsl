@@ -10,6 +10,8 @@ uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform vec3 uCameraPos;
 uniform vec3 uLightPos;
+uniform vec3 uShipPos;
+
 // Shadow pass things
 uniform mat4 uShadowView;
 uniform mat4 uShadowProj;
@@ -36,6 +38,9 @@ void main()
 
    gl_Position = uProjMatrix * uViewMatrix * vWorldSpace;
    
+   float offset = -1.0f * (vWorldSpace.z - uShipPos.z); // Offset z by current ship position
+   gl_Position.y += 0.0009f * offset * offset;
+
    vMaterial = int(aMaterial);
    vUV = aUV;
    vNormal = normalize((uModelMatrix * vec4(aNormal, 0)).xyz);

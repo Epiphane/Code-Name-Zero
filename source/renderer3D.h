@@ -46,6 +46,7 @@ private:
    static GLuint uTexScale, uTexUnits, uHasTextures;
    static GLuint uShadowView, uShadowProj, uShadowMap;
    static GLuint uShipTint;
+   static GLuint uShipPos;
    
 public:
    Renderer3D(bool isClone = false);

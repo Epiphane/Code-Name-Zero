@@ -1,4 +1,4 @@
-# List all .h files here
+﻿# List all .h files here
 set(HEADERS
    GLIncludes.h
    GLSL.h
@@ -82,7 +82,7 @@ set(RESOURCES
    "models"
    "textures"
    "audio"
-   “beatmaps”
+   "beatmaps"
 )
 
 set(SHADERS

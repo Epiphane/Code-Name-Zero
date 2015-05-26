@@ -38,7 +38,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
    // Get a reference to the movement component
    MovementComponent *movement = dynamic_cast<MovementComponent *>(player->getPhysics());
    // If entering the next track segment
-   while (movement->getLongPos() >= 1.0f || first) {
+   while (movement->getLongPos() >= 0.5f || first) {
       first = false;
       GameObject *track = new GameObject(ModelRenderer::load("models/Track/track.obj", "models/Track/"));
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
@@ -75,11 +75,11 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
 
 // This function defines the track with functions for the x, y, and z component of the track.  Functions must be smoothe and continuous.
 glm::vec3 TrackManager::nextPosition(int track_number) {
-   float curviness = 0.1;
-   float x = TRACK_LENGTH * curviness * cos(track_number * 0.1f) + TRACK_LENGTH * curviness * cos(track_number * 0.15f + 0.5f);
-   float y = TRACK_LENGTH * curviness * sin(track_number * 0.05f) + TRACK_LENGTH * curviness * sin(track_number * 0.1f);
-   float z = TRACK_LENGTH * -track_number; // Fine if track is mostly straigh, otherwise need to actually do math;
-   return glm::vec3(x,y,z);
+   float curviness = 0.4f;
+   float x = TRACK_LENGTH * curviness * 50.62f * cos(track_number * 0.001f) + TRACK_LENGTH * curviness * 30.7f * cos(track_number * 0.015f + 0.5f);
+   float y = TRACK_LENGTH * curviness * 0.91f * sin(track_number * 0.05f) + TRACK_LENGTH * curviness * 10.8f * sin(track_number * 0.01f);
+   float z = TRACK_LENGTH * -track_number; // Fine if track is mostly straight, otherwise need to actually do math
+   return glm::vec3(x, y, z);
 }
 
 glm::vec3 TrackManager::nextDirection(int track_number) {
