@@ -35,7 +35,7 @@ void ObstaclePhysicsComponent::update(GameObject *obj, State *world, float dt) {
       float player_long     = movement->getLongPos();
       float player_velocity = movement->getVelocity();
       
-      float new_obj_long = player_long + msec_left * player_velocity / 5;
+      float new_obj_long = player_long + 10 + msec_left * player_velocity / 5;
       
       glm::vec3 new_pos = tm->getPosOnTrack(new_obj_long, lane);
 //      if (msec_left >= 0.2f) {
