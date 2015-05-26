@@ -1,4 +1,4 @@
-﻿# List all .h files here
+# List all .h files here
 set(HEADERS
    GLIncludes.h
    GLSL.h
@@ -10,6 +10,7 @@ set(HEADERS
    rendererDebug.h
    renderer2D.h
    renderer3D.h
+   rendererSky.h
    renderer.h
    rendererPostProcess.h
    texture.h
@@ -48,6 +49,7 @@ set(SOURCES
    camera.cpp
    rendererDebug.cpp
    renderer2D.cpp
+   rendererSky.cpp
    renderer3D.cpp
    renderer.cpp
    rendererPostProcess.cpp
@@ -103,4 +105,6 @@ set(SHADERS
    AudioVisualizerFragment.glsl
    AudioVisualizerGeometry.glsl
    AudioVisualizerVertex.glsl
+   SkyShaderFragment.glsl
+   SkyShaderVertex.glsl
 )
