@@ -151,19 +151,21 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
    m_billboardTechnique.setProjection(Projection);
    m_pTexture->Bind(GL_TEXTURE0);
    
+   glDisable(GL_RASTERIZER_DISCARD);
+   
    glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[m_currTFB]);
    
    glEnableVertexAttribArray(0);
    glEnableVertexAttribArray(1);
    
-   glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), 0);                 // type
+   glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), 0); // type
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
    
    glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
    
    glDisableVertexAttribArray(0);
    glDisableVertexAttribArray(1);
-   
+ 
    //Switch buffers every Render call
    m_currVB = m_currTFB;
    m_currTFB = (m_currTFB + 1) & 0x1;

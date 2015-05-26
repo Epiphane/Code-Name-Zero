@@ -7,6 +7,6 @@ out float Type0;
 
 void main()
 {
-    gl_Position = vec4(Position, 1.0);
-    Type0 = Type;
+   gl_Position = vec4(Position, 1.0);
+   Type0 = Type;
 }

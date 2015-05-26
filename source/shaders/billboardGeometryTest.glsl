@@ -25,15 +25,14 @@ void main()
       vec4 clip = gProjection * gView * vec4(Pos, 1.0);
       float invWidth = 1.0/1024;
       float invHeight= 1.0/768;
-      int iconSize=128;
+      int iconSize=32;
       
       // Used to unproject the XY plane
       float dx = iconSize * invWidth * 0.5 * clip.w;
       float dy = iconSize * invHeight * 0.5 * clip.w;
-      //dx *= gBillboardSize * clip.w;
-      //dy *= gBillboardSize * clip.w;
-      vec3 temp = gBillboardSize * gCameraPos; // not using gCameraPos
       
+      vec3 temp = gBillboardSize*gCameraPos; // not using gCameraPos
+
       // Bottom left corner of the quad
       gl_Position = vec4(clip.x - dx, clip.y + dy, clip.z, clip.w);
       TexCoord = vec2(0.0, 0.0);
