@@ -15,7 +15,6 @@
 #include "track_enum.h"
 #include <math.h>
 
-
 // Initialization
 TrackManager::TrackManager(State *world, GameObject *player_in) {
    player = player_in;
@@ -23,7 +22,7 @@ TrackManager::TrackManager(State *world, GameObject *player_in) {
    // NOTE:
    // Current track is 27.5 units long
    for (int i = 0; i<VISIBLE_TRACKS; i++) {
-      GameObject *track = new GameObject(ModelRenderer::load("models/Track/track.obj", "models/Track/"));
+      GameObject *track = new GameObject(ModelRenderer::load(TRACK_OBJECT, "models/Track/"));
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
       track->setPosition(nextPosition(next_track_number));
       world->addObject(track);
@@ -40,7 +39,7 @@ void TrackManager::update(float dt, glm::vec3 player_position, State *world) {
    // If entering the next track segment
    while (movement->getLongPos() >= 0.5f || first) {
       first = false;
-      GameObject *track = new GameObject(ModelRenderer::load("models/Track/track.obj", "models/Track/"));
+      GameObject *track = new GameObject(ModelRenderer::load(TRACK_OBJECT, "models/Track/"));
       track->transform(nextRotate(next_track_number) * glm::scale(1.0f, 1.0f, TRACK_SCALE));
       track->setPosition(nextPosition(next_track_number));
       world->addObject(track);

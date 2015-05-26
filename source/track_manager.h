@@ -15,8 +15,9 @@
 #include "game_object.h"
 #include "in_game_state.h"
 
-#define TRACK_SCALE 0.09f
-#define TRACK_LENGTH 65.0f * TRACK_SCALE
+#define TRACK_SCALE 0.2f
+#define TRACK_LENGTH 27.5f * TRACK_SCALE
+#define TRACK_OBJECT "models/Track/RGB_TrackOnly_Curved.obj"
 
 #define TRACK_OFFSET_BLUE -3.8
 #define TRACK_OFFSET_GREEN 0
