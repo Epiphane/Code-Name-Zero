@@ -50,6 +50,9 @@ void setState(State *state) {
    currentState->start();
 }
 
+bool moveOneFrame = false;
+void forwardOneFrame() { moveOneFrame = true; }
+
 GLFWwindow* window;
 
 const int w_width = 1024;
@@ -125,6 +128,7 @@ int main(int argc, char **argv) {
    
    input_init(window);
    input_set_callback(GLFW_KEY_SPACE, toggleDebug);
+   input_set_callback(GLFW_KEY_M, forwardOneFrame);
    
    glEnable (GL_BLEND);
    glEnable(GL_DEPTH_TEST);
@@ -143,8 +147,6 @@ int main(int argc, char **argv) {
    INIT_BENCHMARK
    do {
       assert(currentState != NULL);
-      
-      audio_update();
       
       double nextTime = glfwGetTime();
       if (nextTime - clock > SEC_PER_FRAME) {
@@ -169,15 +171,17 @@ int main(int argc, char **argv) {
          }
          
          input_update();
+         audio_update();
 
          // Update and render the game
          // Use fixed time updating
-         if (!DEBUG) {
+         if (!DEBUG || moveOneFrame) {
             currentState->update(nextTime - clock);
          }
          else {
             currentState->update(0);
          }
+         moveOneFrame = false;
 
          currentState->render(glfwGetTime() - clock);
          

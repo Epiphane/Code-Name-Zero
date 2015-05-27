@@ -14,6 +14,7 @@
 #include "physics_component.h"
 #include "input_component.h"
 #include "collision_component.h"
+#include "track_manager.h"
 
 #define OBJECT_PLAYER 0
 #define OBJECT_TARGET 1
@@ -32,15 +33,22 @@ private:
    
    Bounds bounds;
 
+   // Useless right now, we don't have hierarchical models!
    std::vector<GameObject *> children;
 
    GraphicsComponent  *graphics;
    PhysicsComponent   *physics;
    InputComponent     *input;
    CollisionComponent *collision;
+   TrackManager       *transformer;
 
 public:
    GameObject(GraphicsComponent  *graphics, 
+              PhysicsComponent   *physics,
+              InputComponent     *input,
+              CollisionComponent *collision,
+              TrackManager       *trackManager);
+   GameObject(GraphicsComponent  *graphics,
               PhysicsComponent   *physics,
               InputComponent     *input,
               CollisionComponent *collision);
@@ -53,9 +61,6 @@ public:
    GameObject(GraphicsComponent  *graphics, 
               PhysicsComponent   *physics);
    GameObject(GraphicsComponent  *graphics);
-   //for stationary objects
-   GameObject(GraphicsComponent *graphics,
-              CollisionComponent *collision);
    
    bool isDead() { return remove; }
    void die()    { remove = true; }

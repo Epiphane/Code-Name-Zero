@@ -26,16 +26,9 @@
 
 #define Z_EPSILON 5.0
 
-// Farthest Z value of track
-// const float track_piece_length = 30.005f;
-float track_length = 0.0f;
-
 GameObject *playerObj;
 int currentPlayerShip = 0;
 std::vector<GraphicsComponent *> ships;
-
-
-
 
 glm::vec3 getPlayerPosition();
 float getPlayerLatPosition();
@@ -46,14 +39,11 @@ void switchModels() {
    playerObj->setGraphics(ships[currentPlayerShip]);
 }
 
-InGameState::InGameState() {
+InGameState::InGameState() : player_speed(100) {
    State::State();
    
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
-   
-   MovementComponent *movement = new PlayerPhysicsComponent();
-   InputComponent *i = new PlayerInputComponent();
    
    // Create player ships
    std::string model;
@@ -68,11 +58,11 @@ InGameState::InGameState() {
    model = "models/Little Wyvern/";
    ships.push_back(ModelRenderer::load(model + "model.obj", model));
    
-   playerObj = player = new GameObject(ships[currentPlayerShip], movement, i, new PlayerCollisionComponent);
-  // player->setType(OBJECT_PLAYER);
-   //player->addCollision(OBJECT_TARGET);
-   player->setPosition(glm::vec3(0, 0, 0));
-   movement->setVelocity(50.0f);
+   player_movement = new PlayerPhysicsComponent();
+   playerObj = player = new GameObject(ships[currentPlayerShip], 
+                                       player_movement, 
+                                       new PlayerInputComponent, 
+                                       new PlayerCollisionComponent);
    addObject(player);
    
    input_set_callback(GLFW_KEY_P, switchModels);
@@ -80,9 +70,9 @@ InGameState::InGameState() {
    camera_follow(player, glm::vec3(0, 1, 4));
    
    // Set up track manager
-   track_manager = new TrackManager(this, player);
+   track_manager = new TrackManager();
 
-   soundtrack = audio_load_music("./audio/RGB_MuteCity.mp3", 200);
+   soundtrack = audio_load_music("./audio/BeatBotBlues.mp3", 120);
    soundtrack->play();
    
    visualizer = new AudioVisualizer(soundtrack);
@@ -118,6 +108,8 @@ void InGameState::send(std::string message, void *data) {
 }
 
 void InGameState::update(float dt) {
+   player_speed = player_movement->getSpeed();
+
    // Update all objects and the camera
    State::update(dt);
    
@@ -125,13 +117,13 @@ void InGameState::update(float dt) {
    
    visualizer->update(dt);
 
-   track_manager->update(dt, player->getPosition(), this);
+   track_manager->update(dt, this);
    
    cleanupObstacles();
    
    event_listener->update(dt, soundtrack->getBeat(), this, track_manager);
    
-   float latPos = dynamic_cast<MovementComponent *>(player->getPhysics())->getLatPos();
+   float latPos = player->getPosition().x;
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
       collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
    }
@@ -144,7 +136,7 @@ void InGameState::render(float dt) {
    shadowMap->enable();
    isShadowMapRender = true;
    glClear(GL_DEPTH_BUFFER_BIT);
-   State::render(dt);
+   player->render();
    isShadowMapRender = false;
    shadowMap->disable();
    
@@ -155,30 +147,25 @@ void InGameState::render(float dt) {
    glBindTexture(GL_TEXTURE_2D, shadowMap->getTexID());
 
    // Turn on frame buffer
-//   glBindFramebuffer(GL_FRAMEBUFFER, RendererPostProcess::get_fbo());
    RendererPostProcess::capture();
    
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    // Render scene
+   track_manager->render();
    State::render(dt);
    if (DEBUG)
       RendererDebug::instance()->render(glm::mat4(1));
    COMPUTE_BENCHMARK(25, "Render elements time: ", true)
    
    // Turn off frame buffer, and render frame buffer to screen
-//   glBindFramebuffer(GL_FRAMEBUFFER, 0);
    RendererPostProcess::endCapture();
 
    static int blurRate = 0;
    static float playerPreviousSpeed = 0;
 
    if (!DEBUG) {
-      MovementComponent *playMove = (MovementComponent *)player->getPhysics();
-	  blurRate = (playMove->getVelocity() / 50.0f + (playMove->getVelocity() - playerPreviousSpeed) * 1.0f + 9 * blurRate) / 10;
-	  playerPreviousSpeed = playMove->getVelocity();
-	  // Old vector based blur rate
-//	  blurRate = (glm::length(playMove->getSpeed()) / 10.0f + playMove->getAccel().z * 60.0f + 9 * blurRate) / 10;
+      blurRate = (player_speed / 10.0f + player_movement->getAccel() * 60.0f + 9 * blurRate) / 10;
    }
    else {
       blurRate = 0;
@@ -209,10 +196,23 @@ void InGameState::collide(GameObject *player, GameObject *other) {
 
 //add an obstacle to the world.
 //params: a vec3 for its position, which Track it's on, and which color it is
-GameObject *InGameState::addObstacle(glm::vec3 position, int track_num, Track track, Track color, int obj, int spawntime, int hittime) {
+GameObject *InGameState::addObstacle(Track track, Track color, int obj, float travel_time) {
    std::string extension;
    std::string obstacle;
    //set up a new obstacle object
+
+   glm::vec3 position(0);
+   position.z = -player_speed * travel_time;
+   switch (track) {
+   case BLUE:
+      position.x = -4;
+      break;
+   case RED:
+      position.x = 4;
+      break;
+   default:
+      break;
+   }
    
    // Based on color, load different mesh
    switch (color) {
@@ -244,8 +244,8 @@ GameObject *InGameState::addObstacle(glm::vec3 position, int track_num, Track tr
 //   std::cout << obstacle+ "_" + extension << " spawning in lane " << track << " with color " << color << std::endl;
    ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color);
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
-   opc->init(spawntime, hittime, track);
-   GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle+ "_" + extension + ".obj", baseDir), opc, occ);
+   opc->init(travel_time);
+   GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle+ "_" + extension + ".obj", baseDir), opc, nullptr, occ, track_manager);
 
    //set its position and let the world know it exists
    addObject(ob);
@@ -287,8 +287,7 @@ Track getTrackFromLatPos(float latPos) {
 }
 
 float getPlayerLatPosition() {
-   MovementComponent *movement = dynamic_cast<MovementComponent *>(playerObj->getPhysics());
-   return movement->getLatPos();
+   return playerObj->getPosition().x;
 }
 
 glm::vec3 getPlayerPosition() {

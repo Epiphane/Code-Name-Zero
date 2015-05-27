@@ -55,28 +55,12 @@ Renderer *Renderer::clone() {
    return NULL;
 }
 
-void setUniforms(GLuint uWinScale, GLuint uPerspective, GLuint uView, GLuint uModel, glm::mat4 MVP) {
-    if(w_width > w_height)
-        glUniform2f(uWinScale, (float) w_height / w_width, 1);
-    else
-        glUniform2f(uWinScale, 1, (float) w_width / w_height);
-    
-    // Send camera projection
-    MVP = currentMVP * MVP;
-    
-    glm::mat4 View = camera_getMatrix();
-    
-    glUniformMatrix4fv(uModel, 1, GL_FALSE, &MVP[0][0]);
-    glUniformMatrix4fv(uView, 1, GL_FALSE, &View[0][0]);
-    glUniformMatrix4fv(uPerspective, 1, GL_FALSE, &Projection[0][0]);
-}
-
 void shaders_init() {
    GLuint VertexArrayID;
    glGenVertexArrays(1, &VertexArrayID);
    glBindVertexArray(VertexArrayID);
    
-   Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 800.0f);
+   Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 6400.0f);
    currentMVP = glm::mat4(1.0f);
    MatrixStack.empty();
 }

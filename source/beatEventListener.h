@@ -16,7 +16,7 @@
 #include "track_manager.h"
 #include "state.h"
 
-const int SPAWN_OFFSET = 4;
+const int SPAWN_OFFSET = 16;
 
 typedef struct {
    int object;

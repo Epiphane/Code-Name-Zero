@@ -29,19 +29,13 @@ public:
 
 
 class ObstacleCollisionComponent : public CollisionComponent {
-private:
-   bool hit;
-   
 public:
-   ObstacleCollisionComponent() : hit(false) {};
    ObstacleCollisionComponent(Track loc, Track clr);
    
    bool shouldAcceleratePlayer() { return location == color; };
    Track location;
    Track color;
    
-   void setHit(bool hasBeenHit) { hit = hasBeenHit; };
-   bool hasBeenHit() { return hit; };
    void collide(GameObject *thisObj, GameObject *other);
 };
 
