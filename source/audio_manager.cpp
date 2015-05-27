@@ -177,16 +177,7 @@ float Music::getProgress() {
 }
 
 void Music::update() {
-   Beat position;
-   channel->getPosition(&position, FMOD_TIMEUNIT_MS);
-   
-   Beat currentBeat = position * bpm / 60000 + 1;
-   if (currentBeat != beat) {
-      beat = currentBeat;
-      
-      getCurrentState()->send("beat", &beat);
-   }
-   
+   RendererDebug::instance()->log("Music update", false);
    // Compute frequency spectrum
    float val;
    char s[256];
@@ -220,6 +211,17 @@ void Music::update() {
    }
    
    currentSpectrum = (currentSpectrum + 1) % SAMPLES_PER_SPECTRUM;
+
+   // Calculate beat (more accurate here)
+   Beat position;
+   channel->getPosition(&position, FMOD_TIMEUNIT_MS);
+
+   Beat currentBeat = position * bpm / 60000 + 1;
+   if (currentBeat != beat) {
+      beat = currentBeat;
+
+      getCurrentState()->send("beat", &beat);
+   }
 }
 
 float Music::getSample(int index, int totalSpectra) {
@@ -235,7 +237,7 @@ float Music::getSample(int index, int totalSpectra) {
       }
    }
    
-   return avg / (scale * SAMPLES_PER_SPECTRUM / 3);
+   return avg / (scale * SAMPLES_PER_SPECTRUM / 2);
 }
 
 void Music::getSamples(float *samples, int number) {
@@ -253,7 +255,7 @@ void Music::getSamples(float *samples, int number) {
    }
    
    for (int s = 0; s < number; s ++)
-      samples[s] /= scale * SAMPLES_PER_SPECTRUM / 3;
+      samples[s] /= scale * SAMPLES_PER_SPECTRUM / 2;
 }
 
 void Music::play() {
