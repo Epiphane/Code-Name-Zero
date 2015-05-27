@@ -176,7 +176,13 @@ int main(int argc, char **argv) {
          // Update and render the game
          // Use fixed time updating
          if (!DEBUG || moveOneFrame) {
-            currentState->update(nextTime - clock);
+            float dt = nextTime - clock;
+            if (dt > 0.5f) {
+               DEBUG_LOG("Game hung. dt=" + std::to_string(dt));
+               dt = 0.5f;
+            }
+
+            currentState->update(dt);
          }
          else {
             currentState->update(0);
