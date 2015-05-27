@@ -139,8 +139,7 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
-   
-   setState(new FIRST_STATE());
+   setState(new InGameState("RGB_MuteCity", 0));
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();

@@ -102,21 +102,21 @@ void audio_release() {
    sounds->release();
 }
 
-FMOD::Sound *audio_load_sound(const char *fileName) {
+FMOD::Sound *audio_load_sound(std::string fileName) {
    assert(audio_system != nullptr);
    
    if (soundMap[fileName])
       return soundMap[fileName];
    
    FMOD::Sound *sound;
-   if (!check(audio_system->createStream(fileName, FMOD_DEFAULT, nullptr, &sound), "loading sound", Error)) {
+   if (!check(audio_system->createStream(fileName.c_str(), FMOD_DEFAULT, nullptr, &sound), "loading sound", Error)) {
       return nullptr;
    }
    
    return sound;
 }
 
-Music *audio_load_music(const char *fileName, Beat bpm) {
+Music *audio_load_music(std::string fileName, Beat bpm) {
    FMOD::Sound *sound = audio_load_sound(fileName);
    check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_NORMAL), "sound looping", Error);
    check(sound->setLoopCount(-1), "sound->setLoopCount(-1)", Error);
@@ -149,7 +149,7 @@ void audio_play_music(Music *music) {
    music->setChannel(channel);
 }
 
-void audio_play_sound(const char *fileName) {
+void audio_play_sound(std::string fileName) {
    assert(audio_system != nullptr);
    
    FMOD::Sound *sound = audio_load_sound(fileName);
@@ -177,7 +177,6 @@ float Music::getProgress() {
 }
 
 void Music::update() {
-   RendererDebug::instance()->log("Music update", false);
    // Compute frequency spectrum
    float val;
    char s[256];
@@ -188,29 +187,31 @@ void Music::update() {
    check(dsp->getParameterFloat(FMOD_DSP_FFT_DOMINANT_FREQ, &val, 0, 0), "get dominant");
    check(dsp->getParameterData(FMOD_DSP_FFT_SPECTRUMDATA, (void **)&data, &len, s, 256), "get spectrum");
    
-   int average_samples = data->length / data->numchannels / MAX_SPECTRA;
-   int index = 0;
-   for (int s = 0; s < MAX_SPECTRA; s ++) {
-      spectrum[s] = 0;
-      
-      int ds = average_samples * s * 2 / MAX_SPECTRA;
-      for (int i = 0; i < ds; i ++) {
-         for (int chan = 0; chan < data->numchannels; chan ++) {
-            // arbitrary cutoff to filter out noise
-            if (data->spectrum[chan][index] > 0.0001f) {
-               spectrum[s] += data->spectrum[chan][index];
+   if (data->length > 0) {
+      int average_samples = data->length / data->numchannels / MAX_SPECTRA;
+      int index = 0;
+      for (int s = 0; s < MAX_SPECTRA; s ++) {
+         spectrum[s] = 0;
+         
+         int ds = average_samples * s * 2 / MAX_SPECTRA;
+         for (int i = 0; i < ds; i ++) {
+            for (int chan = 0; chan < data->numchannels; chan ++) {
+               // arbitrary cutoff to filter out noise
+               if (data->spectrum[chan][index] > 0.0001f) {
+                  spectrum[s] += data->spectrum[chan][index];
+               }
             }
+            
+            index ++;
          }
          
-         index ++;
+         if (spectrum[s] < 0.001f) {
+            spectrum[s] = 0;
+         }
       }
-      
-      if (spectrum[s] < 0.001f) {
-         spectrum[s] = 0;
-      }
-   }
    
-   currentSpectrum = (currentSpectrum + 1) % SAMPLES_PER_SPECTRUM;
+      currentSpectrum = (currentSpectrum + 1) % SAMPLES_PER_SPECTRUM;
+   }
 
    // Calculate beat (more accurate here)
    Beat position;

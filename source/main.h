@@ -36,8 +36,6 @@
 #define GROUND_WIDTH 40
 #define MAX_TARGET 50
 
-#define FIRST_STATE InGameState
-
 #define DEBUG_LOG_VAL(val) RendererDebug::instance()->log(std::to_string(val), true);
 #define DEBUG_LOG(val) RendererDebug::instance()->log(val, true);
 #define INIT_BENCHMARK float _clock = glfwGetTime();

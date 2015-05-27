@@ -11,6 +11,7 @@
 
 #include <vector>
 
+#include "track_enum.h"
 #include "bounds.h"
 #include "renderer.h"
 
@@ -21,6 +22,8 @@ protected:
    Bounds bounds;
    std::vector<Renderer *> renderers;
    
+   glm::vec3 current_tint;
+   
 public:
    GraphicsComponent();
    
@@ -29,6 +32,8 @@ public:
    
    GraphicsComponent *clone();
    void clone(GraphicsComponent *other);
+   
+   void tint(Track lane);
 };
 
 class ModelRenderer : public GraphicsComponent {

@@ -72,7 +72,7 @@ void BeatEventListener::init(std::string filename, State *world) {
             e.object = obj;
             e.lane = lane;
             e.color = color;
-            std::cout << "Adding event: " << beat << obj << lane << color << std::endl;
+            std::cout << "Adding event: " << beat << " " << obj << " " << lane << " " << color << std::endl;
             events.emplace(beat, e);
          }
       }

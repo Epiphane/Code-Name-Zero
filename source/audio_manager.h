@@ -78,10 +78,10 @@ void audio_setPaused(bool paused);
 void audio_update();
 void audio_release();
 
-FMOD::Sound *audio_load_sound(const char *filename);
-void audio_play_sound(const char *filename);
+FMOD::Sound *audio_load_sound(std::string filename);
+void audio_play_sound(std::string filename);
 
-Music *audio_load_music(const char *fileName, Beat bpm);
+Music *audio_load_music(std::string fileName, Beat bpm);
 void audio_play_music(Music *music);
 
 void audio_stuff();
