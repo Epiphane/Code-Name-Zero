@@ -27,7 +27,7 @@ BeatEventListener::~BeatEventListener() {
 // Beat File Format:
 // <Beat# float>,<Object int[0-3]>,<Lane int[0-3]>,<Color int[0-3]>
 
-void BeatEventListener::init(std::string filename) {
+void BeatEventListener::init(std::string filename, State *world) {
    struct stat buffer;
    int beat = 0;
    int obj = 0;
@@ -77,25 +77,33 @@ void BeatEventListener::init(std::string filename) {
          }
       }
    }
+
+   InGameState* igs = dynamic_cast<InGameState *>(world);
+   if (igs != nullptr) {
+      // Spawn the first few gates
+      for (int i = 0; i < SPAWN_OFFSET; i++) {
+         // Add object to hit in SPAWN_OFFSET beats
+         igs->addGate(60.0f / float(igs->getSoundtrack()->getBPM()) * i);
+      }
+   }
 }
 
-void BeatEventListener::update(float dt, int currBeat, State* world, TrackManager* tm) {
-   if (events.find(currBeat+SPAWN_OFFSET) != events.end() && last_beat != currBeat) {
-      Event curr_event = events[currBeat+SPAWN_OFFSET];
+void BeatEventListener::update(int currBeat, State* world) {
+   InGameState* igs = dynamic_cast<InGameState *>(world);
+   if (igs != nullptr) {
+      if (events.find(currBeat+SPAWN_OFFSET) != events.end()) {
+         Event curr_event = events[currBeat+SPAWN_OFFSET];
       
-      // Spawn object 50 track pieces away (visible tracks/4)
-      std::cout << "Beat " << (currBeat+SPAWN_OFFSET) % 4 << "!!" << std::endl;
-      // InGameState *world, glm::vec3 trackPos, int track, int color, int obj, int spawntime, int hittime
-      InGameState* igs = dynamic_cast<InGameState *>(world);
+         // Spawn object 50 track pieces away (visible tracks/4)
+         std::cout << "Beat " << (currBeat+SPAWN_OFFSET) % 4 << "!!" << std::endl;
+         // Add object to hit in SPAWN_OFFSET beats
+         igs->addObstacle(static_cast<Track>(curr_event.lane),
+                           static_cast<Track>(curr_event.color),
+                           curr_event.object,
+                           60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
+      }
 
-      int spawnms = (1.0f/(igs->getSoundtrack()->getBPM()/60.0f) * 1000)*currBeat;
-      int hitms = (1.0f/(igs->getSoundtrack()->getBPM()/60.0f) * 1000)*(currBeat+SPAWN_OFFSET);
-      
       // Add object to hit in SPAWN_OFFSET beats
-      igs->addObstacle(static_cast<Track>(curr_event.lane),
-                       static_cast<Track>(curr_event.color),
-                       curr_event.object,
-                       60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
-      last_beat = currBeat;
+      igs->addGate(60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
    }
 }

@@ -30,7 +30,7 @@ void AudioVisualizer::init() {
 AudioVisualizer::AudioVisualizer(Music *m) : music(m) {
    init();
    
-   renderer = new Renderer2D("./textures/progress.png", 0);
+   renderer = new Renderer2D("./textures/progress.png", 1.499999);
 }
 
 int num_bars = Music::MAX_SPECTRA;
