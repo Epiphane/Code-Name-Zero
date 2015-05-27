@@ -23,6 +23,7 @@
 #include "track_manager.h"
 #include "shadowMap.h"
 #include "beatEventListener.h"
+#include "rendererSky.h"
 
 #define Z_EPSILON 5.0
 
@@ -86,13 +87,15 @@ InGameState::InGameState() : player_speed(100) {
    }
    shadowMap = new ShadowMap;
    shadowMap->init(2048);
-
+   
    RendererPostProcess::shaders_init();
+   
+   skyRender = new SkyRenderer;
 }
 
 void InGameState::start() {
    event_listener = new BeatEventListener;
-   event_listener->init("./beatmaps/RGB_Harcore.beatmap");
+   event_listener->init("./beatmaps/RGB_MuteCity.beatmap");
 }
 
 InGameState::~InGameState() {
@@ -150,6 +153,10 @@ void InGameState::render(float dt) {
    RendererPostProcess::capture();
    
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   
+   // Render DA SKY!
+   // TODO Figure out where and how we want the sun to operate.
+   skyRender->render(glm::vec3(0.0f, 0.3f, -0.7f));
 
    // Render scene
    track_manager->render();
@@ -234,7 +241,7 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
       case WALL:
          obstacle = "wall";
          break;
-      default:
+      case SPIKE:
          obstacle = "obstacle2";
          position += glm::vec3(0, 2, 0);
          break;
@@ -262,6 +269,18 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
    
    return ob;
 }
+
+GameObject *InGameState::addGate(glm::vec3 position, int track_num, int spawntime, int hittime) {
+   ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
+   opc->init(spawntime, hittime, 1);
+   GameObject *ob = new GameObject(ModelRenderer::load("models/Track/RBG_Gate_1.obj", "models/Track/"), opc);
+   
+   addObject(ob);
+   ob->setPosition(position);
+   
+   return ob;
+}
+
 
 //clear the lists of any obstacles behind the player
 void InGameState::cleanupObstacles() {

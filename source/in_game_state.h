@@ -21,6 +21,7 @@
 #define NUM_TRACKS 3
 
 class ShadowMap;
+class SkyRenderer;
 //circular dependencies are silly
 class TrackManager;
 class BeatEventListener;
@@ -33,6 +34,7 @@ private:
    float player_speed;
 
    ShadowMap *shadowMap;
+   SkyRenderer *skyRender;
    Music *soundtrack;
    TrackManager *track_manager;
    BeatEventListener *event_listener;
@@ -60,6 +62,7 @@ public:
    void send(std::string message, void *data);
    
    GameObject *addObstacle(Track track, Track color, int obj, float travel_time);
+   GameObject *addGate(glm::vec3 position, int track_num,int spawntime, int hittime);
 };
 
 glm::vec3 getPlayerPosition();
