@@ -60,6 +60,10 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    const int min_speed = 30, max_speed = 1000;
    if (speed < min_speed) speed = min_speed;
    if (speed > max_speed) speed = max_speed;
+
+   glm::vec3 pos = obj->getPosition();
+   pos.x += (lat_destination - pos.x) / 4;
+   obj->setPosition(pos);
 }
 
 void PlayerPhysicsComponent::accelerate(float time, float _accel) {

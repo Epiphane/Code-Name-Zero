@@ -32,7 +32,7 @@ public:
 
 class PlayerPhysicsComponent : public PhysicsComponent {
 private:
-   float lat_destination;
+   float lat_destination = 0;
    float accel, accel_time;
    float speed = 100;
 
