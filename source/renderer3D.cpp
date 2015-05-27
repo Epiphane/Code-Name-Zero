@@ -28,8 +28,6 @@ GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
 GLuint Renderer3D::uShadowView, Renderer3D::uShadowProj, Renderer3D::uShadowMap;
 // Color GLuint for ship tint.
 GLuint Renderer3D::uShipTint;
-// GLuint for vehicle position
-GLuint Renderer3D::uShipPos;
 
 bool Renderer3D::initialized = false;
 void Renderer3D::init() {
@@ -51,12 +49,11 @@ void Renderer3D::init() {
    uShadowView = glGetUniformLocation(program, "uShadowView");
    uShadowMap = glGetUniformLocation(program, "uShadowMap");
    uShipTint = glGetUniformLocation(program, "uShipTint");
-   uShipPos = glGetUniformLocation(program, "uShipPos");
 
    initialized = true;
 }
 
-Renderer3D::Renderer3D(bool isClone) : Renderer(), b_vertex(Vertices), b_uv(UVs), b_normal(Normals), b_material(Materials), b_index(Indices), numMaterials(0), hasTextures(false) {
+Renderer3D::Renderer3D(bool isClone) : Renderer(), b_vertex(Vertices), b_uv(UVs), b_normal(Normals), b_material(Materials), b_index(Indices), numMaterials(0), hasTextures(false), tint(0) {
    if (!initialized)
       init();
    
@@ -90,11 +87,10 @@ void Renderer3D::render(glm::mat4 Model) {
    
    // LIGHT POSITION. HARDCODED. YEE BREH
    glm::vec3 camPos = camera_getPosition();
-   glm::vec3 playerPos = getPlayerPosition();
-   glm::vec3 shadowLightPos = glm::vec3(playerPos.x+10.0f,playerPos.y+20.0f,playerPos.z);
-   glm::vec3 lightPos = glm::vec3(playerPos.x+10.0f, playerPos.y + 40.0f, playerPos.z);
+   glm::vec3 shadowLightPos = glm::vec3(10.0f, 20.0f, 0.0f);
+   glm::vec3 lightPos = glm::vec3(10.0f, 40.0f, 0.0f);
    
-   glm::mat4 shadowView = glm::lookAt(shadowLightPos, glm::vec3(playerPos.x, playerPos.y, playerPos.z), glm::vec3(0.0f, 1.0f, 0.0f));
+   glm::mat4 shadowView = glm::lookAt(shadowLightPos, glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f));
    /*(left, right, bottom, top, zNear, zFar) changes 'dimensions' of shadow map*/
    glm::mat4 shadowProj = glm::ortho(-80.0f, 80.0f, -80.0f, 80.0f, 0.0f, 100.0f);
    // Bias matrix to make window coordinates and texture coordinates cooperate.
@@ -118,28 +114,9 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniformMatrix4fv(uShadowProj, 1, GL_FALSE, glm::value_ptr(shadowProj));
    // Shadow Texture, dedicated to 1
    glUniform1i(uShadowMap, 1);
-   
-   // Sent Ship position to shaders
-   glUniform3f(uShipPos, playerPos.x, playerPos.y, playerPos.z);
 
    // Send Ship tint to shaders
-   float lane = getPlayerLatPosition();
-   bool isShip = false; //TODO - figure out how to see if we're rendering the ship.
-   float colorIntensity = isShip ? 0.4f : 0.0f;
-   float laneOffset = 0.40;
-   
-   if (lane <= -laneOffset) {
-      // In left lane, blue is active color
-      glUniform3f(uShipTint, 0.0, 0.0, colorIntensity);
-   }
-   else if (lane >= laneOffset) {
-      // In right lane, red is active color
-      glUniform3f(uShipTint, colorIntensity, 0.0, 0.0);
-   }
-   else {
-      // In middle lane, green is active color
-      glUniform3f(uShipTint, 0.0, colorIntensity,0.0);
-   }
+   glUniform3f(uShipTint, tint.x, tint.y, tint.z);
    
    glUniformMatrix4fv(uView, 1, GL_FALSE, &View[0][0]);
    glUniformMatrix4fv(uProj, 1, GL_FALSE, &Proj[0][0]);

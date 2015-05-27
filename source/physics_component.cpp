@@ -64,6 +64,16 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    glm::vec3 pos = obj->getPosition();
    pos.x += (lat_destination - pos.x) / 4;
    obj->setPosition(pos);
+   
+   // Tint the player
+   Track current_track = GREEN;
+   if (pos.x < TRACK_OFFSET_BLUE / 2)
+      current_track = BLUE;
+   else if (pos.x > TRACK_OFFSET_RED / 2)
+      current_track = RED;
+   
+   if (obj->getGraphics() != nullptr)
+      obj->getGraphics()->tint(current_track);
 }
 
 void PlayerPhysicsComponent::accelerate(float time, float _accel) {

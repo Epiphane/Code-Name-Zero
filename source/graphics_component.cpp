@@ -15,7 +15,7 @@
 #include "graphics_component.h"
 #include "game_object.h"
 
-GraphicsComponent::GraphicsComponent() {
+GraphicsComponent::GraphicsComponent() : current_tint(glm::vec3(0)) {
    renderers.clear();
    bounds.min_x = bounds.max_x = 0;
    bounds.min_y = bounds.max_y = 0;
@@ -94,6 +94,37 @@ ModelRenderer *ModelRenderer::load(std::string filename, std::string baseDir) {
    }
 
    return new ModelRenderer(filename, baseDir);
+}
+
+void GraphicsComponent::tint(Track lane) {
+   glm::vec3 tint(0);
+   const float color_intensity = 0.3f;
+   switch(lane) {
+      case GREEN:
+         tint.g = color_intensity;
+         break;
+      case BLUE:
+         tint.b = color_intensity;
+         break;
+      case RED:
+         tint.r = color_intensity;
+         break;
+   }
+   
+   if (tint == current_tint) {
+      return;
+   }
+   
+   Renderer3D *renderer3D;
+   std::vector<Renderer *>::iterator renderer;
+   for (renderer = renderers.begin(); renderer != renderers.end(); renderer ++) {
+      renderer3D = dynamic_cast<Renderer3D *>(*renderer);
+      if (renderer3D != nullptr) {
+         renderer3D->setTint(tint);
+      }
+   }
+   
+   current_tint = tint;
 }
 
 ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {

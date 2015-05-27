@@ -27,53 +27,39 @@
 
 #define Z_EPSILON 5.0
 
-GameObject *playerObj;
-int currentPlayerShip = 0;
-std::vector<GraphicsComponent *> ships;
-
-glm::vec3 getPlayerPosition();
-float getPlayerLatPosition();
 Track getTrackFromLatPos(float latPos);
 
-void switchModels() {
-   currentPlayerShip = (currentPlayerShip + 1) % ships.size();
-   playerObj->setGraphics(ships[currentPlayerShip]);
-}
+const int InGameState::NUM_SHIPS = 5;
+const std::string InGameState::SHIP_MODELS[] = {
+   "Red Razelle/",
+   "Sonic Phantom/",
+   "Wild Boar/",
+   "Magic Seagull/",
+   "Little Wyvern/"
+};
 
-InGameState::InGameState() : player_speed(100) {
+InGameState::InGameState(std::string levelname, int player_ship) : level(levelname), player_speed(100) {
    State::State();
    
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
    
    // Create player ships
-   std::string model;
-   model = "models/Red Razelle/";
-   ships.push_back(ModelRenderer::load(model + "model.obj", model));
-   model = "models/Sonic Phantom/";
-   ships.push_back(ModelRenderer::load(model + "model.obj", model));
-   model = "models/Wild Boar/";
-   ships.push_back(ModelRenderer::load(model + "model.obj", model));
-   model = "models/Magic Seagull/";
-   ships.push_back(ModelRenderer::load(model + "model.obj", model));
-   model = "models/Little Wyvern/";
-   ships.push_back(ModelRenderer::load(model + "model.obj", model));
+   std::string ship = "models/" + SHIP_MODELS[player_ship];
    
    player_movement = new PlayerPhysicsComponent();
-   playerObj = player = new GameObject(ships[currentPlayerShip], 
-                                       player_movement, 
-                                       new PlayerInputComponent, 
-                                       new PlayerCollisionComponent);
+   player = new GameObject(ModelRenderer::load(ship + "model.obj", ship),
+                           player_movement,
+                           new PlayerInputComponent,
+                           new PlayerCollisionComponent);
    addObject(player);
-   
-   input_set_callback(GLFW_KEY_P, switchModels);
    
    camera_follow(player, glm::vec3(0, 1, 4));
    
    // Set up track manager
    track_manager = new TrackManager();
 
-   soundtrack = audio_load_music("./audio/RGB_MuteCity.mp3", 200);
+   soundtrack = audio_load_music("./audio/" + level + ".mp3", 200);
 //   soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
 //   soundtrack = audio_load_music("./audio/Mambo5.mp3", 174);
    soundtrack->play();
@@ -97,7 +83,7 @@ InGameState::InGameState() : player_speed(100) {
 
 void InGameState::start() {
    event_listener = new BeatEventListener;
-   event_listener->init("./beatmaps/RGB_MuteCity.beatmap", this);
+   event_listener->init("./beatmaps/" + level + ".beatmap", this);
 }
 
 InGameState::~InGameState() {
@@ -241,6 +227,7 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
          break;
       case WALL:
          obstacle = "wall";
+         position.x = 0;
          break;
       case SPIKE:
          obstacle = "obstacle2";
@@ -307,12 +294,4 @@ Track getTrackFromLatPos(float latPos) {
    } else {
       return RED;
    }
-}
-
-float getPlayerLatPosition() {
-   return playerObj->getPosition().x;
-}
-
-glm::vec3 getPlayerPosition() {
-   return playerObj->getPosition();
 }

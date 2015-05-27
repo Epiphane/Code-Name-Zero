@@ -1,0 +1,15 @@
+beat obj lane color - all as ints
+ex: 32 1 1 1
+
+Beats: 1-based (as if you're counting music)
+Obj: {
+   METEOR = 0,
+   WALL = 1,
+   SPIKE = 2
+};
+
+Lane/Color: {
+   BLUE = 0,
+   GREEN = 1,
+   RED = 2
+};

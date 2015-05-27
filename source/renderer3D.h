@@ -35,6 +35,8 @@ private:
    
    bool hasTextures;
    
+   glm::vec3 tint;
+   
    static bool initialized;
    void init();
    static GLuint program;
@@ -46,11 +48,12 @@ private:
    static GLuint uTexScale, uTexUnits, uHasTextures;
    static GLuint uShadowView, uShadowProj, uShadowMap;
    static GLuint uShipTint;
-   static GLuint uShipPos;
    
 public:
    Renderer3D(bool isClone = false);
    Renderer3D(Renderer3D *clone);
+   
+   void setTint(glm::vec3 t) { tint = t; }
    
    // Send data to the GPU
    void bufferData(DataType type, size_t size, void *data);

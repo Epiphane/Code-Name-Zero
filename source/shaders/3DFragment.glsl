@@ -93,7 +93,7 @@ void main() {
 	  float Is = specular(cameraVec, vNormal, lightVector, 0.4f, 0.3f);
 	  
 	  fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
-     //fragColor += vec4(uShipTint, 1.0);
+     fragColor += vec4(uShipTint, 1.0);
 //	  fragColor = vec4(Id * dColor + aColor, 1);
    }
    else {
@@ -112,14 +112,14 @@ void main() {
 		float Is = specular(cameraVec, vNormal, lightVector, 0.35f, 0.2f);
          
          fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * visibility + (textureColor*1.5), 1);
-         //fragColor += vec4(uShipTint, 1.0);
+         fragColor += vec4(uShipTint, 1.0);
       }
       else {
 //         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
    		 float Is = specular(cameraVec, vNormal, lightVector, 0.5f, 0.01f);
          
          fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
-         //fragColor += vec4(uShipTint, 1.0);
+         fragColor += vec4(uShipTint, 1.0);
 //         fragColor = vec4(Id * dColor + aColor, 1);
       }
       

@@ -29,6 +29,8 @@ class BeatEventListener;
 
 class InGameState : public State {
 private:
+   std::string level;
+   
    GameObject *player;
    PlayerPhysicsComponent *player_movement;
    float player_speed;
@@ -45,7 +47,10 @@ private:
    
    void cleanupObstacles();
 public:
-   InGameState();
+   const static int NUM_SHIPS;
+   const static std::string SHIP_MODELS[];
+   
+   InGameState(std::string levelname, int playership);
    ~InGameState();
    
    void start();
@@ -64,8 +69,5 @@ public:
    GameObject *addObstacle(Track track, Track color, int obj, float travel_time);
    GameObject *addGate(float traveltime);
 };
-
-glm::vec3 getPlayerPosition();
-float getPlayerLatPosition();
 
 #endif /* defined(__Project__in_game_state__) */
