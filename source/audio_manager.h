@@ -26,9 +26,9 @@ class Music {
 public:
    const static int MAX_SPECTRA = 128;
 #if defined(WIN32) || defined(_WIN32)
-   const static int SAMPLES_PER_SPECTRUM = 2;
+   const static int SAMPLES_PER_SPECTRUM = 1;
 #else
-   const static int SAMPLES_PER_SPECTRUM = 256;
+   const static int SAMPLES_PER_SPECTRUM = 1;
 #endif
    
 private:
@@ -40,7 +40,7 @@ private:
    unsigned int length;
    
    int currentSpectrum = 0;
-   float spectrum[MAX_SPECTRA][SAMPLES_PER_SPECTRUM];
+   float spectrum[MAX_SPECTRA];//[SAMPLES_PER_SPECTRUM];
    
 public:
    Music(FMOD::Sound *s, Beat _bpm);

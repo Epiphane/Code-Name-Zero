@@ -191,22 +191,22 @@ void Music::update() {
    int average_samples = data->length / data->numchannels / MAX_SPECTRA;
    int index = 0;
    for (int s = 0; s < MAX_SPECTRA; s ++) {
-      spectrum[s][currentSpectrum] = 0;
+      spectrum[s] = 0;
       
       int ds = average_samples * s * 2 / MAX_SPECTRA;
       for (int i = 0; i < ds; i ++) {
          for (int chan = 0; chan < data->numchannels; chan ++) {
             // arbitrary cutoff to filter out noise
             if (data->spectrum[chan][index] > 0.0001f) {
-               spectrum[s][currentSpectrum] += data->spectrum[chan][index];
+               spectrum[s] += data->spectrum[chan][index];
             }
          }
          
          index ++;
       }
       
-      if (spectrum[s][currentSpectrum] < 0.001f) {
-         spectrum[s][currentSpectrum] = 0;
+      if (spectrum[s] < 0.001f) {
+         spectrum[s] = 0;
       }
    }
    
@@ -233,11 +233,11 @@ float Music::getSample(int index, int totalSpectra) {
    int scale = MAX_SPECTRA / totalSpectra;
    for (int s = scale * index; s < scale * (index + 1); s ++) {
       for (int i = 0; i < SAMPLES_PER_SPECTRUM; i ++) {
-         avg += spectrum[s][i];
+         avg += spectrum[s];
       }
    }
    
-   return avg / (scale * SAMPLES_PER_SPECTRUM / 2);
+   return avg / (scale * SAMPLES_PER_SPECTRUM);
 }
 
 void Music::getSamples(float *samples, int number) {
@@ -249,13 +249,13 @@ void Music::getSamples(float *samples, int number) {
    // Consolidate spectrum groups
    int scale = MAX_SPECTRA / number;
    for (int s = 0; s < MAX_SPECTRA; s ++) {
-      for (int i = 0; i < SAMPLES_PER_SPECTRUM; i ++) {
-         samples[s * number / MAX_SPECTRA] += spectrum[s][i];
-      }
+//      for (int i = 0; i < SAMPLES_PER_SPECTRUM; i ++) {
+         samples[s * number / MAX_SPECTRA] += spectrum[s];
+//      }
    }
    
    for (int s = 0; s < number; s ++)
-      samples[s] /= scale * SAMPLES_PER_SPECTRUM / 2;
+      samples[s] /= scale * SAMPLES_PER_SPECTRUM;
 }
 
 void Music::play() {
