@@ -91,14 +91,11 @@ void BeatEventListener::update(float dt, int currBeat, State* world, TrackManage
       int spawnms = (1.0f/(igs->getSoundtrack()->getBPM()/60.0f) * 1000)*currBeat;
       int hitms = (1.0f/(igs->getSoundtrack()->getBPM()/60.0f) * 1000)*(currBeat+SPAWN_OFFSET);
       
-      tm->addObstacle(igs,
-                      tm->nextPosition(tm->nextTrack_number()),
-                      tm->nextTrack_number(),
-                      curr_event.lane,
-                      curr_event.color,
-                      curr_event.object,
-                      spawnms,
-                      hitms);
+      // Add object to hit in SPAWN_OFFSET beats
+      igs->addObstacle(static_cast<Track>(curr_event.lane),
+                       static_cast<Track>(curr_event.color),
+                       curr_event.object,
+                       60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
       last_beat = currBeat;
    }
 }

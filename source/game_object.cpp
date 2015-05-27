@@ -12,12 +12,13 @@
 #include "rendererDebug.h"
 
 /* Constructors (ew) */
-GameObject::GameObject(GraphicsComponent *g) : GameObject(g, NULL, NULL, NULL) {};
-GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p) : GameObject(g, p, NULL, NULL) {};
-GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, CollisionComponent *c) : GameObject(g, p, NULL, c) {};
-GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i) : GameObject(g, p, i, NULL) {};
-GameObject::GameObject(GraphicsComponent *g, CollisionComponent *c) : GameObject (g, NULL, NULL, c) {};
-GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : remove(false), position(glm::vec3(0, 0, 0)), scale(glm::vec3(1, 1, 1)), rotation(glm::vec3(0, 0, 0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c) {
+GameObject::GameObject(GraphicsComponent *g) : GameObject(g, NULL, NULL, NULL, NULL) {};
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p) : GameObject(g, p, NULL, NULL, NULL) {};
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, CollisionComponent *c) : GameObject(g, p, NULL, c, NULL) {};
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i) : GameObject(g, p, i, NULL, NULL) {};
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c) : GameObject(g, p, i, c, NULL) {};
+GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent *i, CollisionComponent *c, TrackManager *t) 
+   : remove(false), position(glm::vec3(0, 0, 0)), scale(glm::vec3(1, 1, 1)), rotation(glm::vec3(0, 0, 0)), Model(glm::mat4(1.0f)), type(OBJECT_OBSTACLE), collidesWith(0), graphics(g), physics(p), input(i), collision(c), transformer(t) {
    children.clear();
 
    setBounds(g->getBounds());
@@ -44,8 +45,11 @@ float GameObject::getRadius() {
 }
 
 glm::mat4 GameObject::getModel() {
-   //return this->Model;
-   glm::mat4 model = glm::translate(position);
+   glm::mat4 model;
+   if (transformer == nullptr)
+      model = glm::translate(position);
+   else
+      model = transformer->translate(position);
    
    // Ryan's curvy track model transforms
    model *= glm::rotate(rotation.z, 0.0f, 0.0f, 1.0f); // Roll
@@ -98,8 +102,14 @@ void GameObject::update(State *world, float dt) {
 }
 
 void GameObject::render() {
+   glm::mat4 Model = getModel();
+   if (Model == glm::mat4(0)) {
+      // Don't render
+      return;
+   }
+
    if (graphics)
-      graphics->render(this);
+      graphics->render(Model);
 }
 
 void GameObject::_debug_render() {

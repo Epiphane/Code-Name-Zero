@@ -37,8 +37,20 @@ void main()
    vCameraVec = normalize(uCameraPos - vWorldSpace.xyz);
 
    gl_Position = uProjMatrix * uViewMatrix * vWorldSpace;
-   
-   float offset = -1.0f * (vWorldSpace.z - uShipPos.z); // Offset z by current ship position
+
+   /*
+   gl_Position = uViewMatrix * vWorldSpace;
+
+   mat4 ProjMat2 = mat4(vec4(1.0f, 0.0f, 0.0f, 0.0f),
+   vec4(0.0f, 1.0f, 0.0f, 0.0f),
+   vec4(0.0f, 0.01f * (gl_Position.z) * (gl_Position.z), 1.0f, 0.0f),
+   vec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+   gl_Position = uProjMatrix * ProjMat2 * gl_Position;
+   */
+
+
+   float offset = -1.0f * (vWorldSpace.z - 0);// - uShipPos.z); // Offset z by current ship position
    gl_Position.y += 0.0009f * offset * offset;
 
    vMaterial = int(aMaterial);

@@ -14,30 +14,32 @@
 #include "game_object.h"
 
 
-#define ACCELERATION_AMT 10.0f
-#define DECELERATION_AMT 8.0f
+#define ACCELERATION_AMT 1.0f
+#define DECELERATION_AMT 0.8f
 
 void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    ObstacleCollisionComponent *occ = dynamic_cast<ObstacleCollisionComponent *>(other->getCollision());
    
-   MovementComponent *playerMovement = dynamic_cast<MovementComponent *>(player->getPhysics());
+   PlayerPhysicsComponent *playerMovement = dynamic_cast<PlayerPhysicsComponent *>(player->getPhysics());
    
-   if (!occ->hasBeenHit()) {
-      if (occ->shouldAcceleratePlayer()) {
-         playerMovement->setVelocity(playerMovement->getVelocity() + ACCELERATION_AMT);
-         std::cout << "Accelerated" << std::endl;
-      } else {
-         playerMovement->setVelocity(std::max(playerMovement->getVelocity() - DECELERATION_AMT, 10.0f));
-      }
+   if (occ->shouldAcceleratePlayer()) {
+      playerMovement->accelerate(ACCELERATION_AMT);
+   }
+   else {
+      playerMovement->decelerate(DECELERATION_AMT);
    }
 }
 
 void ObstacleCollisionComponent::collide(GameObject *thisObj, GameObject *otherObj) {
-   setHit(true);
+   thisObj->setCollision(nullptr);
+
+   ObstaclePhysicsComponent *physics = dynamic_cast<ObstaclePhysicsComponent *>(thisObj->getPhysics());
+   assert(physics != nullptr);
+
+   std::cout << "Off-beat by " << physics->getTimeLeft() << " seconds." << std::endl;
 }
 
 ObstacleCollisionComponent::ObstacleCollisionComponent(Track loc, Track clr) {
-   hit = false;
    location = loc;
    color = clr;
 }

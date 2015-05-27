@@ -11,9 +11,10 @@
 
 #include "main.h"
 #include "camera.h"
+#include "in_game_state.h"
 #include "game_object.h"
 
-#define SHAKE_SCALE 0.01f
+#define SHAKE_SCALE 0.02f
 noise::module::Perlin shake;
 float t = 0;
 
@@ -63,7 +64,7 @@ void camera_setPosition(glm::vec3 _position) {
    position = _position;
 }
 
-void camera_update(float dt) {
+void camera_update(float dt, State *world) {
    if (DEBUG) {
       if (input_keyDown(GLFW_KEY_A)) {
          camera_move(-CAMERA_MOVE, 0, 0);
@@ -97,11 +98,11 @@ void camera_update(float dt) {
       transform += (destination - transform) * dt * 5;
       
       // Follow the player's direction if it exists
-      MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
-      if (movement != NULL) {
+      InGameState *game = dynamic_cast<InGameState *>(world);
+      if (game != nullptr) {
          // Shake camera
          t += 0.01f;
-         double freq = movement->getVelocity() / 100.0f;
+         double freq = game->getPlayerSpeed() / 100.0f;
          if (freq > 10.0f) freq = 10.0f;
          shake.SetFrequency(freq);
       }
@@ -114,12 +115,8 @@ glm::vec3 camera_getLookAt() {
    float p = pitch;
    
    if (!DEBUG && following != nullptr) {
-      // Follow the player's direction if it exists
-      MovementComponent *movement = dynamic_cast<MovementComponent *>(following->getPhysics());
-      if (movement != NULL) {
-         y += shake.GetValue(0, t, 0) * SHAKE_SCALE;
-         p += shake.GetValue(t, 0, 0) * SHAKE_SCALE;
-      }
+      y += shake.GetValue(0, t, 0) * SHAKE_SCALE;
+      p += shake.GetValue(t, 0, 0) * SHAKE_SCALE;
    }
    
    return glm::vec3(cos(y) * cos(p), sin(p), -sin(y) * cos(p));

@@ -21,11 +21,12 @@ void camera_moveYaw(double dy);
 void camera_move(float dx, float dy, float dz);
 
 class GameObject;
+class State;
 void camera_follow(GameObject *follow, glm::vec3 offset);
 
 void camera_setDebug(bool debug);
 void camera_init(glm::vec3 position, glm::vec3 lookAt);
-void camera_update(float dt);
+void camera_update(float dt, State *world);
 
 glm::mat4 camera_savedMatrix();
 glm::mat4 camera_getMatrix();

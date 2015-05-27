@@ -25,7 +25,7 @@ public:
    GraphicsComponent();
    
    Bounds *getBounds() { return &bounds; }
-   virtual void render(GameObject *obj);
+   virtual void render(glm::mat4 Model);
    
    GraphicsComponent *clone();
    void clone(GraphicsComponent *other);

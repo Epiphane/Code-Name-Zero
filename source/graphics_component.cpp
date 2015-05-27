@@ -40,9 +40,7 @@ void GraphicsComponent::clone(GraphicsComponent *copy) {
       copy->renderers.push_back((*renderer)->clone());
 }
 
-void GraphicsComponent::render(GameObject *obj) {
-   glm::mat4 Model = obj->getModel();
-   
+void GraphicsComponent::render(glm::mat4 Model) {
    std::vector<Renderer *>::iterator renderer;
    for (renderer = renderers.begin(); renderer != renderers.end(); renderer ++)
       (*renderer)->render(Model);

@@ -29,6 +29,9 @@ class BeatEventListener;
 class InGameState : public State {
 private:
    GameObject *player;
+   PlayerPhysicsComponent *player_movement;
+   float player_speed;
+
    ShadowMap *shadowMap;
    Music *soundtrack;
    TrackManager *track_manager;
@@ -45,6 +48,7 @@ public:
    
    void start();
    
+   float getPlayerSpeed() { return player_speed; }
    GameObject *getPlayer() { return player; }
    Music *getSoundtrack() { return soundtrack; }
    TrackManager *getTrackManager() {return track_manager;};
@@ -55,7 +59,7 @@ public:
    
    void send(std::string message, void *data);
    
-   GameObject *addObstacle(glm::vec3 position, int track_num, Track track, Track color, int obj, int spawntime, int hittime);
+   GameObject *addObstacle(Track track, Track color, int obj, float travel_time);
 };
 
 glm::vec3 getPlayerPosition();

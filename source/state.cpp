@@ -30,7 +30,7 @@ void State::update(float dt) {
    }
    
    
-   camera_update(dt);
+   camera_update(dt, this);
    
    COMPUTE_BENCHMARK(25, "Update time: ", true);
 }

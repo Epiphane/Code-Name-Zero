@@ -21,44 +21,31 @@ public:
 
 class MovementComponent : public PhysicsComponent {
 private:
-   float velocity = 100.0f;
-   glm::vec3 track_position;
-   glm::vec3 slide;
-   float lat_position = 0, lat_destination = 0;
-   glm::vec3 direction;
-   float long_position = 0;
-   glm::vec3 accel;
+   glm::vec3 speed, accel;
 
 public:
-   //virtual void update(GameObject *obj, State *world, float dt, TrackManager track);
    virtual void update(GameObject *obj, State *world, float dt);
-   glm::vec3 getAccel(){ return accel; }
-   void setAccel(glm::vec3 a){ accel = a; }
-   
-   // Ryan's movement stuff - staying on the moving track
-   void setSlide(glm::vec3 a){ slide = a; }
-   void setDirection(glm::vec3 a){ direction = a; }
-   glm::vec3 getDirection(){ return direction; }
-   void setTrackPosition(glm::vec3 a){ track_position = a; }
-   void setLongPos(float a){ long_position = a; }
-   void setLatPos(float pos, bool instant);
-   float getLongPos(){ return long_position; }
-   float getLatPos(){ return lat_position; }
-   float getVelocity(){ return velocity; }
-#define MAX_VELOCITY 1000
-   void setVelocity(float a){ if (a < MAX_VELOCITY) { velocity = a; } else { velocity = MAX_VELOCITY; } };
 
+   glm::vec3 getAccel() { return accel; }
+   void setAccel(glm::vec3 a) { accel = a; }
 };
 
-class PlayerPhysicsComponent : public MovementComponent {
+class PlayerPhysicsComponent : public PhysicsComponent {
 private:
-   float accel, decel;
-   
+   float lat_destination = 0;
+   float accel, accel_time;
+   float speed = 100;
+
 public:
    virtual void update(GameObject *obj, State *world, float dt);
    
-   void accelerate(float length) { accel = length; }
-   void decelerate(float length) { decel = length; }
+   void setLatPos(float pos) { lat_destination = pos * 4; }
+
+   void accelerate(float time, float accel = 1);
+   void decelerate(float time, float decel = 1);
+
+   float getSpeed() { return speed; }
+   float getAccel() { return accel; }
 };
 
 class TrackPhysicsComponent : public PhysicsComponent {
@@ -68,10 +55,11 @@ public:
 
 class ObstaclePhysicsComponent : public MovementComponent {
 private:
-   float msec_left;
-   int lane;
+   float sec_left;
 public:
-   void init(int spawn_time, int hit_time, int spawn_lane);
+   float getTimeLeft() { return sec_left; }
+
+   void init(float travel_time);
    virtual void update(GameObject *obj, State *world, float dt);
 };
 
