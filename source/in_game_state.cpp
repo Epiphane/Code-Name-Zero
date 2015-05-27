@@ -73,7 +73,8 @@ InGameState::InGameState() : player_speed(100) {
    // Set up track manager
    track_manager = new TrackManager();
 
-   soundtrack = audio_load_music("./audio/BeatBotBlues.mp3", 120);
+   soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
+   //soundtrack = audio_load_music("./audio/Mambo5.mp3", 174);
    soundtrack->play();
    
    visualizer = new AudioVisualizer(soundtrack);
@@ -95,7 +96,7 @@ InGameState::InGameState() : player_speed(100) {
 
 void InGameState::start() {
    event_listener = new BeatEventListener;
-   event_listener->init("./beatmaps/RGB_MuteCity.beatmap");
+   event_listener->init("./beatmaps/RGB_MuteCity.beatmap", this);
 }
 
 InGameState::~InGameState() {
@@ -106,7 +107,7 @@ InGameState::~InGameState() {
 
 void InGameState::send(std::string message, void *data) {
    if (message == "beat") {
-//      std::cout << "beat " << *(Beat *)data << std::endl;
+      event_listener->update(*(Beat *)data, this);
    }
 }
 
@@ -123,8 +124,6 @@ void InGameState::update(float dt) {
    track_manager->update(dt, this);
    
    cleanupObstacles();
-   
-   event_listener->update(dt, soundtrack->getBeat(), this, track_manager);
    
    float latPos = player->getPosition().x;
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
@@ -161,6 +160,7 @@ void InGameState::render(float dt) {
    // Render scene
    track_manager->render();
    State::render(dt);
+   visualizer->render();
    if (DEBUG)
       RendererDebug::instance()->render(glm::mat4(1));
    COMPUTE_BENCHMARK(25, "Render elements time: ", true)
@@ -183,7 +183,7 @@ void InGameState::render(float dt) {
    
    // Render non-blurred elements
    hud->render(dt);
-   visualizer->render();
+   //visualizer->render();
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)
 }
@@ -270,10 +270,13 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
    return ob;
 }
 
-GameObject *InGameState::addGate(glm::vec3 position, int track_num, int spawntime, int hittime) {
+GameObject *InGameState::addGate(float travel_time) {
+   glm::vec3 position(0);
+   position.z = -player_speed * travel_time;
+
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
-   opc->init(spawntime, hittime, 1);
-   GameObject *ob = new GameObject(ModelRenderer::load("models/Track/RBG_Gate_1.obj", "models/Track/"), opc);
+   opc->init(travel_time);
+   GameObject *ob = new GameObject(ModelRenderer::load("models/Track/RBG_Gate_1.obj", "models/Track/"), opc, nullptr, nullptr, track_manager);
    
    addObject(ob);
    ob->setPosition(position);

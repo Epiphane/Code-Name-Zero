@@ -62,7 +62,7 @@ public:
    void send(std::string message, void *data);
    
    GameObject *addObstacle(Track track, Track color, int obj, float travel_time);
-   GameObject *addGate(glm::vec3 position, int track_num,int spawntime, int hittime);
+   GameObject *addGate(float traveltime);
 };
 
 glm::vec3 getPlayerPosition();

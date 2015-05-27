@@ -27,14 +27,13 @@ typedef struct {
 class BeatEventListener {
 private:
    std::unordered_map<int, Event> events;
-   unsigned int last_beat;
    
 public:
    BeatEventListener();
    virtual ~BeatEventListener();
    
-   void init(std::string filename);
-   void update(float dt, int currBeat, State* world, TrackManager* tm);
+   void init(std::string filename, State *world);
+   void update(int currBeat, State* world);
 };
 
 #endif /* defined(__RGBZero__beatEventListener__) */
