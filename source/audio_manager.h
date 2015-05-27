@@ -25,7 +25,11 @@ typedef void(* beat_callback)(Beat);
 class Music {
 public:
    const static int MAX_SPECTRA = 128;
+#if defined(WIN32) || defined(_WIN32)
+   const static int SAMPLES_PER_SPECTRUM = 2;
+#else
    const static int SAMPLES_PER_SPECTRUM = 256;
+#endif
    
 private:
    FMOD::Channel *channel;
