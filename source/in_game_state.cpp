@@ -77,8 +77,11 @@ InGameState::InGameState(std::string levelname, int player_ship) : level(levelna
    shadowMap->init(4096);
    
    RendererPostProcess::shaders_init();
+   skyRender = new SkyRenderer;
    
    skyRender = new SkyRenderer;
+   ps = new  ParticleSystem();
+   ps->InitParticleSystem(glm::vec3(0.05, -1.6, -0.5));
 }
 
 void InGameState::start() {
@@ -88,8 +91,6 @@ void InGameState::start() {
 
 InGameState::~InGameState() {
    delete shadowMap;
-   
-
 }
 
 void InGameState::send(std::string message, void *data) {
@@ -117,6 +118,9 @@ void InGameState::update(float dt) {
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
       collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
    }
+   
+   
+   ps->UpdateParticles(dt * 1000, player_movement->getSpeed());
 }
 
 void InGameState::render(float dt) {
@@ -135,7 +139,7 @@ void InGameState::render(float dt) {
    // Bind Shadow map texture as active
    glActiveTexture(GL_TEXTURE1);
    glBindTexture(GL_TEXTURE_2D, shadowMap->getTexID());
-
+   
    // Turn on frame buffer
    RendererPostProcess::capture();
    
@@ -155,9 +159,16 @@ void InGameState::render(float dt) {
       RendererDebug::instance()->render(glm::mat4(1));
    COMPUTE_BENCHMARK(25, "Render elements time: ", true)
    
+   if (!DEBUG) {
+      glm::vec3 carPos = player->getPosition();
+      glm::mat4 transform = glm::translate(carPos.x, carPos.y, carPos.z);
+      ps->RenderParticles(renderer_getProjection() * camera_getMatrix() * transform, glm::mat4(1.0f), glm::vec3(1.0));
+   }
+   COMPUTE_BENCHMARK(25, "Render particles time: ", true)
+      
    // Turn off frame buffer, and render frame buffer to screen
    RendererPostProcess::endCapture();
-
+   
    static int blurRate = 0;
 
    if (!DEBUG) {

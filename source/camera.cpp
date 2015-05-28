@@ -22,7 +22,7 @@ GameObject *following = nullptr;
 glm::vec3 followOffset = glm::vec3(0, 1, 4);
 
 glm::vec3 position;
-glm::mat4 transform(1.0f), destination(1.0f);
+glm::mat4 destination(1.0f), transformation(1.0f);
 double pitch, yaw, savedPitch, savedYaw;
 
 glm::vec3 savedPosition, savedLookAt;
@@ -32,17 +32,17 @@ void camera_setDebug(bool debug) {
    if (debug) {
       savedPosition    = position;
       savedDestination = destination;
-      savedTransform   = transform;
+      savedTransform   = transformation;
       savedLookAt      = camera_getLookAt();
       
-      transform = glm::mat4(1.0f);
+      transformation = glm::mat4(1.0f);
       savedPitch = pitch;
       savedYaw = yaw;
    }
    else {
       position    = savedPosition;
       destination = savedDestination;
-      transform   = savedTransform;
+      transformation   = savedTransform;
    
       pitch = savedPitch;
       yaw = savedYaw;
@@ -56,7 +56,7 @@ void camera_init(glm::vec3 _position, glm::vec3 lookAt) {
 
 void camera_follow(GameObject *follow, glm::vec3 offset) {
    following = follow;
-   transform = destination = following->getModel();
+   transformation = destination = following->getModel();
    followOffset = offset;
 }
 
@@ -95,7 +95,7 @@ void camera_update(float dt, State *world) {
       position = following->getPosition();
       destination = following->getModel();
       
-      transform += (destination - transform) * dt * 5;
+      transformation += (destination - transformation) * dt * 5;
       
       // Follow the player's direction if it exists
       InGameState *game = dynamic_cast<InGameState *>(world);
@@ -166,8 +166,8 @@ glm::mat4 camera_savedMatrix() {
 
 glm::mat4 camera_getMatrix() {
     glm::vec4 pos = glm::vec4(position, 1);
-    glm::vec4 dir = transform * glm::vec4(camera_getLookAt(), 0);
-    glm::vec4 up = transform * glm::vec4(0, 1, 0, 0);
+    glm::vec4 dir = transformation * glm::vec4(camera_getLookAt(), 0);
+    glm::vec4 up = transformation * glm::vec4(0, 1, 0, 0);
    
     return glm::translate(-followOffset) * glm::lookAt(glm::vec3(pos), glm::vec3(pos + dir), glm::vec3(up));
 }

@@ -87,7 +87,7 @@ glm::vec3 randPoint(float r) {
    }
 
    float angle = M_PI * 2 * randA / randB;
-   return glm::vec3(randB * r * cos(angle), 0, randB * r * sin(angle));
+   return glm::vec3(randB * r * cos(angle), randB * r * sin(angle), 0);
 }
 
 int main(int argc, char **argv) {
