@@ -74,7 +74,7 @@ InGameState::InGameState(std::string levelname, int player_ship) : level(levelna
       obstacleLists.push_back(std::list<GameObject *>());
    }
    shadowMap = new ShadowMap;
-   shadowMap->init(2048);
+   shadowMap->init(4096);
    
    RendererPostProcess::shaders_init();
    

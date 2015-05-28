@@ -78,7 +78,7 @@ void main() {
    // Calculate a visibility value
    float bias = 0.005 * tan(acos(Id));
    bias = clamp(bias, 0.0, 0.01);
-   float visibility = texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias));
+   float visibility = (texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias)) +0.2);
    
    
    
