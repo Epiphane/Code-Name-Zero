@@ -38,7 +38,7 @@ const std::string InGameState::SHIP_MODELS[] = {
    "Little Wyvern/"
 };
 
-InGameState::InGameState(std::string levelname, int player_ship) : level(levelname), player_speed(100) {
+InGameState::InGameState(std::string levelname, int player_ship) : level(levelname), player_speed(100), score(0) {
    State::State();
    
    // Move camera
@@ -74,7 +74,7 @@ InGameState::InGameState(std::string levelname, int player_ship) : level(levelna
       obstacleLists.push_back(std::list<GameObject *>());
    }
    shadowMap = new ShadowMap;
-   shadowMap->init(2048);
+   shadowMap->init(4096);
    
    RendererPostProcess::shaders_init();
    
@@ -100,6 +100,7 @@ void InGameState::send(std::string message, void *data) {
 
 void InGameState::update(float dt) {
    player_speed = player_movement->getSpeed();
+   score += player_speed * SCORE_MULT * dt;
 
    // Update all objects and the camera
    State::update(dt);
@@ -141,8 +142,10 @@ void InGameState::render(float dt) {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    // Render DA SKY!
-   // TODO Figure out where and how we want the sun to operate.
-   skyRender->render(glm::vec3(0.0f, 0.3f, -0.7f));
+   glm::vec4 sunLowAngle(-0.3f, 0.0f, -0.7f, 1.0f);
+   float percent_done = (powf(soundtrack->getProgress() - 0.5f, 3.0f) + 0.125f) / 0.25f;
+   glm::vec3 sunAngle = glm::vec3(glm::rotate(270.0f * percent_done - 45.0f, 0.0f, 0.0f, -1.0f) * sunLowAngle);
+   skyRender->render(sunAngle);
 
    // Render scene
    track_manager->render();
@@ -156,7 +159,6 @@ void InGameState::render(float dt) {
    RendererPostProcess::endCapture();
 
    static int blurRate = 0;
-   static float playerPreviousSpeed = 0;
 
    if (!DEBUG) {
       blurRate = (player_speed / 10.0f + player_movement->getAccel() * 60.0f + 9 * blurRate) / 10;

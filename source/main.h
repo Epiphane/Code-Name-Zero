@@ -31,7 +31,7 @@
 #define CAMERA_MOVE 0.4
 
 #define FRAMES_PER_SEC 60.0f
-#define SEC_PER_FRAME 1 / FRAMES_PER_SEC
+#define SEC_PER_FRAME (1 / FRAMES_PER_SEC)
 
 #define GROUND_WIDTH 40
 #define MAX_TARGET 50

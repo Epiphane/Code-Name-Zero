@@ -35,8 +35,9 @@ void toggleDebug() {
    camera_setDebug(DEBUG);
 }
 
-bool showDebugLog = true;
+bool showDebugLog = false;
 bool isShadowMapRender = false;
+void toggleDebugLog() { setDebugLog(!showDebugLog); }
 void setDebugLog(bool enabled) { showDebugLog = enabled; }
 
 State *currentState = NULL;
@@ -57,7 +58,7 @@ GLFWwindow* window;
 
 const int w_width = 1024;
 const int w_height = 768;
-const char *w_title = "Lab 1";
+const char *w_title = "RGB Zero";
 
 /*
  * Generates a pseudo random float
@@ -129,6 +130,7 @@ int main(int argc, char **argv) {
    input_init(window);
    input_set_callback(GLFW_KEY_SPACE, toggleDebug);
    input_set_callback(GLFW_KEY_M, forwardOneFrame);
+   input_set_callback(GLFW_KEY_P, toggleDebugLog);
    
    glEnable (GL_BLEND);
    glEnable(GL_DEPTH_TEST);
@@ -187,8 +189,12 @@ int main(int argc, char **argv) {
             currentState->update(0);
          }
          moveOneFrame = false;
+         
+         COMPUTE_BENCHMARK(25, "Game Update: ", true)
 
          currentState->render(glfwGetTime() - clock);
+         
+         COMPUTE_BENCHMARK(25, "Game Render: ", true)
          
          if (showDebugLog)
             RendererDebug::instance()->renderLog();

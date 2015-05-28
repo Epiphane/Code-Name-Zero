@@ -167,6 +167,8 @@ Music::Music(FMOD::Sound *s, Beat _bpm) : channel(nullptr), sound(s), beat(0), b
    check(audio_system->createDSPByType(FMOD_DSP_TYPE_FFT, &dsp), "DSP creation");
    check(dsp->setParameterInt(FMOD_DSP_FFT_WINDOWTYPE, FMOD_DSP_FFT_WINDOW_RECT), "window type setting");
    check(dsp->setParameterInt(FMOD_DSP_FFT_WINDOWSIZE, 4096), "window size setting");
+   
+   memset(spectrum, 0, sizeof(spectrum));
 };
 
 float Music::getProgress() {

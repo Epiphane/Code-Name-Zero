@@ -31,7 +31,7 @@ TrackManager::TrackManager() : next_track_number(0), zpos(0) {
 
 const glm::mat4 TrackManager::Z_TRANSLATE(glm::translate(0.0f, 0.0f, -TRACK_LENGTH));
 glm::mat4 TrackManager::getTransform(int track_number) {
-   glm::mat4 transform = glm::rotate(0.4f, 0.0f, sinf(track_number / 30.0f) / 2.0f, 0.0f);
+   glm::mat4 transform = glm::rotate(sinf(track_number / 10.0f), 0.0f, 1.0f, 0.0f);
 
    // Always move the piece backwards too!
    return Z_TRANSLATE * transform;
@@ -48,14 +48,15 @@ glm::mat4 TrackManager::translate(glm::vec3 pos) {
 
    glm::mat4 transform = tracks[track_num];
 
-   glm::mat4 offset = glm::translate(pos.x, 0.0f, 0.0f);
-
    if (track_num < 1) {
       return glm::translate(pos);
    }
    else {
       transform = second_track * transform;
    }
+   
+   glm::vec4 base = transform * glm::vec4(0, 0, 0, 1);
+   glm::mat4 offset = glm::translate(pos.x, 0.0f, pos.z - base.z);
 
    return transform * offset;
 }
@@ -133,6 +134,10 @@ void TrackManager::update(float dt, State *world) {
    COMPUTE_BENCHMARK(25, "Track update: ", true)
 }
 
+const Bounds track_bounds = {
+   0, 1, 0, 1, 0, TRACK_LENGTH
+};
+
 void TrackManager::render() {
    INIT_BENCHMARK
       renderer->render(first_track);
@@ -145,6 +150,7 @@ void TrackManager::render() {
    // Now, draw the rest as usual
    while (transform < tracks.end()) {
       renderer->render(second_track * (*transform));
+      RendererDebug::instance()->renderBounds(glm::vec3(second_track * (*transform) * glm::vec4(0, 0, 0, 1)), track_bounds);
       transform++;
    }
 
