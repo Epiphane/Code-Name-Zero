@@ -19,13 +19,13 @@ HUD::HUD() {
    uvBuf.clear();
    
    // Progress bar
-   progress_bar_height = 13.0f / HUD_TEXTURE_SIZE;
+   /*progress_bar_height = 13.0f / HUD_TEXTURE_SIZE;
    buf_progress_ndx = posBuf.size();
    posBuf.push_back(glm::vec2(-1, 1));
    posBuf.push_back(glm::vec2(1, 1 - progress_bar_height));
    uvBuf.push_back(glm::vec2(0));
    uvBuf.push_back(glm::vec2(1, progress_bar_height));
-   
+   */
    // MPH Marker
    const float mph_marker_th = 19.0f / HUD_TEXTURE_SIZE;
    const float mph_marker_tw = 92.0f / HUD_TEXTURE_SIZE;
@@ -63,7 +63,7 @@ HUD::HUD() {
    const float score_digit_tx = 0;
    const float score_digit_ty = 16.0f / HUD_TEXTURE_SIZE;
    const float score_marker_x = 0.0f;
-   const float score_marker_y = -0.97f;
+   const float score_marker_y = 0.79f;
    score_digit_ndx = posBuf.size();
    for (int i = 0; i < MAX_SCORE_DIGITS; i ++) {
       posBuf.push_back(glm::vec2(i * score_digit_tw + score_marker_x,
@@ -160,7 +160,7 @@ void HUD::update(float dt, InGameState *state) {
    }
    
    // Show percent done
-   float percentDone = state->getSoundtrack()->getProgress();
+   /*float percentDone = state->getSoundtrack()->getProgress();
    if (percentDone < 1) {
       percentDone += dt / 2;
       
@@ -168,7 +168,7 @@ void HUD::update(float dt, InGameState *state) {
       uvBuf[buf_progress_ndx + 1] = glm::vec2(percentDone, progress_bar_height);
       
       renderer->bufferData(Vertices, posBuf);
-   }
+   }*/
    
    renderer->bufferData(UVs, uvBuf);
 }

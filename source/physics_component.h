@@ -34,7 +34,7 @@ class PlayerPhysicsComponent : public PhysicsComponent {
 private:
    float lat_destination = 0;
    float accel, accel_time;
-   float speed = 100;
+   float speed = 1000;
 
 public:
    virtual void update(GameObject *obj, State *world, float dt);

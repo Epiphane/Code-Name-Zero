@@ -142,8 +142,11 @@ void InGameState::render(float dt) {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    // Render DA SKY!
-   // TODO Figure out where and how we want the sun to operate.
-   skyRender->render(glm::vec3(0.0f, 0.3f, -0.7f));
+   glm::vec4 sunLowAngle(-0.3f, 0.0f, -0.7f, 1.0f);
+   float percent_done = soundtrack->getProgress();
+   glm::vec3 sunAngle = glm::vec3(glm::rotate(270.0f * percent_done - 45.0f, 0.0f, 0.0f, -1.0f) * sunLowAngle);
+   std::cout << sunAngle << std::endl;;
+   skyRender->render(sunAngle);
 
    // Render scene
    track_manager->render();

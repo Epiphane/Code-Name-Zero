@@ -35,7 +35,7 @@ void toggleDebug() {
    camera_setDebug(DEBUG);
 }
 
-bool showDebugLog = true;
+bool showDebugLog = false;
 bool isShadowMapRender = false;
 void toggleDebugLog() { setDebugLog(!showDebugLog); }
 void setDebugLog(bool enabled) { showDebugLog = enabled; }
@@ -58,7 +58,7 @@ GLFWwindow* window;
 
 const int w_width = 1024;
 const int w_height = 768;
-const char *w_title = "Lab 1";
+const char *w_title = "RGB Zero";
 
 /*
  * Generates a pseudo random float
