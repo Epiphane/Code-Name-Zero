@@ -143,7 +143,7 @@ void InGameState::render(float dt) {
    
    // Render DA SKY!
    glm::vec4 sunLowAngle(-0.3f, 0.0f, -0.7f, 1.0f);
-   float percent_done = powf(soundtrack->getProgress(), 0.75f);
+   float percent_done = (powf(soundtrack->getProgress() - 0.5f, 3.0f) + 0.125f) / 0.25f;
    glm::vec3 sunAngle = glm::vec3(glm::rotate(270.0f * percent_done - 45.0f, 0.0f, 0.0f, -1.0f) * sunLowAngle);
    skyRender->render(sunAngle);
 
