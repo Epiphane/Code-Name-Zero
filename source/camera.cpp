@@ -14,7 +14,7 @@
 #include "in_game_state.h"
 #include "game_object.h"
 
-#define SHAKE_SCALE 0.02f
+#define SHAKE_SCALE 0.01f
 noise::module::Perlin shake;
 float t = 0;
 

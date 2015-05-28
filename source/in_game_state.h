@@ -34,6 +34,9 @@ private:
    GameObject *player;
    PlayerPhysicsComponent *player_movement;
    float player_speed;
+   
+   const static int SCORE_MULT = 1;
+   unsigned long score;
 
    ShadowMap *shadowMap;
    SkyRenderer *skyRender;
@@ -54,6 +57,8 @@ public:
    ~InGameState();
    
    void start();
+   
+   unsigned long getScore() { return score; }
    
    float getPlayerSpeed() { return player_speed; }
    GameObject *getPlayer() { return player; }

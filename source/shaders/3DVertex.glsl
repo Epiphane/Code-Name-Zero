@@ -38,25 +38,13 @@ void main()
 
    gl_Position = uProjMatrix * uViewMatrix * vWorldSpace;
 
-   /*
-   gl_Position = uViewMatrix * vWorldSpace;
-
-   mat4 ProjMat2 = mat4(vec4(1.0f, 0.0f, 0.0f, 0.0f),
-   vec4(0.0f, 1.0f, 0.0f, 0.0f),
-   vec4(0.0f, 0.01f * (gl_Position.z) * (gl_Position.z), 1.0f, 0.0f),
-   vec4(0.0f, 0.0f, 0.0f, 0.0f));
-
-   gl_Position = uProjMatrix * ProjMat2 * gl_Position;
-   */
-
-
-   float offset = -1.0f * (vWorldSpace.z - 0);// - uShipPos.z); // Offset z by current ship position
-   gl_Position.y += 0.0009f * offset * offset;
-
    vMaterial = int(aMaterial);
    vUV = aUV;
    vNormal = normalize((uModelMatrix * vec4(aNormal, 0)).xyz);
-
+   
+   float offset = -1.0f * (vWorldSpace.z - 0); // Offset z by current ship position
+   gl_Position.y += 0.0005f * pow(offset, 2);
+   
    // and now Ryan makes up normals...
    // This makes normals behave with the upward curve of the track
    vNormal.z += 0.000001f * offset * offset;

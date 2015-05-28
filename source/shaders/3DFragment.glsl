@@ -126,4 +126,8 @@ void main() {
       if (fragColor.a == 0)
          discard;
    }
+   
+   vec4 fogColor = vec4(0.4, 0.4, 0.4, 0.0);
+   float fogDensity = 1 - clamp((vWorldSpace.z + 1600) / 800.0, 0.0, 1.0);
+   fragColor = mix(fragColor, fogColor, fogDensity);
 }

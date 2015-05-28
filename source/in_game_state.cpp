@@ -38,7 +38,7 @@ const std::string InGameState::SHIP_MODELS[] = {
    "Little Wyvern/"
 };
 
-InGameState::InGameState(std::string levelname, int player_ship) : level(levelname), player_speed(100) {
+InGameState::InGameState(std::string levelname, int player_ship) : level(levelname), player_speed(100), score(0) {
    State::State();
    
    // Move camera
@@ -100,6 +100,7 @@ void InGameState::send(std::string message, void *data) {
 
 void InGameState::update(float dt) {
    player_speed = player_movement->getSpeed();
+   score += player_speed * SCORE_MULT * dt;
 
    // Update all objects and the camera
    State::update(dt);
@@ -156,7 +157,6 @@ void InGameState::render(float dt) {
    RendererPostProcess::endCapture();
 
    static int blurRate = 0;
-   static float playerPreviousSpeed = 0;
 
    if (!DEBUG) {
       blurRate = (player_speed / 10.0f + player_movement->getAccel() * 60.0f + 9 * blurRate) / 10;
