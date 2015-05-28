@@ -41,7 +41,7 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    //Initial particle considered the emitter
    Particles[0].Type = PARTICLE_TYPE_LAUNCHER;
    Particles[0].Pos = Position;
-   Particles[0].Vel = glm::vec3(0.0f);//, 0.0001f, 0.0f);
+   Particles[0].Vel = glm::vec3(0.0f);
    Particles[0].LifetimeMillis = 0.0f;
    
    glGenTransformFeedbacks(2, m_transformFeedback);
@@ -65,8 +65,8 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    m_updateTechnique.SetRandomTextureUnit(3);
    
    //Times are set in milliseconds
-   m_updateTechnique.SetLauncherLifetime(8.0f);
-   m_updateTechnique.SetShellLifetime(500.0f);
+   m_updateTechnique.SetLauncherLifetime(80.0f);
+   m_updateTechnique.SetShellLifetime(900.0f);
    //m_updateTechnique.SetSecondaryShellLifetime(2500.0f);
    
    if (!m_randomTexture.InitRandomTexture(1000)) {
@@ -150,8 +150,6 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
    m_billboardTechnique.setView(View);
    m_billboardTechnique.setProjection(Projection);
    m_pTexture->Bind(GL_TEXTURE0);
-   
-   glDisable(GL_RASTERIZER_DISCARD);
    
    glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[m_currTFB]);
    
