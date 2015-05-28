@@ -10,8 +10,10 @@ uniform vec3 gCameraPos;
 uniform float gBillboardSize;
 
 in float Type0[];
+in float Age0[];
 
 out vec2 TexCoord;
+out float ParticleAge;
 
 #define PARTICLE_TYPE_LAUNCHER 0.0f
 #define PARTICLE_TYPE_SHELL 1.0f
@@ -20,6 +22,7 @@ out vec2 TexCoord;
 void main()
 {
    if (Type0[0] != PARTICLE_TYPE_LAUNCHER) {
+      ParticleAge = Age0[0];
       vec3 Pos = gl_in[0].gl_Position.xyz; // position of the particle in world space
       
       vec4 clip = gProjection * gView * vec4(Pos, 1.0);

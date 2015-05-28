@@ -43,6 +43,26 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    Particles[0].Pos = Position;
    Particles[0].Vel = glm::vec3(0.0f);
    Particles[0].LifetimeMillis = 0.0f;
+   Particles[1].Type = PARTICLE_TYPE_LAUNCHER;
+   Particles[1].Pos = Position;
+   Particles[1].Vel = glm::vec3(0.0f);
+   Particles[1].LifetimeMillis = 0.0f;
+   Particles[2].Type = PARTICLE_TYPE_LAUNCHER;
+   Particles[2].Pos = Position;
+   Particles[2].Vel = glm::vec3(0.0f);
+   Particles[2].LifetimeMillis = 0.0f;
+   Particles[3].Type = PARTICLE_TYPE_LAUNCHER;
+   Particles[3].Pos = Position;
+   Particles[3].Vel = glm::vec3(0.0f);
+   Particles[3].LifetimeMillis = 0.0f;
+   Particles[4].Type = PARTICLE_TYPE_LAUNCHER;
+   Particles[4].Pos = Position;
+   Particles[4].Vel = glm::vec3(0.0f);
+   Particles[4].LifetimeMillis = 0.0f;
+   Particles[5].Type = PARTICLE_TYPE_LAUNCHER;
+   Particles[5].Pos = Position;
+   Particles[5].Vel = glm::vec3(0.0f);
+   Particles[5].LifetimeMillis = 0.0f;
    
    glGenTransformFeedbacks(2, m_transformFeedback);
    glGenBuffers(2, m_particleBuffer);
@@ -65,7 +85,7 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    m_updateTechnique.SetRandomTextureUnit(3);
    
    //Times are set in milliseconds
-   m_updateTechnique.SetLauncherLifetime(80.0f);
+   m_updateTechnique.SetLauncherLifetime(20.0f);
    m_updateTechnique.SetShellLifetime(900.0f);
    //m_updateTechnique.SetSecondaryShellLifetime(2500.0f);
    
@@ -155,15 +175,18 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
    
    glEnableVertexAttribArray(0);
    glEnableVertexAttribArray(1);
+   glEnableVertexAttribArray(2);
    
    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), 0); // type
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
+   glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)28);          // lifetime
    
    glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
    
    glDisableVertexAttribArray(0);
    glDisableVertexAttribArray(1);
- 
+   glDisableVertexAttribArray(2);
+   
    //Switch buffers every Render call
    m_currVB = m_currTFB;
    m_currTFB = (m_currTFB + 1) & 0x1;
