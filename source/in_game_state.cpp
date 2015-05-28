@@ -89,11 +89,6 @@ void InGameState::start() {
    event_listener->init("./beatmaps/" + level + ".beatmap", this);
 }
 
-void InGameState::start() {
-   event_listener = new BeatEventListener;
-   event_listener->init("./beatmaps/" + level + ".beatmap", this);
-}
-
 InGameState::~InGameState() {
    delete shadowMap;
 }
