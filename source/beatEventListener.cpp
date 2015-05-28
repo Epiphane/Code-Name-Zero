@@ -102,8 +102,9 @@ void BeatEventListener::update(int currBeat, State* world) {
                            curr_event.object,
                            60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
       }
-
-      // Add object to hit in SPAWN_OFFSET beats
-      igs->addGate(60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
+      else {
+         // Add object to hit in SPAWN_OFFSET beats
+         igs->addGate(60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
+      }
    }
 }
