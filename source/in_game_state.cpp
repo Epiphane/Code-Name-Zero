@@ -124,7 +124,8 @@ void InGameState::update(float dt) {
       collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
    }
    
-   ps->UpdateParticles(dt * 1000);
+   
+   ps->UpdateParticles(dt * 1000, player_movement->getSpeed());
 }
 
 void InGameState::render(float dt) {

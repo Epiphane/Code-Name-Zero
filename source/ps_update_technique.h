@@ -15,32 +15,35 @@
 class PSUpdateTechnique : public Technique
 {
 public:
-    PSUpdateTechnique();
-    
-    virtual bool Init();
-    
-    void SetParticleLifetime(float Lifetime);
-    
-    void SetDeltaTimeMillis(unsigned int DeltaTimeMillis);
-    
-    void SetTime(int Time);
-    
-    void SetRandomTextureUnit(unsigned int TextureUnit);
-    
-    void SetLauncherLifetime(float Lifetime);
-    
-    void SetShellLifetime(float Lifetime);
-    
-    //    void SetSecondaryShellLifetime(float Lifetime);
-    
-    
+   PSUpdateTechnique();
+   
+   virtual bool Init();
+   
+   void SetParticleLifetime(float Lifetime);
+   
+   void SetDeltaTimeMillis(unsigned int DeltaTimeMillis);
+   
+   void SetTime(int Time);
+   
+   void SetRandomTextureUnit(unsigned int TextureUnit);
+   
+   void SetLauncherLifetime(float Lifetime);
+   
+   void SetShellLifetime(float Lifetime);
+   
+   void SetPlayerSpeed(float Speed);
+   
+   //    void SetSecondaryShellLifetime(float Lifetime);
+   
+   
 private:
-    GLuint m_deltaTimeMillisLocation;
-    GLuint m_randomTextureLocation;
-    GLuint m_timeLocation;
-    GLuint m_launcherLifetimeLocation;
-    GLuint m_shellLifetimeLocation;
-    //    GLuint m_secondaryShellLifetimeLocation;
+   GLuint m_deltaTimeMillisLocation;
+   GLuint m_randomTextureLocation;
+   GLuint m_timeLocation;
+   GLuint m_launcherLifetimeLocation;
+   GLuint m_shellLifetimeLocation;
+   GLuint m_playerSpeedLocation;
+   //    GLuint m_secondaryShellLifetimeLocation;
 };
 
 #endif /* defined(__RGBZero__ps_update_technique__) */

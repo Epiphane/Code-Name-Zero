@@ -18,6 +18,10 @@ out float ParticleAge;
 #define PARTICLE_TYPE_LAUNCHER 0.0f
 #define PARTICLE_TYPE_SHELL 1.0f
 #define PARTICLE_TYPE_SECONDARY_SHELL 2.0f
+#define ICON_SIZE 8.0f
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 768
+#define SHELL_AGE 900.0f
 
 void main()
 {
@@ -26,9 +30,11 @@ void main()
       vec3 Pos = gl_in[0].gl_Position.xyz; // position of the particle in world space
       
       vec4 clip = gProjection * gView * vec4(Pos, 1.0);
-      float invWidth = 1.0/1024;
-      float invHeight= 1.0/768;
-      int iconSize=32;
+      float invWidth = 1.0/WINDOW_WIDTH;
+      float invHeight = 1.0/WINDOW_HEIGHT;
+      
+      // Make particles bigger as they are about to die
+      float iconSize = ICON_SIZE + (10 * ICON_SIZE * Age0[0] / SHELL_AGE);
       
       // Used to unproject the XY plane
       float dx = iconSize * invWidth * 0.5 * clip.w;

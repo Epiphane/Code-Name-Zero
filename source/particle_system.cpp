@@ -107,7 +107,7 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    m_billboardTechnique.SetColorTextureUnit(0);
    m_billboardTechnique.SetBillboardSize(.05f);
    
-   m_pTexture = new Texture(GL_TEXTURE_2D, "./textures/red_particle.png");
+   m_pTexture = new Texture(GL_TEXTURE_2D, "./textures/smoke_particle.png");
    
    if (!m_pTexture->Load()) {
       fprintf(stderr, "textures failed in particle_system");
@@ -117,12 +117,13 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    return true;
 }
 
-void ParticleSystem::UpdateParticles(int DeltaTimeMillis)
+void ParticleSystem::UpdateParticles(int DeltaTimeMillis, float playerSpeed)
 {
    m_time += DeltaTimeMillis;
    m_updateTechnique.Enable();
    m_updateTechnique.SetTime(m_time);
    m_updateTechnique.SetDeltaTimeMillis(DeltaTimeMillis);
+   m_updateTechnique.SetPlayerSpeed(playerSpeed);
    
    m_randomTexture.Bind(GL_TEXTURE3);
    
