@@ -2,7 +2,7 @@
 
 layout(points) in;
 layout(points) out;
-layout(max_vertices = 30) out;
+layout(max_vertices = 40) out;
 
 in float Type0[];
 in vec3 Position0[];
@@ -38,45 +38,36 @@ void main()
 {
     float Age = Age0[0] + gDeltaTimeMillis;
     
-    //Hacky way of adding emitters
-    if (gTime < 250) {
-       Type1 = PARTICLE_TYPE_LAUNCHER;
-       Position1 = Position0[0];
-       Velocity1 = Velocity0[0];
-       Age1 = Age;
-       EmitVertex();
-       EndPrimitive();
-       
-       Type1 = PARTICLE_TYPE_LAUNCHER;
-       Position1 = Position0[0];
-       Velocity1 = Velocity0[0];
-       Age1 = Age;
-       EmitVertex();
-       EndPrimitive();
-       
-       Type1 = PARTICLE_TYPE_LAUNCHER;
-       Position1 = Position0[0];
-       Velocity1 = Velocity0[0];
-       Age1 = Age;
-       EmitVertex();
-       EndPrimitive();
-    }
-    
     if (Type0[0] == PARTICLE_TYPE_LAUNCHER) {
-        if (Age >= gLauncherLifetime - (gLauncherLifetime - gDeltaTimeMillis * gPlayerSpeed / 1000)) {
+        if (Age >= gLauncherLifetime /*- (gLauncherLifetime - gDeltaTimeMillis * gPlayerSpeed / 1000)*/) {
             Type1 = PARTICLE_TYPE_SHELL;
+            Age1 = 0.0;
+            
+            // Used to spawn particles around the emitters
             vec3 randomVec = GetRandomDir(gTime / 1000.0);
             randomVec.z = 0.0;
-            randomVec.x = randomVec.x / 15;
+            randomVec.x = randomVec.x / 20;
+            randomVec.y = randomVec.y / 15;
             Position1 = Position0[0] + randomVec;
             vec3 Dir = GetRandomDir(gTime/1000.0);
             Dir.y = max(Dir.y, 0.5);
             Dir.x = min(Dir.x, -0.3);
             Dir.z = min(Dir.z, -0.5);
             Velocity1 = normalize(Dir) * gPlayerSpeed / 1000;
-            Age1 = 0.0;
             EmitVertex();
-            EndPrimitive();
+            
+             randomVec = GetRandomDir(gTime / 1000.0);
+            randomVec.z = 0.0;
+            randomVec.x = randomVec.x / 20;
+            randomVec.y = randomVec.y / 15;
+            Position1 = Position0[0] + randomVec;
+             Dir = GetRandomDir(gTime/1000.0);
+            Dir.y = max(Dir.y, 0.5);
+            Dir.x = min(Dir.x, -0.3);
+            Dir.z = min(Dir.z, -0.5);
+            Velocity1 = normalize(Dir) * gPlayerSpeed / 1000;
+            
+            EmitVertex();
             Age = 0.0;
         }
         
@@ -92,7 +83,7 @@ void main()
         float t1 = Age0[0] / 1000.0;
         float t2 = Age / 1000.0;
         vec3 DeltaP = DeltaTimeSecs * Velocity0[0];
-        float dragComponent = -10 * gPlayerSpeed / 1000;
+        float dragComponent = -5 * gPlayerSpeed / 1000;
         vec3 DeltaV = vec3(DeltaTimeSecs) * vec3(0.0, 3.0, dragComponent);
         
         if (Type0[0] == PARTICLE_TYPE_SHELL)  {

@@ -17,6 +17,8 @@ void main()
    if (FragColor.r >= 0.9 && FragColor.g >= 0.9 && FragColor.b >= 0.9 || FragColor.a < 0.4) {
       discard;
    } else {
+      float ratio = ParticleAge / SHELL_AGE;
+      FragColor = vec4(.98, 1.0 - (.70 * ratio), 0.0, 1.0);
       FragColor.a = .8 * (SHELL_AGE - ParticleAge) / SHELL_AGE;
    }
 }
