@@ -112,6 +112,17 @@ void GameObject::render() {
       graphics->render(Model);
 }
 
+void GameObject::renderOutline() {
+   glm::mat4 Model = getModel();
+   if (Model == glm::mat4(0)) {
+      // Don't render
+      return;
+   }
+   
+   if (graphics)
+      graphics->renderOutline(Model);
+}
+
 void GameObject::_debug_render() {
    if (collision) {
       RendererDebug::instance()->renderBounds(position, bounds);

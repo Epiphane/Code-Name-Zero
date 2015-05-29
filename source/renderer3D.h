@@ -44,10 +44,13 @@ private:
    static GLuint uWinScale, uLightPos, uCameraPos;
    static GLuint uAColor, uDColor;
    static GLuint uSColor, uShine;
-   static GLuint aPosition, aNormal;
    static GLuint uTexScale, uTexUnits, uHasTextures;
    static GLuint uShadowView, uShadowProj, uShadowMap;
    static GLuint uShipTint;
+   
+   static GLuint o_program;
+   static GLuint o_uProj, o_uModel, o_uView;
+   static GLuint o_uWinScale, o_uTint;
    
 public:
    Renderer3D(bool isClone = false);
@@ -68,6 +71,7 @@ public:
    
    // Render the data!
    void render(glm::mat4 Model);
+   void renderOutline(glm::mat4 Model);
 };
 
 #endif /* defined(__RGBZero__renderer_3D__) */

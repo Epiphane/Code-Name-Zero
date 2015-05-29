@@ -180,6 +180,17 @@ void InGameState::render(float dt) {
       RendererDebug::instance()->render(glm::mat4(1));
    COMPUTE_BENCHMARK(25, "Render elements time: ", true)
    
+   glDisable(GL_DEPTH_TEST);
+   for (int i = 0; i < NUM_TRACKS; i++) {
+      std::vector<GameObject *>::iterator it = obstacleLists[i].begin();
+      while (it < obstacleLists[i].end()) {
+         (*it)->renderOutline();
+         it ++;
+      }
+   }
+   glEnable(GL_DEPTH_TEST);
+   COMPUTE_BENCHMARK(25, "Render outlines time: ", true)
+   
    if (!DEBUG) {
       glm::vec3 carPos = player->getPosition();
       glm::mat4 transform = glm::translate(carPos.x, carPos.y, carPos.z);
@@ -294,7 +305,7 @@ GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objT
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
    opc->init(travel_time);
    GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle + "_" + extension + ".obj", baseDir), opc, nullptr, occ, track_manager);
-   ob->setPosition(position);
+   ob->getGraphics()->tint(color);
 
    //set its position and let the world know it exists
    addObject(ob);
@@ -325,4 +336,13 @@ GameObject *InGameState::addGate(float travel_time) {
    return ob;
 }
 
-
+//internal only helper function
+Track getTrackFromLatPos(float latPos) {
+   if (latPos < -0.4f) {
+      return BLUE;
+   } else if (latPos >= -0.4f && latPos <= 0.4f) {
+      return GREEN;
+   } else {
+      return RED;
+   }
+}

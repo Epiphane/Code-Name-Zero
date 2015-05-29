@@ -22,12 +22,15 @@
 GLuint Renderer3D::program, Renderer3D::uWinScale, Renderer3D::uProj;
 GLuint Renderer3D::uModel, Renderer3D::uView, Renderer3D::uLightPos, Renderer3D::uCameraPos;
 GLuint Renderer3D::uAColor, Renderer3D::uDColor, Renderer3D::uSColor;
-GLuint Renderer3D::uShine, Renderer3D::aNormal, Renderer3D::aPosition;
+GLuint Renderer3D::uShine;
 GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
 // TODO Make Shadows have its own Renderer so these aren't necessary
 GLuint Renderer3D::uShadowView, Renderer3D::uShadowProj, Renderer3D::uShadowMap;
 // Color GLuint for ship tint.
 GLuint Renderer3D::uShipTint;
+
+GLuint Renderer3D::o_program, Renderer3D::o_uWinScale, Renderer3D::o_uProj;
+GLuint Renderer3D::o_uModel, Renderer3D::o_uView, Renderer3D::o_uTint;
 
 bool Renderer3D::initialized = false;
 void Renderer3D::init() {
@@ -49,6 +52,13 @@ void Renderer3D::init() {
    uShadowView = glGetUniformLocation(program, "uShadowView");
    uShadowMap = glGetUniformLocation(program, "uShadowMap");
    uShipTint = glGetUniformLocation(program, "uShipTint");
+   
+   o_program = LoadShaders("./shaders/3DOutlineVertex.glsl", "./shaders/3DOutlineFragment.glsl");
+   o_uWinScale = glGetUniformLocation(o_program, "windowScale");
+   o_uProj = glGetUniformLocation(o_program, "uProjMatrix");
+   o_uModel = glGetUniformLocation(o_program, "uModelMatrix");
+   o_uView = glGetUniformLocation(o_program, "uViewMatrix");
+   o_uTint = glGetUniformLocation(o_program, "uShipTint");
 
    initialized = true;
 }
@@ -155,6 +165,41 @@ void Renderer3D::render(glm::mat4 Model) {
    glDisableVertexAttribArray(LOCATION_NORMAL);
    glDisableVertexAttribArray(LOCATION_UV);
    glDisableVertexAttribArray(LOCATION_MATERIAL);
+   
+   glUseProgram(0);
+}
+
+void Renderer3D::renderOutline(glm::mat4 Model) {
+   glUseProgram(o_program);
+   
+   // Send window scale
+   if (w_width > w_height)
+      glUniform2f(o_uWinScale, (float)w_height / w_width, 1);
+   else
+      glUniform2f(o_uWinScale, 1, (float)w_width / w_height);
+   
+   glm::mat4 View = camera_getMatrix();
+   glm::mat4 Proj = renderer_getProjection();
+   
+   glUniformMatrix4fv(o_uView, 1, GL_FALSE, &View[0][0]);
+   glUniformMatrix4fv(o_uProj, 1, GL_FALSE, &Proj[0][0]);
+   glUniformMatrix4fv(o_uModel, 1, GL_FALSE, &Model[0][0]);
+   
+   // Send Ship tint to shaders
+   glUniform3f(o_uTint, tint.x, tint.y, tint.z);
+   
+   // Bind attributes...
+   b_vertex  .attribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   b_normal  .attribPointer(LOCATION_NORMAL,   3, GL_FLOAT, GL_FALSE, 0, 0);
+   
+   if (elements == 0)
+      DEBUG_LOG("WARNING: Rendering an object with 0 elements");
+   
+   b_index.bind();
+   glDrawElements(GL_TRIANGLES, elements, GL_UNSIGNED_INT, 0);
+   // Cleanup
+   glDisableVertexAttribArray(LOCATION_POSITION);
+   glDisableVertexAttribArray(LOCATION_NORMAL);
    
    glUseProgram(0);
 }
