@@ -50,7 +50,7 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    for (unsigned int i = 0; i < 2; i++) {
       glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, m_transformFeedback[i]);
       glBindBuffer(GL_ARRAY_BUFFER, m_particleBuffer[i]);
-      glBufferData(GL_ARRAY_BUFFER, sizeof(Particles), Particles, GL_DYNAMIC_DRAW);
+      glBufferData(GL_ARRAY_BUFFER, sizeof(Particles), Particles, GL_STATIC_DRAW);
       glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, m_particleBuffer[i]);
    }
    
@@ -127,10 +127,9 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis, float playerSpeed)
    if (m_isFirst == 1) {
       glDrawArrays(GL_POINTS, 0, 1);
       
-      m_isFirst = 2;
+      m_isFirst = 0;
    }
    else {
-      m_isFirst ++;
       glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
    }
    
@@ -141,6 +140,8 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis, float playerSpeed)
    glDisableVertexAttribArray(2);
    glDisableVertexAttribArray(3);
    
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+   glUseProgram(0);
    glDisable(GL_RASTERIZER_DISCARD);
 }
 
@@ -167,6 +168,9 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
    glDisableVertexAttribArray(0);
    glDisableVertexAttribArray(1);
    glDisableVertexAttribArray(2);
+   
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
+   glUseProgram(0);
    
    //Switch buffers every Render call
    m_currVB = m_currTFB;

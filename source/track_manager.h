@@ -34,7 +34,7 @@ private:
 
    // State of the track
    int next_track_number;
-   float zpos;
+   float zpos, song_progress;
 
    // Keeps "track" of all active tracks
    glm::mat4 first_track, second_track;

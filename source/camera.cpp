@@ -103,7 +103,7 @@ void camera_update(float dt, State *world) {
          // Shake camera
          t += 0.01f;
          double freq = game->getPlayerSpeed() / 100.0f;
-         if (freq > 10.0f) freq = 10.0f;
+         if (freq > 7.5f) freq = 7.5f;
          shake.SetFrequency(freq);
       }
    }

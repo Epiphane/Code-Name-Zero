@@ -244,7 +244,6 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
          break;
       case SPIKE:
          obstacle = "obstacle2";
-         position += glm::vec3(0, 2, 0);
          break;
    }
    

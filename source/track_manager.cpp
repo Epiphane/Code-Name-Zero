@@ -18,7 +18,7 @@
 // Static variables
 ModelRenderer *TrackManager::renderer;
 
-TrackManager::TrackManager() : next_track_number(0), zpos(0) {
+TrackManager::TrackManager() : next_track_number(0), zpos(0), song_progress(0) {
    // Load track OBJ
    renderer = ModelRenderer::load(TRACK_OBJECT, "models/Track/");
 
@@ -31,7 +31,9 @@ TrackManager::TrackManager() : next_track_number(0), zpos(0) {
 
 const glm::mat4 TrackManager::Z_TRANSLATE(glm::translate(0.0f, 0.0f, -TRACK_LENGTH));
 glm::mat4 TrackManager::getTransform(int track_number) {
-   glm::mat4 transform = glm::rotate(sinf(track_number / 10.0f), 0.0f, 1.0f, 0.0f);
+   glm::mat4 transform = glm::mat4(1);
+   if (song_progress > 0.5f);
+      transform = glm::rotate(sinf(track_number / 10.0f), 0.0f, 1.0f, 0.0f);
 
    // Always move the piece backwards too!
    return Z_TRANSLATE * transform;
@@ -74,9 +76,11 @@ void TrackManager::addTrack() {
 }
 
 void TrackManager::update(float dt, State *world) {
-   INIT_BENCHMARK
-      InGameState *game = dynamic_cast<InGameState *>(world);
+   INIT_BENCHMARK;
+   InGameState *game = dynamic_cast<InGameState *>(world);
    if (game != nullptr) {
+      song_progress = game->getSoundtrack()->getProgress();
+      
       // Move the track under the player
       float speed = game->getPlayerSpeed();
       zpos += speed * dt;
