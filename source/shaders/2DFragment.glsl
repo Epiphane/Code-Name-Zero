@@ -12,4 +12,6 @@ void main()
 {
    //fragColor = vec4(fUV.x, fUV.y, 1, 1);
    fragColor = texture(uTexture, fUV);
+
+   if (fragColor.a == 0) discard;
 }

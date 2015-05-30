@@ -57,7 +57,6 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
       accel = 0;
    }
 
-   const int min_speed = 100, max_speed = 1000;
    if (speed < min_speed) speed = min_speed;
    if (speed > max_speed) speed = max_speed;
 

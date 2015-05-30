@@ -11,75 +11,75 @@
 #include "HUD.h"
 #include "texture.h"
 
-unsigned int HUD::buf_progress_ndx, HUD::mph_digit_ndx, HUD::score_digit_ndx;
+unsigned int HUD::mph_bar_ndx, HUD::mph_digit_ndx, HUD::score_digit_ndx;
 float HUD::progress_bar_height;
 
 HUD::HUD() {
    posBuf.clear();
    uvBuf.clear();
    
-   // Progress bar
-   /*progress_bar_height = 13.0f / HUD_TEXTURE_SIZE;
-   buf_progress_ndx = posBuf.size();
-   posBuf.push_back(glm::vec2(-1, 1));
-   posBuf.push_back(glm::vec2(1, 1 - progress_bar_height));
-   uvBuf.push_back(glm::vec2(0));
-   uvBuf.push_back(glm::vec2(1, progress_bar_height));
-   */
-   // MPH Marker
-   const float mph_marker_th = 19.0f / HUD_TEXTURE_SIZE;
-   const float mph_marker_tw = 92.0f / HUD_TEXTURE_SIZE;
-   const float mph_marker_ty = 48.0f / HUD_TEXTURE_SIZE;
-   const float mph_marker_x = -0.97f;
-   const float mph_marker_y = -0.97f;
-   posBuf.push_back(glm::vec2(mph_marker_x, mph_marker_th + mph_marker_y));
-   posBuf.push_back(glm::vec2(mph_marker_tw + mph_marker_x, mph_marker_y));
-   uvBuf.push_back(glm::vec2(0, mph_marker_ty));
-   uvBuf.push_back(glm::vec2(mph_marker_tw, mph_marker_ty + mph_marker_th));
-   
    // MPH Digits
-   const float mph_digit_th = 16.0f / HUD_TEXTURE_SIZE;
-   const float mph_digit_tw = 16.0f / HUD_TEXTURE_SIZE;
-   const float mph_digit_tx = 0;
-   const float mph_digit_ty = 16.0f / HUD_TEXTURE_SIZE;
-   mph_digit_ndx = posBuf.size();
+   mph_digit_ndx = posBuf.size(); 
    for (int i = 0; i < MAX_SPEED_DIGITS; i ++) {
-      posBuf.push_back(glm::vec2(i * mph_digit_tw + mph_marker_x,
-                                 mph_marker_y + mph_marker_th + mph_digit_th));
-      posBuf.push_back(glm::vec2((i + 1) * mph_digit_tw + mph_marker_x,
-                                 mph_marker_y + mph_marker_th));
-      uvBuf.push_back(glm::vec2(mph_digit_tx, mph_digit_ty));
-      uvBuf.push_back(glm::vec2(mph_digit_tx + mph_digit_tw, mph_digit_ty + mph_digit_th));
+      posBuf.push_back(glm::vec2(i *       digit_w + mph_digit_x, mph_digit_y + digit_h));
+      posBuf.push_back(glm::vec2((i + 1) * digit_w + mph_digit_x, mph_digit_y));
+      pushDigit(0);
    }
    
-   // Score marker
-   const float score_marker_th = 0;//19.0f / HUD_TEXTURE_SIZE;
-   const float score_marker_tw = 0;//92.0f / HUD_TEXTURE_SIZE;
-   const float score_marker_ty = 0;//48.0f / HUD_TEXTURE_SIZE;
+   // MPH Marker
+   posBuf.push_back(glm::vec2(mph_marker_x, mph_marker_h + mph_marker_y));
+   posBuf.push_back(glm::vec2(mph_marker_w + mph_marker_x, mph_marker_y));
+   uvBuf.push_back(glm::vec2(mph_marker_tx, mph_marker_ty));
+   uvBuf.push_back(glm::vec2(mph_marker_tx + mph_marker_tw, mph_marker_ty + mph_marker_th));
+
+   // MPH Colored Bar
+   posBuf.push_back(glm::vec2(mph_bar_x, mph_bar_h + mph_bar_y));
+   uvBuf.push_back(glm::vec2(mph_bar_tx, mph_bar_ty));
+   // We move the right side
+   mph_bar_ndx = posBuf.size();
+   posBuf.push_back(glm::vec2(mph_bar_x, mph_bar_y));
+   uvBuf.push_back(glm::vec2(mph_bar_tx, mph_bar_ty + mph_bar_th));
    
    // Score Digits
-   const float score_digit_th = 16.0f / HUD_TEXTURE_SIZE;
-   const float score_digit_tw = 16.0f / HUD_TEXTURE_SIZE;
-   const float score_digit_tx = 0;
-   const float score_digit_ty = 16.0f / HUD_TEXTURE_SIZE;
-   const float score_marker_x = 0.0f;
-   const float score_marker_y = 0.79f;
    score_digit_ndx = posBuf.size();
-   for (int i = 0; i < MAX_SCORE_DIGITS; i ++) {
-      posBuf.push_back(glm::vec2(i * score_digit_tw + score_marker_x,
-                                 score_marker_y + score_marker_th + score_digit_th));
-      posBuf.push_back(glm::vec2((i + 1) * score_digit_tw + score_marker_x,
-                                 score_marker_y + score_marker_th));
-      
-      uvBuf.push_back(glm::vec2(score_digit_tx, score_digit_ty));
-      uvBuf.push_back(glm::vec2(score_digit_tx + score_digit_tw, score_digit_ty + score_digit_th));
+   for (int i = 0; i < MAX_SCORE_DIGITS; i++) {
+      posBuf.push_back(glm::vec2(i *       digit_w + score_digit_x, score_digit_y + digit_h));
+      posBuf.push_back(glm::vec2((i + 1) * digit_w + score_digit_x, score_digit_y));
+      pushDigit(0);
    }
+
+   // Score Marker
+   posBuf.push_back(glm::vec2(score_marker_x, score_marker_h + score_marker_y));
+   posBuf.push_back(glm::vec2(score_marker_w + score_marker_x, score_marker_y));
+   uvBuf.push_back(glm::vec2(score_marker_tx, score_marker_ty));
+   uvBuf.push_back(glm::vec2(score_marker_tx + score_marker_tw, score_marker_ty + score_marker_th));
    
    renderer = new Renderer2D("./textures/HUD.png");
    
    renderer->setNumElements(posBuf.size());
    renderer->bufferData(Vertices, posBuf);
    renderer->bufferData(UVs, uvBuf);
+}
+
+void HUD::setDigit(int digit, int index) {
+   assert(digit >= 0 && digit <= 10);
+
+   glm::vec2 topLeft(digit * digit_tw, digit_ty);
+   glm::vec2 bottomRight = topLeft + glm::vec2(digit_tw, digit_th);
+   if (index < 0) {
+      uvBuf.push_back(topLeft);
+      uvBuf.push_back(bottomRight);
+   }
+   else {
+      assert(index < uvBuf.size());
+
+      uvBuf[index]     = topLeft;
+      uvBuf[index + 1] = bottomRight;
+   }
+}
+
+void HUD::pushDigit(int digit) {
+   setDigit(digit, -1);
 }
 
 void HUD::update(float dt, InGameState *state) {
@@ -96,31 +96,23 @@ void HUD::update(float dt, InGameState *state) {
          num_written = true;
          int digit = speed / digit_factor;
          
-         uvBuf[ndx]     = glm::vec2(digit * 16.0f / HUD_TEXTURE_SIZE,
-                                    16.0f / HUD_TEXTURE_SIZE);
-         uvBuf[ndx + 1] = glm::vec2((digit + 1) * 16.0f / HUD_TEXTURE_SIZE,
-                                    32.0f / HUD_TEXTURE_SIZE);
-         
-         if (uvBuf[ndx].x >= 1) {
-            uvBuf[ndx].x     -= 1;
-            uvBuf[ndx + 1].x -= 1;
-            uvBuf[ndx].y     += 16.0f / HUD_TEXTURE_SIZE;
-            uvBuf[ndx + 1].y += 16.0f / HUD_TEXTURE_SIZE;
-         }
+         setDigit(digit, ndx);
       }
       else if (num_written) {
-         uvBuf[ndx]     = glm::vec2(32.0f / HUD_TEXTURE_SIZE);
-         uvBuf[ndx + 1] = glm::vec2(48.0f / HUD_TEXTURE_SIZE);
+         setDigit(10, ndx);
       }
       else {
-         uvBuf[ndx]     = glm::vec2(0, 16.0f / HUD_TEXTURE_SIZE);
-         uvBuf[ndx + 1] = glm::vec2(16.0f / HUD_TEXTURE_SIZE,
-                                    32.0f / HUD_TEXTURE_SIZE);
+         setDigit(0, ndx);
       }
       
       speed = speed % digit_factor;
       digit_factor /= 10;
    }
+
+   // MPH Bar
+   float speedPercent = 0.9f * float(this->speed - PlayerPhysicsComponent::min_speed) / (PlayerPhysicsComponent::max_speed - PlayerPhysicsComponent::min_speed) + 0.1f;
+   posBuf[mph_bar_ndx].x = mph_bar_x + speedPercent * mph_bar_w;
+   uvBuf[mph_bar_ndx].x = mph_bar_tx + speedPercent * mph_bar_tw;
    
    // Write score
    score = state->getScore();
@@ -132,44 +124,21 @@ void HUD::update(float dt, InGameState *state) {
       if (score / digit_factor > 0) {
          num_written = true;
          int digit = score / digit_factor;
-         
-         uvBuf[ndx]     = glm::vec2(digit * 16.0f / HUD_TEXTURE_SIZE,
-                                    16.0f / HUD_TEXTURE_SIZE);
-         uvBuf[ndx + 1] = glm::vec2((digit + 1) * 16.0f / HUD_TEXTURE_SIZE,
-                                    32.0f / HUD_TEXTURE_SIZE);
-         
-         if (uvBuf[ndx].x >= 1) {
-            uvBuf[ndx].x     -= 1;
-            uvBuf[ndx + 1].x -= 1;
-            uvBuf[ndx].y     += 16.0f / HUD_TEXTURE_SIZE;
-            uvBuf[ndx + 1].y += 16.0f / HUD_TEXTURE_SIZE;
-         }
+
+         setDigit(digit, ndx);
       }
       else if (num_written) {
-         uvBuf[ndx]     = glm::vec2(32.0f / HUD_TEXTURE_SIZE);
-         uvBuf[ndx + 1] = glm::vec2(48.0f / HUD_TEXTURE_SIZE);
+         setDigit(10, ndx);
       }
       else {
-         uvBuf[ndx]     = glm::vec2(0, 16.0f / HUD_TEXTURE_SIZE);
-         uvBuf[ndx + 1] = glm::vec2(16.0f / HUD_TEXTURE_SIZE,
-                                    32.0f / HUD_TEXTURE_SIZE);
+         setDigit(0, ndx);
       }
       
       score = score % digit_factor;
       digit_factor /= 10;
    }
    
-   // Show percent done
-   /*float percentDone = state->getSoundtrack()->getProgress();
-   if (percentDone < 1) {
-      percentDone += dt / 2;
-      
-      posBuf[buf_progress_ndx + 1] = glm::vec2(2*percentDone - 1, 1 - progress_bar_height);
-      uvBuf[buf_progress_ndx + 1] = glm::vec2(percentDone, progress_bar_height);
-      
-      renderer->bufferData(Vertices, posBuf);
-   }*/
-   
+   renderer->bufferData(Vertices, posBuf);
    renderer->bufferData(UVs, uvBuf);
 }
 
