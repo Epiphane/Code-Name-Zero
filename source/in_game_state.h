@@ -55,7 +55,7 @@ public:
    const static int NUM_SHIPS;
    const static std::string SHIP_MODELS[];
    
-   InGameState(std::string levelname, int playership);
+   InGameState(std::string levelname, Beat bpm, int playership);
    ~InGameState();
    
    void start();
