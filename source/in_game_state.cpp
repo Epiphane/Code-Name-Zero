@@ -27,8 +27,6 @@
 
 #define Z_EPSILON 5.0
 
-Track getTrackFromLatPos(float latPos);
-
 const int InGameState::NUM_SHIPS = 5;
 const std::string InGameState::SHIP_MODELS[] = {
    "Red Razelle/",
@@ -208,7 +206,7 @@ void InGameState::collide(GameObject *player, GameObject *other) {
 
 //add an obstacle to the world.
 //params: a vec3 for its position, which Track it's on, and which color it is
-GameObject *InGameState::addObstacle(Track track, Track color, int obj, float travel_time) {
+GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objType, float travel_time) {
    std::string extension;
    std::string obstacle;
    //set up a new obstacle object
@@ -239,7 +237,7 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
          break;
    }
 
-   switch (obj) {
+   switch (objType) {
       case METEOR:
          obstacle = "meteor";
          break;
@@ -254,7 +252,27 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
    
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
 //   std::cout << obstacle+ "_" + extension << " spawning in lane " << track << " with color " << color << std::endl;
-   ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color);
+   ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color, objType);
+   if (objType == WALL) {
+      std::string asdf = "";
+      if (track == GREEN) {
+         asdf = "green";
+      } else if (track == BLUE) {
+         asdf = "blue";
+      } else {
+         asdf = "red";
+      }
+      std::string dfsa;
+      if (color == GREEN) {
+         dfsa = "green";
+      } else if (color == BLUE) {
+         dfsa = "blue";
+      } else {
+         dfsa = "red";
+      }
+      std::cout << "Spawning a wall in the " << asdf << " lane" << std::endl;
+      std::cout << "This wall has color " << dfsa << std::endl;
+   }
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
    opc->init(travel_time);
    GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle+ "_" + extension + ".obj", baseDir), opc, nullptr, occ, track_manager);
@@ -263,10 +281,10 @@ GameObject *InGameState::addObstacle(Track track, Track color, int obj, float tr
    addObject(ob);
    ob->setPosition(position);
    
-   if (obj == WALL) {
-      obstacleLists[0].push_back(ob);
-      obstacleLists[1].push_back(ob);
-      obstacleLists[2].push_back(ob);
+   if (objType == WALL) {
+      obstacleLists[BLUE].push_back(ob);
+      obstacleLists[GREEN].push_back(ob);
+      obstacleLists[RED].push_back(ob);
    }
    else {
       obstacleLists[track].push_back(ob);
@@ -289,13 +307,4 @@ GameObject *InGameState::addGate(float travel_time) {
    return ob;
 }
 
-//internal only helper function
-Track getTrackFromLatPos(float latPos) {
-   if (latPos < -0.4f) {
-      return BLUE;
-   } else if (latPos >= -0.4f && latPos <= 0.4f) {
-      return GREEN;
-   } else {
-      return RED;
-   }
-}
+

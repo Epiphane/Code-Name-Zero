@@ -73,7 +73,7 @@ public:
    
    void send(std::string message, void *data);
    
-   GameObject *addObstacle(Track track, Track color, int obj, float travel_time);
+   GameObject *addObstacle(Track track, Track color, ObstacleType obj, float travel_time);
    GameObject *addGate(float traveltime);
 };
 

@@ -99,7 +99,7 @@ void BeatEventListener::update(int currBeat, State* world) {
          // Add object to hit in SPAWN_OFFSET beats
          igs->addObstacle(static_cast<Track>(curr_event.lane),
                            static_cast<Track>(curr_event.color),
-                           curr_event.object,
+                           ObstacleType(curr_event.object),
                            60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
       }
       else {
