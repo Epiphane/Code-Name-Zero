@@ -15,8 +15,10 @@ enum Track {
    RED = 2
 };
 
+Track getTrackFromLatPos(float latPos);
+
 const int TOTAL_OBSTACLES = 3;
-enum Obstacles {
+enum ObstacleType {
    METEOR = 0,
    WALL = 1,
    SPIKE = 2

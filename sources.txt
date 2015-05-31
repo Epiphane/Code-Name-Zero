@@ -87,6 +87,9 @@ set(SOURCES
    billboard_technique.cpp
    ps_update_technique.cpp
    particle_system.cpp
+
+   track_enum.cpp
+
 )
 
 # List resources to copy to build directory

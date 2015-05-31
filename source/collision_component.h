@@ -30,13 +30,15 @@ public:
 
 class ObstacleCollisionComponent : public CollisionComponent {
 public:
-   ObstacleCollisionComponent(Track loc, Track clr);
+   ObstacleCollisionComponent(Track loc, Track clr, ObstacleType type);
    
-   bool shouldAcceleratePlayer() { return location == color; };
+   bool shouldAcceleratePlayer(Track playerLane);
    Track location;
    Track color;
+   ObstacleType type;
    
    void collide(GameObject *thisObj, GameObject *other);
 };
+
 
 #endif /* defined(__Project__collision_component__) */

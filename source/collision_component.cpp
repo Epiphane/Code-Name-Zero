@@ -22,7 +22,7 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    
    PlayerPhysicsComponent *playerMovement = dynamic_cast<PlayerPhysicsComponent *>(player->getPhysics());
    
-   if (occ->shouldAcceleratePlayer()) {
+   if (occ->shouldAcceleratePlayer(getTrackFromLatPos(player->getPosition().x))) {
       playerMovement->accelerate(ACCELERATION_AMT);
    }
    else {
@@ -39,7 +39,16 @@ void ObstacleCollisionComponent::collide(GameObject *thisObj, GameObject *otherO
    std::cout << "Off-beat by " << physics->getTimeLeft() << " seconds." << std::endl;
 }
 
-ObstacleCollisionComponent::ObstacleCollisionComponent(Track loc, Track clr) {
+ObstacleCollisionComponent::ObstacleCollisionComponent(Track loc, Track clr, ObstacleType obsType) {
    location = loc;
    color = clr;
+   type = obsType;
+}
+
+bool ObstacleCollisionComponent::shouldAcceleratePlayer(Track playerLane) {
+   if (type == WALL) {
+      return color == playerLane;
+   } else {
+      return color == location;
+   }
 }
