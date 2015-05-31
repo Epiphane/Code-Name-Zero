@@ -20,7 +20,7 @@
 #include "main.h"
 #include "audio_manager.h"
 #include "input_manager.h"
-#include "in_game_state.h"
+#include "tutorial_state.h"
 #include "camera.h"
 #include "tiny_obj_loader.h"
 #include "rendererDebug.h"
@@ -132,6 +132,7 @@ int main(int argc, char **argv) {
    input_set_callback(GLFW_KEY_M, forwardOneFrame);
    input_set_callback(GLFW_KEY_P, toggleDebugLog);
    
+   glEnable(GL_MULTISAMPLE);
    glEnable (GL_BLEND);
    glEnable(GL_DEPTH_TEST);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -141,7 +142,7 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
-   setState(new InGameState("Mambo5", 174, 0));
+   setState(new TutorialState(0));
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();

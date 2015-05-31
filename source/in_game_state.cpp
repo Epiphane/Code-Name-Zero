@@ -38,7 +38,7 @@ const std::string InGameState::SHIP_MODELS[] = {
    "Little Wyvern/"
 };
 
-InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0) {
+InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0), sun_rotation(-45.0f) {
    State::State();
    
    // Move camera
@@ -60,8 +60,6 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    track_manager = new TrackManager();
 
    soundtrack = audio_load_music("./audio/" + level + ".mp3", bpm);
-//   soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
-//   soundtrack = audio_load_music("./audio/Mambo5.mp3", 174);
    soundtrack->play();
    
    visualizer = new AudioVisualizer(soundtrack);
@@ -114,13 +112,16 @@ void InGameState::update(float dt) {
 
    track_manager->update(dt, this);
    
-   cleanupObstacles();
-   
    float latPos = player->getPosition().x;
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
       collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
    }
-   
+
+   for (int i = 0; i < NUM_TRACKS; i++) {
+      while (!obstacleLists[i].empty() && obstacleLists[i].front()->isDead()) {
+         obstacleLists[i].erase(obstacleLists[i].begin());
+      }
+   }
    
    ps->UpdateParticles(dt * 1000, player_movement->getSpeed());
 }
@@ -150,7 +151,9 @@ void InGameState::render(float dt) {
    // Render DA SKY!
    glm::vec4 sunLowAngle(-0.3f, 0.0f, -0.7f, 1.0f);
    float percent_done = (powf(soundtrack->getProgress() - 0.5f, 3.0f) + 0.125f) / 0.25f;
-   glm::vec3 sunAngle = glm::vec3(glm::rotate(270.0f * percent_done - 45.0f, 0.0f, 0.0f, -1.0f) * sunLowAngle);
+   float angle = 270.0f * percent_done - 45.0f;
+   sun_rotation += (angle - sun_rotation) / 16;
+   glm::vec3 sunAngle = glm::vec3(glm::rotate(sun_rotation, 0.0f, 0.0f, -1.0f) * sunLowAngle);
    skyRender->render(sunAngle);
 
    // Render scene
@@ -284,19 +287,6 @@ GameObject *InGameState::addGate(float travel_time) {
    ob->setPosition(position);
    
    return ob;
-}
-
-
-//clear the lists of any obstacles behind the player
-void InGameState::cleanupObstacles() {
-   for (int i = 0; i < NUM_TRACKS; i++) {
-      if (!obstacleLists[i].empty()) {
-         if (obstacleLists[i].front()->getPosition().z > player->getPosition().z + Z_EPSILON) {
-            obstacleLists[i].front()->die();
-            obstacleLists[i].pop_front();
-         }
-      }
-   }
 }
 
 //internal only helper function

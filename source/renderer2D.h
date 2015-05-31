@@ -16,29 +16,28 @@
 
 #include "tiny_obj_loader.h"
 #include "renderer.h"
+#include "vertex_buffer_object.h"
 #include "GLSL.h"
 
 class Renderer2D : public Renderer {
 private:
-   const static int NUM_BUFFERS = 2;
-   // Indices at which we keep each buffer
-   const static int b_vertex   = 0;
-   const static int b_uv       = 1;
-   
-   GLuint buffers[NUM_BUFFERS];
+   VBO b_vertex, b_uv, b_opacity;
    GLuint elements, texture;
    
    float z;
+
+   bool hasOpacity;
    
    static bool initialized;
    void init();
    static GLuint program;
    static GLuint uProj, uModel, uZValue;
-   static GLuint uWinScale, uTexture;
-   static GLuint aPosition, aUV;
+   static GLuint uWinScale, uTexture, uHasOpacity;
    
 public:
-   Renderer2D(std::string texture, float z = 0);
+   Renderer2D(std::string texture) : Renderer2D(texture, false, 0) {};
+   Renderer2D(std::string texture, float z) : Renderer2D(texture, false, z) {};
+   Renderer2D(std::string texture, bool hasOpacity, float z);
    
    // Refers to the number of indices
    void setNumElements(GLuint num) { elements = num; }

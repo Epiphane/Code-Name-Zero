@@ -6,10 +6,15 @@ layout (triangle_strip, max_vertices=4) out;
 uniform float uZValue;
 
 in vec2 vUV[];
+in float vOpacity[];
+
 out vec2 fUV;
+out float fOpacity;
 
 void main()
 {
+   fOpacity = vOpacity[0];
+
    // Two input vertices will be the top left and bottom right
    vec4 vertices[4];
    vertices[0] = gl_in[0].gl_Position;

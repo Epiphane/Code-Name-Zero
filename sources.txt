@@ -28,6 +28,7 @@ set(HEADERS
 
    state.h
    in_game_state.h
+   tutorial_state.h
 
    bounds.h
    game_object.h
@@ -73,6 +74,7 @@ set(SOURCES
 
    state.cpp
    in_game_state.cpp
+   tutorial_state.cpp
 
    game_object.cpp
    graphics_component.cpp

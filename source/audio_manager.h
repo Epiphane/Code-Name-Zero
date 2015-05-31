@@ -36,6 +36,7 @@ private:
    FMOD::Sound *sound;
    FMOD::DSP *dsp;
    Beat beat;
+   int beat_offset;
    Beat bpm;
    unsigned int length;
    
@@ -66,8 +67,10 @@ public:
    
    void update();
    void play();
+   void rewind(Beat amount);
    
    Beat getBeat()  { return beat; }
+   int getBeatOffsetMS() { return beat_offset; }
    Beat getBPM() { return bpm; }
    unsigned int getLength() { return length; }
    float getProgress();
