@@ -38,7 +38,7 @@ const std::string InGameState::SHIP_MODELS[] = {
    "Little Wyvern/"
 };
 
-InGameState::InGameState(std::string levelname, int player_ship) : level(levelname), player_speed(100), score(0) {
+InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0) {
    State::State();
    
    // Move camera
@@ -59,7 +59,7 @@ InGameState::InGameState(std::string levelname, int player_ship) : level(levelna
    // Set up track manager
    track_manager = new TrackManager();
 
-   soundtrack = audio_load_music("./audio/" + level + ".mp3", 200);
+   soundtrack = audio_load_music("./audio/" + level + ".mp3", bpm);
 //   soundtrack = audio_load_music("./audio/RGB_Hardcore.mp3", 145);
 //   soundtrack = audio_load_music("./audio/Mambo5.mp3", 174);
    soundtrack->play();
@@ -81,7 +81,9 @@ InGameState::InGameState(std::string levelname, int player_ship) : level(levelna
    
    skyRender = new SkyRenderer;
    ps = new  ParticleSystem();
-   ps->InitParticleSystem(glm::vec3(0.05, -1.6, -0.5));
+   if (!ps->InitParticleSystem(glm::vec3(0.05, -1.6, -0.5))) {
+      exit(1);
+   }
 }
 
 void InGameState::start() {

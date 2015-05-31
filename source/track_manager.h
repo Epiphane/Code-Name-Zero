@@ -21,7 +21,7 @@
 #define TRACK_OFFSET_GREEN 0
 #define TRACK_OFFSET_RED 3.8
 
-#define VISIBLE_TRACKS 200
+#define VISIBLE_TRACKS 100
 
 class State;
 

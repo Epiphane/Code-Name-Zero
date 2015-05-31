@@ -36,7 +36,7 @@ void RendererPostProcess::shaders_init() {
 	PostProc_blur = glGetUniformLocation(programID, "blur");
 
 	create();
-	setupBufferData(1024, 768);
+	setupBufferData(w_width, w_height);
 }
 
 void RendererPostProcess::create() {

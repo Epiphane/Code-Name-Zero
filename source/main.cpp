@@ -56,8 +56,8 @@ void forwardOneFrame() { moveOneFrame = true; }
 
 GLFWwindow* window;
 
-const int w_width = 1024;
-const int w_height = 768;
+const int w_width = 1200;
+const int w_height = 900;
 const char *w_title = "RGB Zero";
 
 /*
@@ -141,7 +141,7 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
-   setState(new InGameState("RGB_MuteCity", 0));
+   setState(new InGameState("Mambo5", 174, 0));
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();
