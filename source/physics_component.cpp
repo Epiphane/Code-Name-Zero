@@ -24,19 +24,18 @@ void ObstaclePhysicsComponent::update(GameObject *obj, State *world, float dt) {
    MovementComponent::update(obj, world, dt);
    
    sec_left -= dt;
-   //if (sec_left >= 0) {
-      InGameState* game = dynamic_cast<InGameState*>(world);
-      assert(game != nullptr);
+   InGameState* game = dynamic_cast<InGameState*>(world);
+   assert(game != nullptr);
 
-      float player_speed = game->getPlayerSpeed();
-      glm::vec3 new_pos = obj->getPosition();
-      new_pos.z = (sec_left + CALIBRATION) * -player_speed;
+   float player_speed = game->getPlayerSpeed();
+   glm::vec3 new_pos = obj->getPosition();
+   new_pos.z = (sec_left + CALIBRATION) * -player_speed;
 
-      //if (sec_left > 0.2f) {
-      obj->setPosition(new_pos);
-      //}
-   //}
-   
+   obj->setPosition(new_pos);
+
+   // Get rid of dead objects
+   if (new_pos.z > 1)
+      obj->die();
 }
 
 void MovementComponent::update(GameObject *obj, State *world, float dt) {

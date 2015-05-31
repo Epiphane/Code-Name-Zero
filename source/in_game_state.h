@@ -36,6 +36,8 @@ private:
    PlayerPhysicsComponent *player_movement;
    float player_speed;
    
+   float sun_rotation;
+
    const static int SCORE_MULT = 1;
    unsigned long score;
 
@@ -49,8 +51,6 @@ private:
 
    HUD *hud;
    std::vector<std::list<GameObject *>> obstacleLists;
-   
-   void cleanupObstacles();
 public:
    const static int NUM_SHIPS;
    const static std::string SHIP_MODELS[];

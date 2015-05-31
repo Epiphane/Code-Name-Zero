@@ -220,11 +220,31 @@ void Music::update() {
    channel->getPosition(&position, FMOD_TIMEUNIT_MS);
 
    Beat currentBeat = position * bpm / 60000 + 1;
+   beat_offset = position - (currentBeat - 1) * 60000 / bpm;
    if (currentBeat != beat) {
       beat = currentBeat;
 
       getCurrentState()->send("beat", &beat);
    }
+}
+
+void Music::rewind(Beat amount) {
+   Beat position;
+   check(channel->getPosition(&position, FMOD_TIMEUNIT_MS), "get channel position");
+
+   // Convert to MS
+   Beat d_pos = amount * 60000 / bpm;
+   if (position < d_pos) {
+      position = 0;
+      beat = 0;
+      beat_offset = 0;
+   }
+   else {
+      position -= d_pos;
+      beat -= amount;
+   }
+
+   check(channel->setPosition(position, FMOD_TIMEUNIT_MS), "set channel position");
 }
 
 float Music::getSample(int index, int totalSpectra) {

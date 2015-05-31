@@ -12,7 +12,7 @@ const int INDICES_BUFFER = 3;
 const int MATERIAL_BUFFER = 4;
 
 typedef enum {
-   Vertices, Colors, UVs, Normals, Indices, Materials, ArrayBuffer
+   Vertices, Colors, UVs, Normals, Indices, Materials, Opacities, ArrayBuffer
 } DataType;
 
 // Location for shader attributes
@@ -22,6 +22,7 @@ const int LOCATION_SHAPE = 1; // For debug shader
 const int LOCATION_UV = 2;
 const int LOCATION_COLOR = 2;
 const int LOCATION_MATERIAL = 3;
+const int LOCATION_OPACITY = 3;
 const int LOCATION_MODEL_MATRIX = 7;
 
 const unsigned int MATERIAL_RUBBER = 0;

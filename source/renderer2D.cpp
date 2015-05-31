@@ -14,7 +14,7 @@
 #include "Renderer2D.h"
 
 GLuint Renderer2D::program, Renderer2D::uWinScale, Renderer2D::uProj;
-GLuint Renderer2D::uModel, Renderer2D::aUV, Renderer2D::aPosition;
+GLuint Renderer2D::uModel, Renderer2D::uHasOpacity;
 GLuint Renderer2D::uTexture, Renderer2D::uZValue;
 
 bool Renderer2D::initialized = false;
@@ -23,19 +23,21 @@ void Renderer2D::init() {
    uWinScale = glGetUniformLocation(program, "windowScale");
    uProj = glGetUniformLocation(program, "uProjMatrix");
    uModel = glGetUniformLocation(program, "uModelMatrix");
-   aPosition = glGetAttribLocation(program, "aPosition");
-   aUV = glGetAttribLocation(program, "aUV");
    uTexture = glGetUniformLocation(program, "uTexture");
    uZValue = glGetUniformLocation(program, "uZValue");
+   uHasOpacity = glGetUniformLocation(program, "hasOpacity");
    
    initialized = true;
 }
 
-Renderer2D::Renderer2D(std::string textureName, float z) : Renderer(), z(z) {
+Renderer2D::Renderer2D(std::string textureName, bool o, float z) : Renderer(), b_vertex(Vertices), b_uv(UVs), b_opacity(Opacities), hasOpacity(o), z(z), elements(0) {
    if (!initialized)
       init();
-   
-   glGenBuffers(NUM_BUFFERS, buffers);
+
+   b_vertex.init();
+   b_uv.init();
+   if (hasOpacity)
+      b_opacity.init();
    
    glGenTextures(1, &texture);
    texture_load(textureName, texture);
@@ -62,6 +64,7 @@ void Renderer2D::render(glm::mat4 Model) {
    glUniformMatrix4fv(uModel, 1, GL_FALSE, &Model[0][0]);
    
    glUniform1f(uZValue, z);
+   glUniform1i(uHasOpacity, hasOpacity);
    
    error = glGetError();
    assert(error == 0);
@@ -74,13 +77,10 @@ void Renderer2D::render(glm::mat4 Model) {
    assert(error == 0);
    
    // Bind attributes...
-   glEnableVertexAttribArray(LOCATION_POSITION);
-   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_vertex]);
-   glVertexAttribPointer(LOCATION_POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
-   
-   glEnableVertexAttribArray(LOCATION_UV);
-   glBindBuffer(GL_ARRAY_BUFFER, buffers[b_uv]);
-   glVertexAttribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
+   b_vertex.attribPointer(LOCATION_POSITION, 2, GL_FLOAT, GL_FALSE, 0, 0);
+   b_uv.attribPointer(LOCATION_UV, 2, GL_FLOAT, GL_FALSE, 0, 0);
+   if (hasOpacity)
+      b_opacity.attribPointer(LOCATION_OPACITY, 1, GL_FLOAT, GL_FALSE, 0, 0);
    
    // Draw it!
    glDrawArrays(GL_LINES, 0, elements);
@@ -91,6 +91,7 @@ void Renderer2D::render(glm::mat4 Model) {
    // Cleanup
    glDisableVertexAttribArray(LOCATION_POSITION);
    glDisableVertexAttribArray(LOCATION_UV);
+   glDisableVertexAttribArray(LOCATION_OPACITY);
    
    glUseProgram(0);
    
@@ -99,28 +100,27 @@ void Renderer2D::render(glm::mat4 Model) {
 }
 
 void Renderer2D::bufferData(DataType type, size_t size, void *data) {
-   GLuint bufType;
-   
-   if(type == Vertices) {
-      bufType = GL_ARRAY_BUFFER;
-      
-      glBindBuffer(bufType, buffers[b_vertex]);
+   VBO *buf;
+
+   if (type == Vertices) {
+      buf = &b_vertex;
    }
-   else if(type == UVs) {
-      bufType = GL_ARRAY_BUFFER;
-      
-      glBindBuffer(bufType, buffers[b_uv]);
+   else if (type == Opacities) {
+      buf = &b_opacity;
+   }
+   else if (type == UVs) {
+      buf = &b_uv;
    }
    else {
       std::cerr << "Buffer type " << type << " not recognized" << std::endl;
       assert(0);
    }
-   
-   glBufferData(bufType, size, data, GL_STATIC_DRAW);
+
+   buf->bufferData(size, data, GL_STATIC_DRAW);
 }
 
 void Renderer2D::bufferData(DataType type, const std::vector<float> &data) {
-   assert(type == Vertices || type == UVs);
+   assert(type == Vertices || type == UVs || type == Opacities);
    if (type == Vertices)
       elements = data.size() * 2;
    

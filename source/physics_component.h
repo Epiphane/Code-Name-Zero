@@ -34,7 +34,7 @@ class PlayerPhysicsComponent : public PhysicsComponent {
 private:
    float lat_destination = 0;
    float accel, accel_time;
-   float speed = 1000;
+   float speed = 100;
 
 public:
    static const int min_speed = 100, max_speed = 1000;

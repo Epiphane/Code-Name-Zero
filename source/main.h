@@ -66,7 +66,7 @@ State *getCurrentState();
 
 extern float randFloat(float l, float h);
 extern glm::vec3 randPoint(float r);
-
+extern glm::vec2 characterUV(char c);
 
 void resize_obj(std::vector<tinyobj::shape_t> &shapes);
 
