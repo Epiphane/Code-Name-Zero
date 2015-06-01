@@ -27,6 +27,7 @@ typedef struct {
 class BeatEventListener {
 private:
    std::unordered_map<int, Event> events;
+   Beat lastBeat;
    
 public:
    BeatEventListener();

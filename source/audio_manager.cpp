@@ -219,7 +219,7 @@ void Music::update() {
    Beat position;
    channel->getPosition(&position, FMOD_TIMEUNIT_MS);
 
-   Beat currentBeat = position * bpm / 60000 + 1;
+   Beat currentBeat = position * bpm / 60000;
    beat_offset = position - (currentBeat - 1) * 60000 / bpm;
    if (currentBeat != beat) {
       beat = currentBeat;

@@ -50,7 +50,7 @@ private:
    ParticleSystem *ps;
 
    HUD *hud;
-   std::vector<std::list<GameObject *>> obstacleLists;
+   std::vector<std::vector<GameObject *>> obstacleLists;
 public:
    const static int NUM_SHIPS;
    const static std::string SHIP_MODELS[];
