@@ -36,6 +36,11 @@ const std::string InGameState::SHIP_MODELS[] = {
    "Little Wyvern/"
 };
 
+void loadObstacleModel(std::string obstacle, std::string extension) {
+   std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
+   ModelRenderer::load(baseDir + obstacle + "_" + extension + ".obj", baseDir);
+}
+
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0), sun_rotation(-45.0f) {
    State::State();
    
@@ -58,16 +63,16 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    track_manager = new TrackManager();
 
    soundtrack = audio_load_music("./audio/" + level + ".mp3", bpm);
-   soundtrack->play();
    
    visualizer = new AudioVisualizer(soundtrack);
    
    hud = new HUD();
    
    //initialize the lists of obstacles
-   obstacleLists = std::vector<std::list<GameObject *>>();
+   obstacleLists = std::vector<std::vector<GameObject *>>();
    for (int i = 0; i < NUM_TRACKS; i++) {
-      obstacleLists.push_back(std::list<GameObject *>());
+      obstacleLists.push_back(std::vector<GameObject *>());
+      obstacleLists[i].reserve(32);
    }
    shadowMap = new ShadowMap;
    shadowMap->init(4096);
@@ -80,11 +85,24 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    if (!ps->InitParticleSystem(glm::vec3(0.05, -1.6, -0.5))) {
       exit(1);
    }
+
+   // Preload models
+   loadObstacleModel("wall", "blue");
+   loadObstacleModel("wall", "green");
+   loadObstacleModel("wall", "red");
+   loadObstacleModel("meteor", "blue");
+   loadObstacleModel("meteor", "green");
+   loadObstacleModel("meteor", "red");
+   loadObstacleModel("obstacle2", "blue");
+   loadObstacleModel("obstacle2", "green");
+   loadObstacleModel("obstacle2", "red");
 }
 
 void InGameState::start() {
    event_listener = new BeatEventListener;
    event_listener->init("./beatmaps/" + level + ".beatmap", this);
+
+   soundtrack->play();
 }
 
 InGameState::~InGameState() {
@@ -251,7 +269,6 @@ GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objT
    }
    
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
-//   std::cout << obstacle+ "_" + extension << " spawning in lane " << track << " with color " << color << std::endl;
    ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color, objType);
    if (objType == WALL) {
       std::string asdf = "";
@@ -273,13 +290,14 @@ GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objT
       std::cout << "Spawning a wall in the " << asdf << " lane" << std::endl;
       std::cout << "This wall has color " << dfsa << std::endl;
    }
+
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
    opc->init(travel_time);
-   GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle+ "_" + extension + ".obj", baseDir), opc, nullptr, occ, track_manager);
+   GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle + "_" + extension + ".obj", baseDir), opc, nullptr, occ, track_manager);
+   ob->setPosition(position);
 
    //set its position and let the world know it exists
    addObject(ob);
-   ob->setPosition(position);
    
    if (objType == WALL) {
       obstacleLists[BLUE].push_back(ob);

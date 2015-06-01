@@ -33,6 +33,7 @@ void BeatEventListener::init(std::string filename, State *world) {
    int obj = 0;
    int lane = 0;
    int color = 0;
+   lastBeat = 0;
    
    InGameState* s = dynamic_cast<InGameState *>(getCurrentState());
    Music* m = s->getSoundtrack();
@@ -77,34 +78,39 @@ void BeatEventListener::init(std::string filename, State *world) {
          }
       }
    }
-
-   InGameState* igs = dynamic_cast<InGameState *>(world);
-   if (igs != nullptr) {
-      // Spawn the first few gates
-      for (int i = 0; i < SPAWN_OFFSET; i++) {
-         // Add object to hit in SPAWN_OFFSET beats
-         igs->addGate(60.0f / float(igs->getSoundtrack()->getBPM()) * i);
-      }
-   }
 }
 
 void BeatEventListener::update(int currBeat, State* world) {
    InGameState* igs = dynamic_cast<InGameState *>(world);
    if (igs != nullptr) {
-      if (events.find(currBeat+SPAWN_OFFSET) != events.end()) {
-         Event curr_event = events[currBeat+SPAWN_OFFSET];
-      
-         // Spawn object 50 track pieces away (visible tracks/4)
-         std::cout << "Beat " << (currBeat+SPAWN_OFFSET) % 4 << "!!" << std::endl;
-         // Add object to hit in SPAWN_OFFSET beats
-         igs->addObstacle(static_cast<Track>(curr_event.lane),
-                           static_cast<Track>(curr_event.color),
-                           ObstacleType(curr_event.object),
-                           60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
-      }
-      else {
-         // Add object to hit in SPAWN_OFFSET beats
-         igs->addGate(60.0f / float(igs->getSoundtrack()->getBPM()) * SPAWN_OFFSET);
+      // Account for all beats that might have been skipped
+      if (lastBeat > currBeat) 
+         lastBeat = currBeat;
+      if (lastBeat + SPAWN_OFFSET < currBeat)
+         lastBeat = currBeat - SPAWN_OFFSET;
+
+      float beat_time = 60.0f / float(igs->getSoundtrack()->getBPM());
+      float beat_offset = beat_time * igs->getSoundtrack()->getBeatOffsetMS() / 1000;
+      for (; lastBeat <= currBeat; lastBeat++) {
+         Beat beats_left = (lastBeat + SPAWN_OFFSET) - currBeat;
+         float travel_time = beat_time * beats_left - beat_offset;
+
+         if (events.find(lastBeat + SPAWN_OFFSET) != events.end()) {
+            Event curr_event = events[lastBeat + SPAWN_OFFSET];
+
+            //DEBUG_LOG("Spawning object to hit in " + std::to_string(travel_time) + " (offset: " + std::to_string(beat_offset) + ") seconds");
+
+            // Add object to hit in SPAWN_OFFSET beats
+            igs->addObstacle(static_cast<Track>(curr_event.lane),
+               static_cast<Track>(curr_event.color),
+               ObstacleType(curr_event.object),
+               travel_time);
+         }
+         
+         if (lastBeat > 0) {
+            // Add object to hit in SPAWN_OFFSET beats
+            igs->addGate(travel_time);
+         }
       }
    }
 }

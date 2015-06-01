@@ -50,7 +50,7 @@ void TutorialState::TextEvent::update(float current_beat, TutorialState *state) 
       state->opacities[i] = opacity;
 }
 
-TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 100, playership) {
+TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, playership) {
    helper = new Renderer2D("./textures/speed_font.png", true, 0);
 
    events.clear();
@@ -58,17 +58,17 @@ TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 100, 
    uvs.clear();
    opacities.clear();
 
-   addTextEvent(new TextEvent(8, 14, 4, 4), glm::vec2(0, 0.5f), "Hello, Commander.");
-   addTextEvent(new TextEvent(12, 14, 4, 4), glm::vec2(0, 0.25f), "Welcome to RGB-Zero.");
+   addTextEvent(new TextEvent(8, 18, 8, 8), glm::vec2(0, 0.5f), "Hello, Commander.");
+   addTextEvent(new TextEvent(16, 18, 8, 8), glm::vec2(0, 0.25f), "Welcome to RGB-Zero.");
 
-   addTextEvent(new TextEvent(20, 24, 2, 2), glm::vec2(0, 0.5f), "The Goal is simple.");
-   addTextEvent(new TextEvent(22, 25, 1, 1), glm::vec2(0, 0.25f), "GO FAST.");
+   addTextEvent(new TextEvent(30, 36, 4, 4), glm::vec2(0, 0.5f), "The Goal is simple.");
+   addTextEvent(new TextEvent(34, 38, 2, 2), glm::vec2(0, 0.25f), "GO FAST.");
 
-   addTextEvent(new TextEvent(28, 32, 2, 2), glm::vec2(0, 0.5f), "Match colors with");
-   addTextEvent(new TextEvent(28, 32, 2, 2), glm::vec2(0, 0.25f), "obstacles to speed up.");
+   addTextEvent(new TextEvent(44, 50, 4, 2), glm::vec2(0, 0.5f), "Match colors with");
+   addTextEvent(new TextEvent(44, 50, 4, 2), glm::vec2(0, 0.25f), "obstacles to speed up.");
 
-   addTextEvent(new TextEvent(36, 40, 2, 2), glm::vec2(0, 0.5f), "Lets try it now");
-   addTextEvent(new TextEvent(36, 40, 2, 2), glm::vec2(0, 0.25f), "Press \2");
+   addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try it now");
+   addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.25f), "Press \2");
 
    helper->bufferData(Vertices, positions);
    helper->bufferData(UVs, uvs);
@@ -80,25 +80,29 @@ void TutorialState::send(std::string message, void *data) {
    if (message == "beat") {
       Beat current_beat = *(Beat *)data;
       static int playerStartSpeed = 0;
-      if (current_beat == 36) {
+      if (current_beat == 72) {
          playerStartSpeed = getPlayerSpeed();
       }
-      else if (current_beat == 44) {
+      else if (current_beat == 80) {
          // Check speed, make sure they did it right
          if (getPlayerSpeed() - playerStartSpeed < 45) {
-            getSoundtrack()->rewind(24);
-            addTextEvent(new TextEvent(28, 40, 2, 2), glm::vec2(0, 0.5f), "Lets try that again");
-            addTextEvent(new TextEvent(28, 40, 2, 2), glm::vec2(0, 0.25f), "Press \2");
+            getSoundtrack()->rewind(48);
+            addTextEvent(new TextEvent(56, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try that again");
+            addTextEvent(new TextEvent(56, 72, 2, 4), glm::vec2(0, 0.25f), "Press \2");
          }
          else {
-            addTextEvent(new TextEvent(48, 52, 2, 2), glm::vec2(0, 0.5f), "Good!");
-            addTextEvent(new TextEvent(50, 54, 2, 2), glm::vec2(0, 0.25f), "\3 and \4 correspond");
-            addTextEvent(new TextEvent(50, 54, 2, 2), glm::vec2(0, 0), "To green and red.");
+            addTextEvent(new TextEvent(86, 98, 4, 4), glm::vec2(0, 0.5f), "Good!");
+            addTextEvent(new TextEvent(90, 98, 4, 4), glm::vec2(0, 0.25f), "\3 and \4 correspond");
+            addTextEvent(new TextEvent(90, 98, 4, 4), glm::vec2(0, 0), "To green and red.");
 
-            addTextEvent(new TextEvent(58, 64, 2, 2), glm::vec2(0, 0.5f), "You can also use");
-            addTextEvent(new TextEvent(58, 64, 2, 2), glm::vec2(0, 0.25f), "A and D to move sideways");
+            addTextEvent(new TextEvent(106, 118, 4, 4), glm::vec2(0, 0.5f), "You can also use");
+            addTextEvent(new TextEvent(106, 118, 4, 4), glm::vec2(0, 0.25f), "A and D");
+            addTextEvent(new TextEvent(106, 118, 4, 4), glm::vec2(0, 0.0f), "to move sideways");
 
-            addTextEvent(new TextEvent(68, 72, 2, 2), glm::vec2(0, 0.5f), "SHALL WE?");
+            addTextEvent(new TextEvent(124, 128, 4, 4), glm::vec2(0, 0.5f), "Use the BEAT to your");
+            addTextEvent(new TextEvent(124, 128, 4, 4), glm::vec2(0, 0.25f), "advantage.");
+
+            addTextEvent(new TextEvent(136, 144, 4, 4), glm::vec2(0, 0.5f), "SHALL WE?");
          }
       }
    }

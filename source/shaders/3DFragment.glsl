@@ -89,12 +89,9 @@ void main() {
       sColor = vec3(0.14, 0.14, 0.14);
       shine = 76.8;
 	  
-//	  float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), shine);
 	  float Is = specular(cameraVec, vNormal, lightVector, 0.4f, 0.3f);
 	  
 	  fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
-     fragColor += vec4(uShipTint, 1.0);
-//	  fragColor = vec4(Id * dColor + aColor, 1);
    }
    else {
       aColor = UaColor[vMaterial];
@@ -105,27 +102,24 @@ void main() {
       if (uHasTextures) {
          vec2 UV = vec2(vUV.x * uTexScale[vMaterial].x,
                      vUV.y * uTexScale[vMaterial].y);
-//         fragColor = texture(uTexUnits, vec3(UV, vMaterial));
 		vec3 textureColor = texture(uTexUnits, vec3(UV, vMaterial)).xyz;
 
-//         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0f), 50);
 		float Is = specular(cameraVec, vNormal, lightVector, 0.35f, 0.2f);
          
          fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * visibility + (textureColor*1.5), 1);
-         fragColor += vec4(uShipTint, 1.0);
       }
       else {
-//         float Is = pow(max(dot(vNormal, normalize(lightVector + cameraVec)), 0.0), shine);
    		 float Is = specular(cameraVec, vNormal, lightVector, 0.5f, 0.01f);
          
          fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
-         fragColor += vec4(uShipTint, 1.0);
-//         fragColor = vec4(Id * dColor + aColor, 1);
       }
       
       if (fragColor.a == 0)
          discard;
    }
+
+   vec3 tint = uShipTint + vec3(0.75, 0.75, 0.75);
+   fragColor += vec4(uShipTint, 1);
    
    vec4 fogColor = vec4(0.4, 0.4, 0.4, 0.0);
    float fogDensity = 1 - clamp((vWorldSpace.z + 1600) / 800.0, 0.0, 1.0);

@@ -19,7 +19,7 @@ void ObstaclePhysicsComponent::init(float travel_time) {
    sec_left = travel_time; // Milliseconds between spawn and hit
 }
 
-float CALIBRATION = 0.2f;
+float CALIBRATION = 0.1f;
 void ObstaclePhysicsComponent::update(GameObject *obj, State *world, float dt) {
    MovementComponent::update(obj, world, dt);
    
