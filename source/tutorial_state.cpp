@@ -68,7 +68,7 @@ TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, 
    addTextEvent(new TextEvent(44, 50, 4, 2), glm::vec2(0, 0.25f), "obstacles to speed up.");
 
    addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try it now");
-   addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.25f), "Press \2");
+   addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.25f), "Press \5");
 
    helper->bufferData(Vertices, positions);
    helper->bufferData(UVs, uvs);
@@ -88,15 +88,15 @@ void TutorialState::send(std::string message, void *data) {
          if (getPlayerSpeed() - playerStartSpeed < 45) {
             getSoundtrack()->rewind(48);
             addTextEvent(new TextEvent(56, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try that again");
-            addTextEvent(new TextEvent(56, 72, 2, 4), glm::vec2(0, 0.25f), "Press \2");
+            addTextEvent(new TextEvent(56, 72, 2, 4), glm::vec2(0, 0.25f), "Press \5");
          }
          else {
             addTextEvent(new TextEvent(86, 102, 4, 4), glm::vec2(0, 0.5f), "Good!");
-            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0.25f), "Avoid obstacles that");
-            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0), "dont match their lane.");
+            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0.25f), "Only hit obstacles that");
+            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0), "match their lane.");
             
             addTextEvent(new TextEvent(114, 132, 4, 4), glm::vec2(0, 0.25f), "You can also use");
-            addTextEvent(new TextEvent(114, 132, 4, 4), glm::vec2(0, 0), "\3 and \4");
+            addTextEvent(new TextEvent(114, 132, 4, 4), glm::vec2(0, 0), "\6 to move right.");
 
             addTextEvent(new TextEvent(140, 144, 4, 4), glm::vec2(0, 0.5f), "SHALL WE?");
          }
