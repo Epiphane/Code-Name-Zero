@@ -29,6 +29,7 @@ public:
    
    Bounds *getBounds() { return &bounds; }
    virtual void render(glm::mat4 Model);
+   virtual void renderOutline(glm::mat4 Model);
    
    GraphicsComponent *clone();
    void clone(GraphicsComponent *other);

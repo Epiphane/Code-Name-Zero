@@ -96,6 +96,7 @@ public:
    //void collide(GameObject *other);
    void update(State *world, float dt);
    void render();
+   void renderOutline();
    void _debug_render();
 };
 
