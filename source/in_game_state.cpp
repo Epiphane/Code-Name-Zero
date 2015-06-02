@@ -27,23 +27,21 @@
 
 #define Z_EPSILON 5.0
 
-const int InGameState::NUM_SHIPS = 5;
-const std::string InGameState::SHIP_MODELS[] = {
-   "Red Razelle/",
-   "Sonic Phantom/",
-   "Wild Boar/",
-   "Magic Seagull/",
-   "Little Wyvern/"
-};
+ShipModel* playerShip;
 
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0), sun_rotation(-45.0f) {
    State::State();
+   
+   ship_manager = new ShipManager();
+   ship_manager->initModels();
+   
+   playerShip = ship_manager->getModel(player_ship);
    
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
    
    // Create player ships
-   std::string ship = "models/" + SHIP_MODELS[player_ship];
+   std::string ship = "models/" + playerShip->getFileName();
    
    player_movement = new PlayerPhysicsComponent();
    player = new GameObject(ModelRenderer::load(ship + "model.obj", ship),
@@ -75,10 +73,19 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    RendererPostProcess::shaders_init();
    skyRender = new SkyRenderer;
    
-   ps = new  ParticleSystem();
-   if (!ps->InitParticleSystem(glm::vec3(0.05, -1.6, -0.5))) {
-      exit(1);
+   
+   std::pair<std::vector<glm::vec3>::iterator, std::vector<glm::vec3>::iterator> iterator
+    = playerShip->getExhaustIterator();
+   for (; iterator.first != iterator.second; iterator.first++)
+   {
+      glm::vec3 pos = *(iterator.first);
+      ParticleSystem *ps = new ParticleSystem();
+      if (!ps->InitParticleSystem(pos)) {
+         exit(1);
+      }
+      particles.push_back(ps);
    }
+
 }
 
 void InGameState::start() {
@@ -122,7 +129,12 @@ void InGameState::update(float dt) {
       }
    }
    
-   ps->UpdateParticles(dt * 1000, player_movement->getSpeed());
+   std::vector<ParticleSystem *>::iterator iterator = particles.begin();
+   while(iterator < particles.end()) {
+      ParticleSystem *ps = *iterator;
+      ps->UpdateParticles(dt * 1000, player_movement->getSpeed());
+      iterator++;
+   }
 }
 
 void InGameState::render(float dt) {
@@ -177,7 +189,12 @@ void InGameState::render(float dt) {
    if (!DEBUG) {
       glm::vec3 carPos = player->getPosition();
       glm::mat4 transform = glm::translate(carPos.x, carPos.y, carPos.z);
-      ps->RenderParticles(renderer_getProjection() * camera_getMatrix() * transform, glm::mat4(1.0f), glm::vec3(1.0));
+      std::vector<ParticleSystem *>::iterator iterator = particles.begin();
+      while(iterator < particles.end()) {
+         ParticleSystem *ps = *iterator;
+         ps->RenderParticles(renderer_getProjection() * camera_getMatrix() * transform, glm::mat4(1.0f), glm::vec3(1.0));
+         iterator++;
+      }
    }
    COMPUTE_BENCHMARK(25, "Render particles time: ", true)
       
