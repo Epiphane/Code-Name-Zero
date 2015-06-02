@@ -26,10 +26,19 @@ void PlayerInputComponent::update(GameObject *obj) {
          if (input_keyDown(GLFW_KEY_S)) {
             movement->decelerate(0.01f);
          }
+         Track currentTrack = getTrackFromLatPos(obj->getPosition().x);
+         if (input_keyDown(GLFW_KEY_A) && currentTrack != BLUE) {
+            int nextLatPos = (currentTrack == GREEN) ? -1 : 0;
+            movement->setLatPos(nextLatPos);
+         }
+         if (input_keyDown(GLFW_KEY_D) && currentTrack != RED) {
+            int nextLatPos = (currentTrack == GREEN) ? 1 : 0;
+            movement->setLatPos(nextLatPos);
+         }
          if (input_keyDown(GLFW_KEY_Z)) {
             movement->setLatPos(-1);
          }
-         if (input_keyDown(GLFW_KEY_X)) {
+         if (input_keyDown(GLFW_KEY_X) || input_keyDown(GLFW_KEY_S)) {
             movement->setLatPos(0);
          }
          if (input_keyDown(GLFW_KEY_C)) {

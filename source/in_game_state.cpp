@@ -335,14 +335,3 @@ GameObject *InGameState::addGate(float travel_time) {
    
    return ob;
 }
-
-//internal only helper function
-Track getTrackFromLatPos(float latPos) {
-   if (latPos < -0.4f) {
-      return BLUE;
-   } else if (latPos >= -0.4f && latPos <= 0.4f) {
-      return GREEN;
-   } else {
-      return RED;
-   }
-}
