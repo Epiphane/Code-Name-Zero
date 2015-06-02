@@ -22,7 +22,7 @@ using namespace std;
 
 class ShipManager {
 public:
-   ShipManager();
+   ShipManager() {}
    
    ShipModel* getModel(int index) { return models[index]; }
    void initModels();

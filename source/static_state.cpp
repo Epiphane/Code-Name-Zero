@@ -110,7 +110,7 @@ void LoadingScreen::update(float dt) {
       renderer->bufferData(Opacities, opacities);
       
       if (fading_time >= 1) {
-         setState(new TutorialState(0));
+         setState(new TutorialState(4));
       }
    }
    else {

@@ -10,6 +10,7 @@
 #define __Project__in_game_state__
 
 #include <list>
+#include <vector>
 
 #include "audio_manager.h"
 #include "audio_visualizer.h"
@@ -48,7 +49,7 @@ private:
    TrackManager *track_manager;
    BeatEventListener *event_listener;
    AudioVisualizer *visualizer;
-   ParticleSystem *ps;
+   std::vector<ParticleSystem *> particles;
    ShipManager *ship_manager;
 
    HUD *hud;
