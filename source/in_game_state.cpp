@@ -75,7 +75,6 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    RendererPostProcess::shaders_init();
    skyRender = new SkyRenderer;
    
-   skyRender = new SkyRenderer;
    ps = new  ParticleSystem();
    if (!ps->InitParticleSystem(glm::vec3(0.05, -1.6, -0.5))) {
       exit(1);
