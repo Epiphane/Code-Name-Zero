@@ -14,6 +14,8 @@
 
 using namespace std;
 
+int ParticleSystem::transform_feedback_supported = -1;
+
 struct Particle
 {
    float Type;
@@ -99,6 +101,9 @@ bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
 
 void ParticleSystem::UpdateParticles(int DeltaTimeMillis, float playerSpeed)
 {
+   if (transform_feedback_supported == 0)
+      return;
+   
    m_time += DeltaTimeMillis;
    m_updateTechnique.Enable();
    m_updateTechnique.SetTime(m_time);
@@ -133,6 +138,26 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis, float playerSpeed)
       glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
    }
    
+   // Determine tranform support
+   if (transform_feedback_supported < 0) {
+      GLuint drawnQuery;
+      int result = 0;
+      glGenQueries(1, &drawnQuery);
+      glBeginQuery(GL_PRIMITIVES_GENERATED, drawnQuery);
+      glEndQuery(GL_PRIMITIVES_GENERATED);
+      while (result == 0)
+         glGetQueryObjectiv(drawnQuery, GL_QUERY_RESULT_AVAILABLE, &result);
+      
+      glGetQueryObjectiv(drawnQuery, GL_QUERY_RESULT, &result);
+      if (result == 0) {
+         // No primitives generated = no support
+         transform_feedback_supported = 0;
+      }
+      else {
+         transform_feedback_supported = 1;
+      }
+   }
+   
    glEndTransformFeedback();
    
    glDisableVertexAttribArray(0);
@@ -147,6 +172,9 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis, float playerSpeed)
 
 void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Projection, const glm::vec3 &CameraPos)
 {
+   if (transform_feedback_supported == 0)
+      return;
+   
    m_billboardTechnique.Enable();
    m_billboardTechnique.SetCameraPosition(CameraPos);
    m_billboardTechnique.setView(View);

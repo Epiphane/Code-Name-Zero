@@ -48,6 +48,8 @@ private:
     RandomTexture m_randomTexture;
     Texture* m_pTexture;
     int m_time;
+   
+   static int transform_feedback_supported;
 };
 
 #endif /* defined(__RGBZero__particle_system__) */
