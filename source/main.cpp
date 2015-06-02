@@ -51,8 +51,8 @@ void forwardOneFrame() { moveOneFrame = true; }
 
 GLFWwindow* window;
 
-const int w_width = 1200;
-const int w_height = 900;
+const int w_width = 900;
+const int w_height = 600;
 const char *w_title = "RGB Zero";
 
 /*
@@ -141,8 +141,11 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
+
    currentState = new TitleScreen();
+
    currentState->start();
+
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();

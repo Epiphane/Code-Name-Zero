@@ -18,7 +18,8 @@ protected:
    
 public:
    StaticState(std::string background);
-   
+   StaticState(std::string background, float z);
+   Renderer2D *getRenderer() { return renderer; }
    void render(float dt);
 };
 
@@ -37,10 +38,10 @@ private:
    float fading_time, progress;
    const int num_to_load = 11;
    int num_loaded = -1;
-   
+   int ship;
    State *game = nullptr;
 public:
-   LoadingScreen();
+   LoadingScreen(int shipIndex);
 
    void loadNext();
    

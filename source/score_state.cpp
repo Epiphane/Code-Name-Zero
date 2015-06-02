@@ -23,6 +23,8 @@ bool toMainMenu = false;
 int player_place = 0;
 std::string lastRenderedName;
 
+int playerShipIndex;
+
 void deleteCharacter();
 void updateString(char ch);
 void enterKeyPressed();
@@ -59,6 +61,8 @@ ScoreState::ScoreState(State *game) {
    // Retrieve the player's score
    InGameState *s = dynamic_cast<InGameState *>(game_state);
    long player_score = s->getScore();
+   playerShipIndex = s->getShipIndex();
+   
    // find the player's placement among the scorers
    std::vector<ScoreEntry>::iterator it = scores.begin();
    while (it < scores.end()) {
@@ -220,11 +224,11 @@ void ScoreState::update(float dt) {
    } else if (toMainMenu) {
       //TODO: set state to the actual main menu
       initializeVariables();
-      setState(new TutorialState(rand() % MAX_SHIPS));
+      setState(new TutorialState(playerShipIndex));
    } else if (retryLevel) {
       //TODO: set state to appropriate "level" it won't aways be tutorial
       initializeVariables();
-      setState(new TutorialState(rand() % MAX_SHIPS));
+      setState(new TutorialState(playerShipIndex));
    } else if (madeHighScore) {
       for (int i = 0; i < lastRenderedName.length(); i++) removeLastText();
       

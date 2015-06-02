@@ -12,6 +12,25 @@
 #include "tutorial_state.h"
 #include "static_state.h"
 #include "ship_manager.h"
+#include "ship_select_state.h"
+
+StaticState::StaticState(std::string background, float z) {
+   renderer = new Renderer2D(background, true, z);
+   
+   std::vector<glm::vec2> positions, uvs;
+   positions.push_back(glm::vec2(-1, 1));
+   positions.push_back(glm::vec2(1, -1));
+   uvs.push_back(glm::vec2(0));
+   uvs.push_back(glm::vec2(1));
+   
+   std::vector<float> opacities;
+   opacities.push_back(1);
+   opacities.push_back(1);
+   
+   renderer->bufferData(Opacities, opacities);
+   renderer->bufferData(Vertices, positions);
+   renderer->bufferData(UVs, uvs);
+}
 
 StaticState::StaticState(std::string background) {
    renderer = new Renderer2D(background, true, 0);
@@ -47,11 +66,11 @@ void TitleScreen::update(float dt) {
    }
 
    if (input_keyDown(GLFW_KEY_SPACE)) {
-      setState(new LoadingScreen());
+      setState(new ShipSelect());
    }
 }
 
-LoadingScreen::LoadingScreen() : StaticState("./textures/loading_screen.png"), fading_time(0), progress(0) {};
+LoadingScreen::LoadingScreen(int shipIndex) : StaticState("./textures/loading_screen.png"), fading_time(0), progress(0), ship(shipIndex) {};
 
 void loadObstacleModel(std::string obstacle, std::string extension) {
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
@@ -88,12 +107,12 @@ void LoadingScreen::loadNext() {
       loadObstacleModel("obstacle2", "red");
       break;
    case 9:
-      ShipManager::instance()->getModel(4)->getModelRenderer();
+      ShipManager::instance()->getModel(ship)->getModelRenderer();
       break;
    case 10:
          //      game = new InGameState("Mambo5", 174, 4);
          //      game = new InGameState("BRODYQUEST", 190, 4);
-      game = new TutorialState(4);
+      game = new TutorialState(ship);
       game->start();
       break;
    }

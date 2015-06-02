@@ -33,6 +33,7 @@
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), sun_rotation(-45.0f), score(0) {
    State::State();
    
+   playerShipIndex = player_ship;
    ShipModel* playerShip = ShipManager::instance()->getModel(player_ship);
    
    // Move camera
