@@ -58,7 +58,7 @@ TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, 
    uvs.clear();
    opacities.clear();
 
-   addTextEvent(new TextEvent(8, 18, 8, 8), glm::vec2(0, 0.5f), "Hello, Commander.");
+   addTextEvent(new TextEvent(8, 18, 4, 8), glm::vec2(0, 0.5f), "Hello, Commander.");
    addTextEvent(new TextEvent(16, 18, 8, 8), glm::vec2(0, 0.25f), "Welcome to RGB-Zero.");
 
    addTextEvent(new TextEvent(30, 36, 4, 4), glm::vec2(0, 0.5f), "The Goal is simple.");

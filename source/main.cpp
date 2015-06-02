@@ -20,7 +20,7 @@
 #include "main.h"
 #include "audio_manager.h"
 #include "input_manager.h"
-#include "tutorial_state.h"
+#include "static_state.h"
 #include "camera.h"
 #include "tiny_obj_loader.h"
 #include "rendererDebug.h"
@@ -40,15 +40,10 @@ bool isShadowMapRender = false;
 void toggleDebugLog() { setDebugLog(!showDebugLog); }
 void setDebugLog(bool enabled) { showDebugLog = enabled; }
 
-State *currentState = NULL;
+State *currentState = NULL, *nextState = NULL;
 State *getCurrentState() { return currentState; }
 void setState(State *state) {
-   if (currentState != NULL) {
-      currentState->pause();
-   }
-   
-   currentState = state;
-   currentState->start();
+   nextState = state;
 }
 
 bool moveOneFrame = false;
@@ -137,18 +132,27 @@ int main(int argc, char **argv) {
    glEnable(GL_DEPTH_TEST);
    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    
-   glClearColor(0.10f, 0.05f, 0.3f, 1.0f);
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    shaders_init();
    audio_init();
-   setState(new TutorialState(4));
+   currentState = new LoadingScreen();
+   currentState->start();
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();
    INIT_BENCHMARK
    do {
       assert(currentState != NULL);
+      if (nextState != NULL) {
+         currentState->pause();
+         
+         currentState = nextState;
+         currentState->start();
+         
+         nextState = NULL;
+      }
       
       double nextTime = glfwGetTime();
       if (nextTime - clock > SEC_PER_FRAME) {

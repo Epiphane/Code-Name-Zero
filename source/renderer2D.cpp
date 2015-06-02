@@ -30,7 +30,7 @@ void Renderer2D::init() {
    initialized = true;
 }
 
-Renderer2D::Renderer2D(std::string textureName, bool o, float z) : Renderer(), b_vertex(Vertices), b_uv(UVs), b_opacity(Opacities), hasOpacity(o), z(z), elements(0) {
+Renderer2D::Renderer2D(std::string textureName, bool o, float z) : Renderer(), b_vertex(Vertices), b_uv(UVs), b_opacity(Opacities), z(z), elements(0), hasOpacity(o) {
    if (!initialized)
       init();
 

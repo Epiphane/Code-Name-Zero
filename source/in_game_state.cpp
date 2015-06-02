@@ -36,11 +36,6 @@ const std::string InGameState::SHIP_MODELS[] = {
    "Little Wyvern/"
 };
 
-void loadObstacleModel(std::string obstacle, std::string extension) {
-   std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
-   ModelRenderer::load(baseDir + obstacle + "_" + extension + ".obj", baseDir);
-}
-
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0), sun_rotation(-45.0f) {
    State::State();
    
@@ -85,17 +80,6 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    if (!ps->InitParticleSystem(glm::vec3(0.05, -1.6, -0.5))) {
       exit(1);
    }
-
-   // Preload models
-   loadObstacleModel("wall", "blue");
-   loadObstacleModel("wall", "green");
-   loadObstacleModel("wall", "red");
-   loadObstacleModel("meteor", "blue");
-   loadObstacleModel("meteor", "green");
-   loadObstacleModel("meteor", "red");
-   loadObstacleModel("obstacle2", "blue");
-   loadObstacleModel("obstacle2", "green");
-   loadObstacleModel("obstacle2", "red");
 }
 
 void InGameState::start() {
