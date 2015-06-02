@@ -32,11 +32,6 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
 
 void ObstacleCollisionComponent::collide(GameObject *thisObj, GameObject *otherObj) {
    thisObj->setCollision(nullptr);
-
-   ObstaclePhysicsComponent *physics = dynamic_cast<ObstaclePhysicsComponent *>(thisObj->getPhysics());
-   assert(physics != nullptr);
-
-   std::cout << "Off-beat by " << physics->getTimeLeft() << " seconds." << std::endl;
 }
 
 ObstacleCollisionComponent::ObstacleCollisionComponent(Track loc, Track clr, ObstacleType obsType) {

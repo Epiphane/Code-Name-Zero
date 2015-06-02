@@ -40,12 +40,9 @@ void BeatEventListener::init(std::string filename, State *world) {
    int bpm = m->getBPM();
    int totalBeats = floor((m->getLength()/1000.0f) * (bpm/60.0f));
    
-   std::cout << "[BeatEvent-init] Does this even get called " << std::endl;
-   
    if (stat (filename.c_str(), &buffer) != 0) {
       // File does not exist, create randomly generated beatmap
       while (beat < totalBeats) {
-         std::cout << "[BeatEvent-noFile] Does shit even get called " << std::endl;
          Event e;
          // TODO: Add stuff to State to set difficulty, then limit randFLoat by that value.
          beat += (rand()%16) + 1;
@@ -58,13 +55,11 @@ void BeatEventListener::init(std::string filename, State *world) {
             e.lane = rand()%TOTAL_OBSTACLES;
          }
          e.color = rand()%TOTAL_OBSTACLES;
-         std::cout << "Adding random event to beat " << beat << std::endl;
          // Spawn offset required since we do not want
          events.emplace(beat, e);
       }
    }
    else {
-      std::cout << "[BeatEvent-yesFile] Does this even get called " << std::endl;
       std::ifstream infile(filename);
       
       while (infile >> beat >> obj >> lane >> color) {
@@ -73,7 +68,6 @@ void BeatEventListener::init(std::string filename, State *world) {
             e.object = obj;
             e.lane = lane;
             e.color = color;
-            std::cout << "Adding event: " << beat << " " << obj << " " << lane << " " << color << std::endl;
             events.emplace(beat, e);
          }
       }
@@ -97,8 +91,6 @@ void BeatEventListener::update(int currBeat, State* world) {
 
          if (events.find(lastBeat + SPAWN_OFFSET) != events.end()) {
             Event curr_event = events[lastBeat + SPAWN_OFFSET];
-
-            //DEBUG_LOG("Spawning object to hit in " + std::to_string(travel_time) + " (offset: " + std::to_string(beat_offset) + ") seconds");
 
             // Add object to hit in SPAWN_OFFSET beats
             igs->addObstacle(static_cast<Track>(curr_event.lane),
