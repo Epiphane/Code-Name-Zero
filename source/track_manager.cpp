@@ -32,8 +32,8 @@ TrackManager::TrackManager() : next_track_number(0), zpos(0), song_progress(0) {
 const glm::mat4 TrackManager::Z_TRANSLATE(glm::translate(0.0f, 0.0f, -TRACK_LENGTH));
 glm::mat4 TrackManager::getTransform(int track_number) {
    glm::mat4 transform = glm::mat4(1);
-   if (song_progress > 0.5f);
-      transform = glm::rotate(sinf(track_number / 10.0f), 0.0f, 1.0f, 0.0f);
+//   if (song_progress > 0.5f);
+//      transform = glm::rotate(sinf(track_number / 10.0f), 0.0f, 1.0f, 0.0f);
 
    // Always move the piece backwards too!
    return Z_TRANSLATE * transform;

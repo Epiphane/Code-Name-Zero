@@ -91,18 +91,14 @@ void TutorialState::send(std::string message, void *data) {
             addTextEvent(new TextEvent(56, 72, 2, 4), glm::vec2(0, 0.25f), "Press \2");
          }
          else {
-            addTextEvent(new TextEvent(86, 98, 4, 4), glm::vec2(0, 0.5f), "Good!");
-            addTextEvent(new TextEvent(90, 98, 4, 4), glm::vec2(0, 0.25f), "Avoid obstacles that");
-            addTextEvent(new TextEvent(90, 98, 4, 4), glm::vec2(0, 0), "don't match their lane.");
+            addTextEvent(new TextEvent(86, 102, 4, 4), glm::vec2(0, 0.5f), "Good!");
+            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0.25f), "Avoid obstacles that");
+            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0), "dont match their lane.");
             
-            addTextEvent(new TextEvent(106, 118, 4, 4), glm::vec2(0, 0.25f), "\3 and \4 correspond");
-            addTextEvent(new TextEvent(106, 118, 4, 4), glm::vec2(0, 0), "To green and red.");
+            addTextEvent(new TextEvent(114, 132, 4, 4), glm::vec2(0, 0.25f), "You can also use");
+            addTextEvent(new TextEvent(114, 132, 4, 4), glm::vec2(0, 0), "\3 and \4");
 
-            addTextEvent(new TextEvent(124, 128, 4, 4), glm::vec2(0, 0.5f), "You can also use");
-            addTextEvent(new TextEvent(124, 128, 4, 4), glm::vec2(0, 0.25f), "A and D");
-            addTextEvent(new TextEvent(124, 128, 4, 4), glm::vec2(0, 0.0f), "to move sideways");
-
-            addTextEvent(new TextEvent(136, 144, 4, 4), glm::vec2(0, 0.5f), "SHALL WE?");
+            addTextEvent(new TextEvent(140, 144, 4, 4), glm::vec2(0, 0.5f), "SHALL WE?");
          }
       }
    }

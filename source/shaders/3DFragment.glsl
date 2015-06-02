@@ -73,7 +73,7 @@ void main() {
    vec3 lightVector = normalize(vLightPos - vWorldSpace.xyz);
    vec3 cameraVec = normalize(vCameraVec);
    
-   float Id = max(dot(vNormal, lightVector), 0.0f);
+   float Id = 3 * max(dot(vNormal, lightVector), 0.0f);
    
    // Calculate a visibility value
    float bias = 0.005 * tan(acos(Id));
