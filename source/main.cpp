@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
-   setState(new TutorialState(0));
+   setState(new TutorialState(4));
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();

@@ -281,30 +281,10 @@ GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objT
    
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
    ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color, objType);
-   if (objType == WALL) {
-      std::string asdf = "";
-      if (track == GREEN) {
-         asdf = "green";
-      } else if (track == BLUE) {
-         asdf = "blue";
-      } else {
-         asdf = "red";
-      }
-      std::string dfsa;
-      if (color == GREEN) {
-         dfsa = "green";
-      } else if (color == BLUE) {
-         dfsa = "blue";
-      } else {
-         dfsa = "red";
-      }
-      std::cout << "Spawning a wall in the " << asdf << " lane" << std::endl;
-      std::cout << "This wall has color " << dfsa << std::endl;
-   }
-
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
    opc->init(travel_time);
    GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle + "_" + extension + ".obj", baseDir), opc, nullptr, occ, track_manager);
+   ob->setPosition(position);
    ob->getGraphics()->tint(color);
 
    //set its position and let the world know it exists
