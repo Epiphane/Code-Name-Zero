@@ -67,6 +67,8 @@ public:
    
    void update();
    void play();
+   void pause();
+   void stop();
    void rewind(Beat amount);
    
    Beat getBeat()  { return beat; }

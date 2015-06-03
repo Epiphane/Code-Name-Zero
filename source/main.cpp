@@ -119,12 +119,11 @@ int main(int argc, char **argv) {
 
    // Ensure we can capture the escape key being pressed below
    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
    glfwSetCursorPos(window, w_width / 2, w_height / 2);
    
    input_init(window);
    input_set_callback(GLFW_KEY_I, forwardOneFrame);
-   input_set_callback(GLFW_KEY_O, toggleDebug);
+   input_set_callback(GLFW_KEY_ENTER, toggleDebug);
    input_set_callback(GLFW_KEY_P, toggleDebugLog);
    
    glEnable(GL_MULTISAMPLE);
