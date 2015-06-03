@@ -7,8 +7,6 @@
 //
 
 #include <errno.h>
-#include <unistd.h>
-#include <fcntl.h>
 
 #include "main.h"
 #include "tutorial_state.h"
@@ -49,57 +47,43 @@ void loadObstacleModel(std::string obstacle, std::string extension) {
    ModelRenderer::load(baseDir + obstacle + "_" + extension + ".obj", baseDir);
 }
 
-void sendProgress(int file, float num_loaded, float total_to_load) {
-   float progress = num_loaded / total_to_load;
-   write(file, &progress, sizeof(float));
-}
-
-void LoadingScreen::start() {
-   pipe(loading_pipe);
-   // Set reading end of the pipe to nonblocking
-   if (fcntl(loading_pipe[0], F_SETFL, O_NONBLOCK) == -1) {
-      fprintf(stderr, "Call to fcntl failed.\n");
-      exit(1);
-   }
-   
-   if (!fork()) {
-      // Loader writes to parent
-      close(loading_pipe[0]);
-      
-      int num_loaded = 0;
-      int total_to_load = 9;
-      
-      // Child loads all models and then exits
+void LoadingScreen::loadNext() {
+   switch (num_loaded) {
+   case 0:
       loadObstacleModel("wall", "blue");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 1:
       loadObstacleModel("wall", "green");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 2:
       loadObstacleModel("wall", "red");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 3:
       loadObstacleModel("meteor", "blue");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 4:
       loadObstacleModel("meteor", "green");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 5:
       loadObstacleModel("meteor", "red");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 6:
       loadObstacleModel("obstacle2", "blue");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 7:
       loadObstacleModel("obstacle2", "green");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
+      break;
+   case 8:
       loadObstacleModel("obstacle2", "red");
-      sendProgress(loading_pipe[1], ++num_loaded, total_to_load);
-      
-      // Done reading. exit process
-      close(loading_pipe[1]);
-      exit(0);
+      break;
    }
-   else {
-      // Parent reads only
-      close(loading_pipe[1]);
-   }
+
+   num_loaded++;
 }
 
 void LoadingScreen::update(float dt) {
+   float progress = float(num_loaded) / num_to_load;
+   std::cout << "Progress: " << progress << std::endl;
    if (progress == 1) {
       fading_time += dt;
       
@@ -114,20 +98,7 @@ void LoadingScreen::update(float dt) {
       }
    }
    else {
-      float load_progress;
-      int result = read(loading_pipe[0], &load_progress, sizeof(float));
-      if (result == -1) {
-         // EAGAIN means pipe is empty for now
-         if (errno != EAGAIN) {
-            std::cerr << "Error reading pipe: " << strerror(errno) << std::endl;
-         }
-      }
-      else if (result == 0) {
-         // Pipe closed!
-         progress = 1;
-      }
-      else {
-         progress = load_progress;
-      }
+      loadNext();
+
    }
 }

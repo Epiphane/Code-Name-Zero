@@ -25,14 +25,15 @@ public:
 class LoadingScreen : public StaticState {
 private:
    float fading_time, progress;
-   
-   int loading_pipe[2];
+   const int num_to_load = 9;
+   int num_loaded = 0;
    
 public:
    LoadingScreen();
+
+   void loadNext();
    
    void update(float dt);
-   void start();
 };
 
 #endif /* defined(__RGBZero__static_state__) */
