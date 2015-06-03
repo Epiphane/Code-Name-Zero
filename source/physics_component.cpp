@@ -70,8 +70,10 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    else if (pos.x > TRACK_OFFSET_RED / 2)
       current_track = RED;
    
-   if (obj->getGraphics() != nullptr)
+   if (obj->getGraphics() != nullptr) {
       obj->getGraphics()->tint(current_track);
+      obj->getGraphics()->setPowerup((accel_time + dt) * accel);
+   }
 }
 
 void PlayerPhysicsComponent::accelerate(float time, float _accel) {

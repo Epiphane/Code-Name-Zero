@@ -27,7 +27,7 @@ GLuint Renderer3D::uTexScale, Renderer3D::uTexUnits, Renderer3D::uHasTextures;
 // TODO Make Shadows have its own Renderer so these aren't necessary
 GLuint Renderer3D::uShadowView, Renderer3D::uShadowProj, Renderer3D::uShadowMap;
 // Color GLuint for ship tint.
-GLuint Renderer3D::uShipTint;
+GLuint Renderer3D::uShipTint, Renderer3D::uPowerup;
 
 GLuint Renderer3D::o_program, Renderer3D::o_uWinScale, Renderer3D::o_uProj;
 GLuint Renderer3D::o_uModel, Renderer3D::o_uView, Renderer3D::o_uTint;
@@ -52,6 +52,7 @@ void Renderer3D::init() {
    uShadowView = glGetUniformLocation(program, "uShadowView");
    uShadowMap = glGetUniformLocation(program, "uShadowMap");
    uShipTint = glGetUniformLocation(program, "uShipTint");
+   uPowerup = glGetUniformLocation(program, "uPowerup");
    
    o_program = LoadShaders("./shaders/3DOutlineVertex.glsl", "./shaders/3DOutlineFragment.glsl");
    o_uWinScale = glGetUniformLocation(o_program, "windowScale");
@@ -63,7 +64,7 @@ void Renderer3D::init() {
    initialized = true;
 }
 
-Renderer3D::Renderer3D(bool isClone) : Renderer(), b_vertex(Vertices), b_uv(UVs), b_normal(Normals), b_material(Materials), b_index(Indices), numMaterials(0), hasTextures(false), tint(0) {
+Renderer3D::Renderer3D(bool isClone) : Renderer(), b_vertex(Vertices), b_uv(UVs), b_normal(Normals), b_material(Materials), b_index(Indices), numMaterials(0), hasTextures(false), tint(0), powerup(0) {
    if (!initialized)
       init();
    
@@ -125,6 +126,8 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniformMatrix4fv(uShadowProj, 1, GL_FALSE, glm::value_ptr(shadowProj));
    // Shadow Texture, dedicated to 1
    glUniform1i(uShadowMap, 1);
+   
+   glUniform1f(uPowerup, powerup);
 
    // Send Ship tint to shaders
    glUniform3f(uShipTint, tint.x, tint.y, tint.z);

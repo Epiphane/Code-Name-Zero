@@ -19,8 +19,7 @@ uniform bool uHasTextures;
 uniform vec2 uTexScale[MAX_MATERIALS];
 uniform sampler2DArray uTexUnits;
 
-uniform int uShadeModel;
-uniform int uShowNormal;
+uniform float uPowerup;
 
 uniform vec3 uShipTint;
 
@@ -118,8 +117,18 @@ void main() {
          discard;
    }
 
-   vec3 tint = uShipTint + vec3(0.75, 0.75, 0.75);
-   fragColor += vec4(uShipTint, 1);
+   vec3 tint = uShipTint;
+   if (uPowerup != 0) {
+      if (mod(uPowerup, 0.2) > 0.1) {
+         if (uPowerup > 0) {
+            tint = 2 * tint + vec3(0.1);
+         }
+         if (uPowerup < 0) {
+            tint = tint / 2 - vec3(0.1);
+         }
+      }
+   }
+   fragColor += vec4(tint, 1);
    
    vec4 fogColor = vec4(0.4, 0.4, 0.4, 0.0);
    float fogDensity = 1 - clamp((vWorldSpace.z + 1600) / 800.0, 0.0, 1.0);
