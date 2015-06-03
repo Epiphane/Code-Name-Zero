@@ -11,6 +11,7 @@
 #include "main.h"
 #include "tutorial_state.h"
 #include "static_state.h"
+#include "ship_manager.h"
 
 StaticState::StaticState(std::string background) {
    renderer = new Renderer2D(background, true, 0);
@@ -58,7 +59,6 @@ void loadObstacleModel(std::string obstacle, std::string extension) {
 }
 
 void LoadingScreen::loadNext() {
-   INIT_BENCHMARK
    switch (num_loaded) {
    case 0:
       loadObstacleModel("wall", "blue");
@@ -87,12 +87,23 @@ void LoadingScreen::loadNext() {
    case 8:
       loadObstacleModel("obstacle2", "red");
       break;
+   case 9:
+      ShipManager::instance()->getModel(4)->getModelRenderer();
+      break;
+   case 10:
+      game = new TutorialState(4);
+      game->start();
+      break;
    }
 
    num_loaded++;
 }
 
 void LoadingScreen::update(float dt) {
+   if (game != nullptr) {
+      game->update(dt);
+   }
+   
    float progress = float(num_loaded) / num_to_load;
    if (progress == 1) {
       fading_time += dt;
@@ -104,11 +115,18 @@ void LoadingScreen::update(float dt) {
       renderer->bufferData(Opacities, opacities);
       
       if (fading_time >= 1) {
-         setState(new TutorialState(4));
+         setState(game);
       }
    }
    else {
       loadNext();
-
    }
+}
+
+void LoadingScreen::render(float dt) {
+   if (game != nullptr) {
+      //game->render(0);
+   }
+   
+   StaticState::render(dt);
 }

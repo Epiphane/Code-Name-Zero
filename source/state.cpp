@@ -12,7 +12,8 @@
 #include "state.h"
 #include "renderer3D.h"
 
-void State::start() {}
+void State::start() { initialized = true; }
+void State::unpause() {}
 void State::pause() {}
 
 void State::update(float dt) {

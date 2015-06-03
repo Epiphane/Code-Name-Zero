@@ -50,7 +50,6 @@ private:
    BeatEventListener *event_listener;
    AudioVisualizer *visualizer;
    std::vector<ParticleSystem *> particles;
-   ShipManager *ship_manager;
 
    HUD *hud;
    std::vector<std::vector<GameObject *>> obstacleLists;
