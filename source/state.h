@@ -28,8 +28,10 @@ private:
 public:
    State() { objects.clear(); rendererQueue.clear(); }
    
+   bool initialized = false;
    virtual void start();
    virtual void pause();
+   virtual void unpause();
    virtual void update(float dt);
    virtual void render(float dt);
    

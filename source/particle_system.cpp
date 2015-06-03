@@ -186,12 +186,18 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
    glEnableVertexAttribArray(0);
    glEnableVertexAttribArray(1);
    glEnableVertexAttribArray(2);
+   GLenum error = glGetError();
+   assert(error == 0);
    
    glVertexAttribPointer(0, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), 0); // type
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)4);  // position
    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(Particle), (const GLvoid*)28);          // lifetime
+   error = glGetError();
+   assert(error == 0);
    
    glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currTFB]);
+   error = glGetError();
+   assert(error == 0);
    
    glDisableVertexAttribArray(0);
    glDisableVertexAttribArray(1);
@@ -203,6 +209,9 @@ void ParticleSystem::RenderParticles(const glm::mat4 &View, const glm::mat4 &Pro
    //Switch buffers every Render call
    m_currVB = m_currTFB;
    m_currTFB = (m_currTFB + 1) & 0x1;
+   
+   error = glGetError();
+   assert(error == 0);
 }
 
 

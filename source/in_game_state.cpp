@@ -32,19 +32,14 @@ ShipModel* playerShip;
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0), sun_rotation(-45.0f) {
    State::State();
    
-   ship_manager = new ShipManager();
-   ship_manager->initModels();
-   
-   playerShip = ship_manager->getModel(player_ship);
+   playerShip = ShipManager::instance()->getModel(player_ship);
    
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
    
    // Create player ships
-   std::string ship = "models/" + playerShip->getFileName();
-   
    player_movement = new PlayerPhysicsComponent();
-   player = new GameObject(ModelRenderer::load(ship + "model.obj", ship),
+   player = new GameObject(playerShip->getModelRenderer(),
                            player_movement,
                            new PlayerInputComponent,
                            new PlayerCollisionComponent);
@@ -89,6 +84,8 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
 }
 
 void InGameState::start() {
+   State::start();
+   
    event_listener = new BeatEventListener;
    event_listener->init("./beatmaps/" + level + ".beatmap", this);
 
@@ -211,9 +208,12 @@ void InGameState::render(float dt) {
    }
    
    RendererPostProcess::render(blurRate);
+
+
    COMPUTE_BENCHMARK(25, "Blur time: ", true)
    
    // Render non-blurred elements
+
    hud->render(dt);
    //visualizer->render();
    

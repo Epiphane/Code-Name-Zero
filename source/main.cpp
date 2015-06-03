@@ -123,8 +123,8 @@ int main(int argc, char **argv) {
    glfwSetCursorPos(window, w_width / 2, w_height / 2);
    
    input_init(window);
-   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
-   input_set_callback(GLFW_KEY_M, forwardOneFrame);
+   input_set_callback(GLFW_KEY_I, forwardOneFrame);
+   input_set_callback(GLFW_KEY_O, toggleDebug);
    input_set_callback(GLFW_KEY_P, toggleDebugLog);
    
    glEnable(GL_MULTISAMPLE);
@@ -149,7 +149,10 @@ int main(int argc, char **argv) {
          currentState->pause();
          
          currentState = nextState;
-         currentState->start();
+         if (!currentState->initialized)
+            currentState->start();
+         
+         currentState->unpause();
          
          nextState = NULL;
       }

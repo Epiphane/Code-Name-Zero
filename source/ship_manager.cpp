@@ -8,7 +8,12 @@
 //"Magic Seagull/",
 //"Little Wyvern/"
 
-void ShipManager::initModels() {
+ShipManager *ShipManager::instance() {
+   static ShipManager *inst = new ShipManager();
+   return inst;
+}
+
+ShipManager::ShipManager() {
    ShipModel *one = new ShipModel("Red Razelle/");
    one->addExhuast(glm::vec3(0.05, -1.6, -0.5));
    

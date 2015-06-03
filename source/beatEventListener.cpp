@@ -35,7 +35,8 @@ void BeatEventListener::init(std::string filename, State *world) {
    int color = 0;
    lastBeat = 0;
    
-   InGameState* s = dynamic_cast<InGameState *>(getCurrentState());
+   InGameState* s = dynamic_cast<InGameState *>(world);
+   assert(s != nullptr);
    Music* m = s->getSoundtrack();
    int bpm = m->getBPM();
    int totalBeats = floor((m->getLength()/1000.0f) * (bpm/60.0f));
