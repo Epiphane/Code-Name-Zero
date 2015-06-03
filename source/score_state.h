@@ -32,7 +32,7 @@ private:
    std::vector<glm::vec2> positions, uvs;
    std::vector<float> opacities;
    
-   void addText(glm::vec2 topLeft, std::string message);
+   void addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size);
 
    
 public:
