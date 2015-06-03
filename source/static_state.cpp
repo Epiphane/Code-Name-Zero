@@ -125,12 +125,8 @@ void LoadingScreen::update(float dt) {
 
 void LoadingScreen::render(float dt) {
    if (game != nullptr) {
-      game->render(dt);
-      GLenum error = glGetError();
-      assert(error == 0);
+      //game->render(0);
    }
    
    StaticState::render(dt);
-   GLenum error = glGetError();
-   assert(error == 0);
 }

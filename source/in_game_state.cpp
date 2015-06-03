@@ -27,12 +27,10 @@
 
 #define Z_EPSILON 5.0
 
-ShipModel* playerShip;
-
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0), sun_rotation(-45.0f) {
    State::State();
    
-   playerShip = ShipManager::instance()->getModel(player_ship);
+   ShipModel* playerShip = ShipManager::instance()->getModel(player_ship);
    
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
@@ -125,13 +123,6 @@ void InGameState::update(float dt) {
          obstacleLists[i].erase(obstacleLists[i].begin());
       }
    }
-   
-   std::vector<ParticleSystem *>::iterator iterator = particles.begin();
-   while(iterator < particles.end()) {
-      ParticleSystem *ps = *iterator;
-      ps->UpdateParticles(dt * 1000, player_movement->getSpeed());
-      iterator++;
-   }
 }
 
 void InGameState::render(float dt) {
@@ -181,7 +172,7 @@ void InGameState::render(float dt) {
       }
    }
    glEnable(GL_DEPTH_TEST);
-   COMPUTE_BENCHMARK(25, "Render outlines time: ", true)
+   COMPUTE_BENCHMARK(25, "Render outlines time: ", true);
    
    if (!DEBUG) {
       glm::vec3 carPos = player->getPosition();
@@ -189,11 +180,12 @@ void InGameState::render(float dt) {
       std::vector<ParticleSystem *>::iterator iterator = particles.begin();
       while(iterator < particles.end()) {
          ParticleSystem *ps = *iterator;
+         ps->UpdateParticles(dt * 1000, player_movement->getSpeed());
          ps->RenderParticles(renderer_getProjection() * camera_getMatrix() * transform, glm::mat4(1.0f), glm::vec3(1.0));
          iterator++;
       }
    }
-   COMPUTE_BENCHMARK(25, "Render particles time: ", true)
+   COMPUTE_BENCHMARK(25, "Render particles time: ", true);
       
    // Turn off frame buffer, and render frame buffer to screen
    RendererPostProcess::endCapture();
@@ -210,8 +202,7 @@ void InGameState::render(float dt) {
    RendererPostProcess::render(blurRate);
 
 
-   COMPUTE_BENCHMARK(25, "Blur time: ", true)
-   
+   COMPUTE_BENCHMARK(25, "Blur time: ", true);
    // Render non-blurred elements
 
    hud->render(dt);
