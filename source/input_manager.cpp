@@ -30,8 +30,12 @@ void input_init(GLFWwindow *_window) {
    input_window = _window;
    
    glfwSetKeyCallback(input_window, key_callback);
-   input_dx = input_dy = 0;
    
+   input_clear();
+}
+
+void input_clear() {
+   input_dx = input_dy = 0;
    memset(keyCallbacks, 0, sizeof(keyCallbacks));
 }
 
@@ -48,8 +52,25 @@ bool input_keyDown(int key) {
    return glfwGetKey(input_window, key) == GLFW_PRESS;
 }
 
+bool input_mouseLocked = false;
+void input_setMouseLock(bool locked) {
+   input_mouseLocked = locked;
+   
+   if (locked) {
+      glfwSetInputMode(input_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+   }
+   else {
+      glfwSetInputMode(input_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+   }
+}
+
 void input_update() {
    assert(input_window != NULL);
+   
+   // Don't lock up mouse
+   if (!input_mouseLocked) {
+      return;
+   }
    
    // Update camera
    double xpos, ypos;

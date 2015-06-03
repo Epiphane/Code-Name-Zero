@@ -86,8 +86,16 @@ void InGameState::start() {
    
    event_listener = new BeatEventListener;
    event_listener->init("./beatmaps/" + level + ".beatmap", this);
-
    soundtrack->play();
+}
+
+void InGameState::unpause() {
+   soundtrack->play();
+   input_setMouseLock(true);
+}
+
+void InGameState::pause() {
+   soundtrack->pause();
 }
 
 InGameState::~InGameState() {

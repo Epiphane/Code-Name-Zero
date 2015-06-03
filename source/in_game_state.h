@@ -58,6 +58,8 @@ public:
    ~InGameState();
    
    void start();
+   void unpause();
+   void pause();
    
    unsigned long getScore() { return score; }
    
