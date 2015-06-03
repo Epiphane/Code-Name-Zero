@@ -119,12 +119,11 @@ int main(int argc, char **argv) {
 
    // Ensure we can capture the escape key being pressed below
    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
    glfwSetCursorPos(window, w_width / 2, w_height / 2);
    
    input_init(window);
-   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
-   input_set_callback(GLFW_KEY_M, forwardOneFrame);
+   input_set_callback(GLFW_KEY_I, forwardOneFrame);
+   input_set_callback(GLFW_KEY_ENTER, toggleDebug);
    input_set_callback(GLFW_KEY_P, toggleDebugLog);
    
    glEnable(GL_MULTISAMPLE);
@@ -137,7 +136,7 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
-   currentState = new LoadingScreen();
+   currentState = new TitleScreen();
    currentState->start();
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
@@ -149,7 +148,10 @@ int main(int argc, char **argv) {
          currentState->pause();
          
          currentState = nextState;
-         currentState->start();
+         if (!currentState->initialized)
+            currentState->start();
+         
+         currentState->unpause();
          
          nextState = NULL;
       }

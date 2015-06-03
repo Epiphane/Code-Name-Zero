@@ -75,33 +75,42 @@ GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *wi
 }
 
 // ------------------- TEXTURE LOADING ------------------------
-//routines to load in a bmp files - must be 2^nx2^m and a 24bit bmp
-GLvoid texture_load(std::string filename, int texture) {
-    Image *img = textures[filename];
-    if (!img) {
-        img = textures[filename] = (Image *) malloc(sizeof(Image));
-        if (img == NULL) {
-            printf("Error allocating space for image");
-            exit(1);
-        }
-        
-        if (!ImageLoad(filename, img)) {
-            exit(1);
-        }
-    }
-    
-    glBindTexture(GL_TEXTURE_2D, texture);
-    
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->sizeX, img->sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, img->data);
-    
-    //Always set reasonable texture parameters
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);//LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);//LINEAR);
-    
-    GLenum error = glGetError();
-    assert(error == 0);
-}
+std::unordered_map<std::string, GLuint> loaded_textures;
+GLuint texture_load(std::string filename) {
+   if (loaded_textures[filename]) {
+      return loaded_textures[filename];
+   }
 
+   std::cout << "Generating texture for " << filename << std::endl;
+   GLuint texture;
+   glGenTextures(1, &texture);
+   Image *img = textures[filename];
+   if (!img) {
+      img = textures[filename] = (Image *)malloc(sizeof(Image));
+      if (img == NULL) {
+         printf("Error allocating space for image");
+         exit(1);
+      }
+
+      if (!ImageLoad(filename, img)) {
+         exit(1);
+      }
+   }
+
+   glBindTexture(GL_TEXTURE_2D, texture);
+
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img->sizeX, img->sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, img->data);
+
+   //Always set reasonable texture parameters
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);//LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);//LINEAR);
+
+   GLenum error = glGetError();
+   assert(error == 0);
+
+   loaded_textures[filename] = texture;
+   return texture;
+}
 
 /* BMP file loader loads a 24-bit bmp file only */
 /*

@@ -282,7 +282,21 @@ void Music::getSamples(float *samples, int number) {
 }
 
 void Music::play() {
-   audio_play_music(this);
-   check(channel->addDSP(0, dsp), "DSP chaining");
-   check(dsp->setActive(true), "DSP activation");
+   if (channel == nullptr) {
+      audio_play_music(this);
+      check(channel->addDSP(0, dsp), "DSP chaining");
+      check(dsp->setActive(true), "DSP activation");
+   }
+   else {
+      check(channel->setPaused(false), "Unpausing channel");
+   }
+}
+
+void Music::pause() {
+   check(channel->setPaused(true), "Pausing channel");
+}
+
+void Music::stop() {
+   pause();
+   check(channel->setPosition(0, FMOD_TIMEUNIT_MS), "Resetting music");
 }

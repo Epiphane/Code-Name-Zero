@@ -22,10 +22,10 @@ using namespace std;
 
 class ShipManager {
 public:
-   ShipManager() {}
+   static ShipManager *instance();
+   ShipManager();
    
    ShipModel* getModel(int index) { return models[index]; }
-   void initModels();
    
 private:
    ShipModel* models[MAX_SHIPS];

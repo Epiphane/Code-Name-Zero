@@ -22,17 +22,30 @@ public:
    void render(float dt);
 };
 
+class TitleScreen : public StaticState {
+private:
+   static bool loading_screen_loaded;
+
+public:
+   TitleScreen() : StaticState("./textures/title_screen.png") {};
+
+   void update(float dt);
+};
+
 class LoadingScreen : public StaticState {
 private:
    float fading_time, progress;
+   const int num_to_load = 11;
+   int num_loaded = -1;
    
-   int loading_pipe[2];
-   
+   State *game = nullptr;
 public:
    LoadingScreen();
+
+   void loadNext();
    
    void update(float dt);
-   void start();
+   void render(float dt);
 };
 
 #endif /* defined(__RGBZero__static_state__) */

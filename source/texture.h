@@ -14,7 +14,7 @@
 
 #define MAX_TEXTURE_SIZE 512
 
-GLvoid texture_load(std::string filename, int texture);
+GLuint texture_load(std::string filename);
 GLvoid texture_loadToArray(std::string filename, int texture, int layer, int *width, int *height);
 
 class RandomTexture {
