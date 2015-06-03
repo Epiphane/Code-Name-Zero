@@ -41,6 +41,7 @@ public:
    virtual void update(GameObject *obj, State *world, float dt);
    
    void setLatPos(float pos) { lat_destination = pos * 4; }
+   float getLatPos() { return lat_destination; }
 
    void accelerate(float time, float accel = 1);
    void decelerate(float time, float decel = 1);

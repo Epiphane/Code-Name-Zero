@@ -22,7 +22,7 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    
    PlayerPhysicsComponent *playerMovement = dynamic_cast<PlayerPhysicsComponent *>(player->getPhysics());
    
-   if (occ->shouldAcceleratePlayer(getTrackFromLatPos(player->getPosition().x))) {
+   if (occ->shouldAcceleratePlayer(getTrackFromLatPos(playerMovement->getLatPos()))) {
       playerMovement->accelerate(ACCELERATION_AMT);
    }
    else {
