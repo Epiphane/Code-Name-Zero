@@ -36,6 +36,7 @@ private:
    bool hasTextures;
    
    glm::vec3 tint;
+   float powerup;
    
    static bool initialized;
    void init();
@@ -46,7 +47,7 @@ private:
    static GLuint uSColor, uShine;
    static GLuint uTexScale, uTexUnits, uHasTextures;
    static GLuint uShadowView, uShadowProj, uShadowMap;
-   static GLuint uShipTint;
+   static GLuint uShipTint, uPowerup;
    
    static GLuint o_program;
    static GLuint o_uProj, o_uModel, o_uView;
@@ -57,6 +58,7 @@ public:
    Renderer3D(Renderer3D *clone);
    
    void setTint(glm::vec3 t) { tint = t; }
+   void setPowerup(float p) { powerup = p; }
    
    // Send data to the GPU
    void bufferData(DataType type, size_t size, void *data);

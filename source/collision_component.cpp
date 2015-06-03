@@ -14,8 +14,8 @@
 #include "game_object.h"
 
 
-#define ACCELERATION_AMT 1.0f
-#define DECELERATION_AMT 0.8f
+#define ACCELERATION_AMT 0.75f
+#define DECELERATION_AMT 0.75f
 
 void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    ObstacleCollisionComponent *occ = dynamic_cast<ObstacleCollisionComponent *>(other->getCollision());

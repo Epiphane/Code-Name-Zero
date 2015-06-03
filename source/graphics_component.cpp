@@ -88,6 +88,17 @@ void GraphicsComponent::tint(Track lane) {
    current_tint = tint;
 }
 
+void GraphicsComponent::setPowerup(float powerup) {
+   Renderer3D *renderer3D;
+   std::vector<Renderer *>::iterator renderer;
+   for (renderer = renderers.begin(); renderer != renderers.end(); renderer ++) {
+      renderer3D = dynamic_cast<Renderer3D *>(*renderer);
+      if (renderer3D != nullptr) {
+         renderer3D->setPowerup(powerup);
+      }
+   }
+}
+
 GroundRenderer::GroundRenderer(float size) {
    GraphicsComponent::GraphicsComponent();
    

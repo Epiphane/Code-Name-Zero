@@ -35,6 +35,7 @@ public:
    void clone(GraphicsComponent *other);
    
    void tint(Track lane);
+   void setPowerup(float powerup);
 };
 
 class ModelRenderer : public GraphicsComponent {
