@@ -10,6 +10,7 @@
 #define __Project__in_game_state__
 
 #include <list>
+#include <vector>
 
 #include "audio_manager.h"
 #include "audio_visualizer.h"
@@ -18,6 +19,7 @@
 #include "track_manager.h"
 #include "track_enum.h"
 #include "particle_system.h"
+#include "ship_manager.h"
 
 #define NUM_TRACKS 3
 
@@ -47,14 +49,12 @@ private:
    TrackManager *track_manager;
    BeatEventListener *event_listener;
    AudioVisualizer *visualizer;
-   ParticleSystem *ps;
+   std::vector<ParticleSystem *> particles;
+   ShipManager *ship_manager;
 
    HUD *hud;
    std::vector<std::vector<GameObject *>> obstacleLists;
 public:
-   const static int NUM_SHIPS;
-   const static std::string SHIP_MODELS[];
-   
    InGameState(std::string levelname, Beat bpm, int playership);
    ~InGameState();
    

@@ -44,6 +44,9 @@ set(HEADERS
    billboard_technique.h
    ps_update_technique.h
    particle_system.h
+
+   ship_model.h
+   ship_manager.h
 )
 
 # List all .c / .cpp files here
@@ -84,14 +87,15 @@ set(SOURCES
    input_component.cpp
    collision_component.cpp
    track_manager.cpp
+   track_enum.cpp
 
    technique.cpp
    billboard_technique.cpp
    ps_update_technique.cpp
    particle_system.cpp
 
-   track_enum.cpp
-
+   ship_model.cpp
+   ship_manager.cpp
 )
 
 # List resources to copy to build directory

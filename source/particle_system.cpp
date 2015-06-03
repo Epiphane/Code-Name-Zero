@@ -14,7 +14,7 @@
 
 using namespace std;
 
-int ParticleSystem::transform_feedback_supported = -1;
+int ParticleSystem::transform_feedback_supported = 1;
 
 struct Particle
 {
