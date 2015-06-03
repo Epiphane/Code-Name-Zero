@@ -42,10 +42,10 @@ glm::mat4 TrackManager::getTransform(int track_number) {
 float TrackManager::nextTrackAngle(int track_number) {
    float angle = 0;
    float x = song_progress;
-   float magnitude = -507.73 * pow(x, 6) + 1446.5 * pow(x, 5) - 1483.6 * pow(x, 4) + 647.64 * pow(x, 3) - 108.53 * pow(x, 2) + 5.771 * x - 0.002;
+   float magnitude = -471.81 * pow(x,6) + 1348.9 * pow(x,5) - 1387.4 * pow(x,4) + 606.06 * pow(x,3) - 100.84 * pow(x,2) + 5.2972 * x - 0.0016;
    float freq = 147.83 * pow(x,6) - 491.38 * pow(x,5) + 601.78 * pow(x,4) - 329.06 * pow(x,3) + 76.725 * pow(x,2) - 5.5047 * x + 1.0101;
    if (song_progress > 0.27f) // Right after intro
-      angle = magnitude * sinf(freq * (track_number / 10.0f));
+      angle = magnitude * (sinf(freq * (track_number / 10.0f)) + 0.73 * cosf(freq * (track_number / 10.0f)));
    return angle;
 }
 
