@@ -47,6 +47,8 @@ set(HEADERS
 
    ship_model.h
    ship_manager.h
+
+   score_state.h
 )
 
 # List all .c / .cpp files here
@@ -96,6 +98,8 @@ set(SOURCES
 
    ship_model.cpp
    ship_manager.cpp
+
+   score_state.cpp
 )
 
 # List resources to copy to build directory
