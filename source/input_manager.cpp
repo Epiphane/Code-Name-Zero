@@ -16,6 +16,7 @@ GLFWwindow *input_window = NULL;
 double input_dx, input_dy;
 
 input_key_callback keyCallbacks[GLFW_KEY_LAST] = {0};
+input_alpha_callback alphaCallback = nullptr;
 
 GLFWwindow *getWindow() {
 	return input_window;
@@ -24,6 +25,10 @@ GLFWwindow *getWindow() {
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int modes) {
    if (action == GLFW_PRESS && keyCallbacks[key])
       keyCallbacks[key]();
+   
+   if (alphaCallback && action == GLFW_PRESS && key >= GLFW_KEY_A && key <= GLFW_KEY_Z) {
+      alphaCallback(key - GLFW_KEY_A + 'A');
+   }
 }
 
 void input_init(GLFWwindow *_window) {
@@ -33,6 +38,10 @@ void input_init(GLFWwindow *_window) {
    input_dx = input_dy = 0;
    
    memset(keyCallbacks, 0, sizeof(keyCallbacks));
+}
+
+void input_on_alphaKey(input_alpha_callback cb) {
+   alphaCallback = cb;
 }
 
 void input_set_callback(int key, input_key_callback cb) {
