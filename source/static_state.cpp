@@ -38,9 +38,19 @@ void StaticState::render(float dt) {
    assert(error == 0);
 }
 
-LoadingScreen::LoadingScreen() : StaticState("./textures/loading_screen.png"), fading_time(0), progress(0) {
-};
+bool TitleScreen::loading_screen_loaded = false;
+void TitleScreen::update(float dt) {
+   if (!loading_screen_loaded) {
+      texture_load("./textures/loading_screen.png");
+      loading_screen_loaded = true;
+   }
 
+   if (input_keyDown(GLFW_KEY_SPACE)) {
+      setState(new LoadingScreen());
+   }
+}
+
+LoadingScreen::LoadingScreen() : StaticState("./textures/loading_screen.png"), fading_time(0), progress(0) {};
 
 void loadObstacleModel(std::string obstacle, std::string extension) {
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
@@ -48,6 +58,7 @@ void loadObstacleModel(std::string obstacle, std::string extension) {
 }
 
 void LoadingScreen::loadNext() {
+   INIT_BENCHMARK
    switch (num_loaded) {
    case 0:
       loadObstacleModel("wall", "blue");

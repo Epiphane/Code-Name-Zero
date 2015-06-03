@@ -137,7 +137,7 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
-   currentState = new LoadingScreen();
+   currentState = new TitleScreen();
    currentState->start();
    RendererDebug::instance()->log("Hey there handsome \2", true);
    

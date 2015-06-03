@@ -22,11 +22,21 @@ public:
    void render(float dt);
 };
 
+class TitleScreen : public StaticState {
+private:
+   static bool loading_screen_loaded;
+
+public:
+   TitleScreen() : StaticState("./textures/title_screen.png") {};
+
+   void update(float dt);
+};
+
 class LoadingScreen : public StaticState {
 private:
    float fading_time, progress;
    const int num_to_load = 9;
-   int num_loaded = 0;
+   int num_loaded = -1;
    
 public:
    LoadingScreen();

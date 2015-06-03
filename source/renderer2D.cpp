@@ -39,8 +39,7 @@ Renderer2D::Renderer2D(std::string textureName, bool o, float z) : Renderer(), b
    if (hasOpacity)
       b_opacity.init();
    
-   glGenTextures(1, &texture);
-   texture_load(textureName, texture);
+   texture = texture_load(textureName);
    
    GLenum error = glGetError();
    assert(error == 0);
