@@ -36,12 +36,6 @@ ScoreState::ScoreState(State *game) {
       scores.push_back(se);
       addText(glm::vec2(0.0, 0.5f), se.name + " : " + se.value);
    }
-   
-   
-   
-   helper->bufferData(Vertices, positions);
-   helper->bufferData(UVs, uvs);
-   helper->bufferData(Opacities, opacities);
 }
 
 void ScoreState::addText(glm::vec2 topLeft, std::string message) {
@@ -77,7 +71,13 @@ void ScoreState::printScores() {
 }
 
 void ScoreState::update(float dt) {
+   //temporary put
+   game_state->update(dt);
    
+   
+   helper->bufferData(Vertices, positions);
+   helper->bufferData(UVs, uvs);
+   helper->bufferData(Opacities, opacities);
 }
 
 void ScoreState::render(float dt) {

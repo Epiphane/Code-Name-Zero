@@ -7,6 +7,7 @@
 //
 
 #include "tutorial_state.h"
+#include "score_state.h"
 
 TutorialState::TextEvent::TextEvent(Beat in, Beat out, float fadeIn, float fadeOut) : done(false), buffer_index(-1) {
    keyframes[0] = in - fadeIn;
@@ -51,6 +52,9 @@ void TutorialState::TextEvent::update(float current_beat, TutorialState *state) 
 }
 
 TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, playership) {
+   setState(new ScoreState(this));
+   return;
+   
    helper = new Renderer2D("./textures/speed_font.png", true, 0);
 
    events.clear();
@@ -141,13 +145,13 @@ void TutorialState::update(float dt) {
       else
          it++;
    }
-   helper->bufferData(Vertices, positions);
-   helper->bufferData(UVs, uvs);
-   helper->bufferData(Opacities, opacities);
+//   helper->bufferData(Vertices, positions);
+//   helper->bufferData(UVs, uvs);
+//   helper->bufferData(Opacities, opacities);
 }
 
 void TutorialState::render(float dt) {
    InGameState::render(dt);
 
-   helper->render(glm::mat4(1));
+//   helper->render(glm::mat4(1));
 }

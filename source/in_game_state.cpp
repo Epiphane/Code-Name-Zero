@@ -87,9 +87,6 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
       }
       particles.push_back(ps);
    }
-
-   ScoreState *ss = new ScoreState(this);
-   ss->printScores();
 }
 
 void InGameState::start() {
