@@ -163,6 +163,23 @@ void InGameState::render(float dt) {
    RendererPostProcess::capture();
    
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+   static int blurRate = 0;
+   static float brightness = 0.1f;
+   static int previousBeat = (int)soundtrack->getBeat();
+
+   if (!DEBUG) {
+	   if (soundtrack->getBeat() != previousBeat) {
+		   previousBeat = soundtrack->getBeat();
+//		   blurRate += 20;
+		   brightness = 0.15f;
+	   }
+	   blurRate = (player_speed / 10.0f + player_movement->getAccel() * 60.0f + 9 * blurRate) / 10;
+	   brightness = std::fmax(brightness - 0.5f * dt, 0.009f);
+   }
+   else {
+	   blurRate = 0;
+   }
    
    // Render DA SKY!
    glm::vec4 sunLowAngle(-0.3f, 0.0f, -0.7f, 1.0f);
@@ -170,7 +187,7 @@ void InGameState::render(float dt) {
    float angle = 270.0f * percent_done - 45.0f;
    sun_rotation += (angle - sun_rotation) / 16;
    glm::vec3 sunAngle = glm::vec3(glm::rotate(sun_rotation, 0.0f, 0.0f, -1.0f) * sunLowAngle);
-   skyRender->render(sunAngle);
+   skyRender->render(sunAngle, brightness);
 
    // Render scene
    track_manager->render();
@@ -200,15 +217,6 @@ void InGameState::render(float dt) {
       
    // Turn off frame buffer, and render frame buffer to screen
    RendererPostProcess::endCapture();
-   
-   static int blurRate = 0;
-
-   if (!DEBUG) {
-      blurRate = (player_speed / 10.0f + player_movement->getAccel() * 60.0f + 9 * blurRate) / 10;
-   }
-   else {
-      blurRate = 0;
-   }
    
    RendererPostProcess::render(blurRate);
    COMPUTE_BENCHMARK(25, "Blur time: ", true)
