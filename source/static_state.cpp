@@ -91,6 +91,8 @@ void LoadingScreen::loadNext() {
       ShipManager::instance()->getModel(4)->getModelRenderer();
       break;
    case 10:
+         //      game = new InGameState("Mambo5", 174, 4);
+         //      game = new InGameState("BRODYQUEST", 190, 4);
       game = new TutorialState(4);
       game->start();
       break;

@@ -48,6 +48,7 @@ public:
 
    glm::mat4 getTransform(int track_num);
    glm::mat4 translate(glm::vec3 position);
+   float nextTrackAngle(int track_number);
    
    void update(float dt, State *world);
    void render();

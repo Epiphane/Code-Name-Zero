@@ -32,11 +32,21 @@ TrackManager::TrackManager() : next_track_number(0), zpos(0), song_progress(0) {
 const glm::mat4 TrackManager::Z_TRANSLATE(glm::translate(0.0f, 0.0f, -TRACK_LENGTH));
 glm::mat4 TrackManager::getTransform(int track_number) {
    glm::mat4 transform = glm::mat4(1);
-//   if (song_progress > 0.5f);
-//      transform = glm::rotate(sinf(track_number / 10.0f), 0.0f, 1.0f, 0.0f);
+   float angle = nextTrackAngle(track_number);
+   transform = glm::rotate(angle, 0.0f, 1.0f, 0.0f);
 
    // Always move the piece backwards too!
    return Z_TRANSLATE * transform;
+}
+
+float TrackManager::nextTrackAngle(int track_number) {
+   float angle = 0;
+   float x = song_progress;
+   float magnitude = -507.73 * pow(x, 6) + 1446.5 * pow(x, 5) - 1483.6 * pow(x, 4) + 647.64 * pow(x, 3) - 108.53 * pow(x, 2) + 5.771 * x - 0.002;
+   float freq = 147.83 * pow(x,6) - 491.38 * pow(x,5) + 601.78 * pow(x,4) - 329.06 * pow(x,3) + 76.725 * pow(x,2) - 5.5047 * x + 1.0101;
+   if (song_progress > 0.27f) // Right after intro
+      angle = magnitude * sinf(freq * (track_number / 10.0f));
+   return angle;
 }
 
 glm::mat4 TrackManager::translate(glm::vec3 pos) {
