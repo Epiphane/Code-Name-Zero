@@ -2,7 +2,7 @@
 //  score_state.h
 //  Project
 //
-//  Created by Thomas Steinke on 5/30/15.
+//  Created by Jonathan Pae on 6/02/15.
 //
 //
 
@@ -15,15 +15,17 @@
 class ScoreState : public State {
 private:
    Renderer2D *helper;
+   State *game_state;
+   
+   std::vector<glm::vec2> positions, uvs;
+   std::vector<float> opacities;
 
    
 public:
-   ScoreState();
+   ScoreState(State *game);
    
    void update(float dt);
    void render(float dt);
-   
-   void send(std::string message, void *data);
 };
 
 #endif /* defined(__RGBZero__score_state__) */
