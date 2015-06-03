@@ -22,6 +22,13 @@ public:
    void render(float dt);
 };
 
+class TitleScreen : public StaticState {
+public:
+   TitleScreen() : StaticState("./textures/title_screen.png") {};
+
+   void update(float dt);
+};
+
 class LoadingScreen : public StaticState {
 private:
    float fading_time, progress;

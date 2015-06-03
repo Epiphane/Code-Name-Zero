@@ -38,6 +38,11 @@ void StaticState::render(float dt) {
    assert(error == 0);
 }
 
+void TitleScreen::update(float dt) {
+   if (input_keyDown(GLFW_KEY_SPACE))
+      setState(new LoadingScreen());
+}
+
 LoadingScreen::LoadingScreen() : StaticState("./textures/loading_screen.png"), fading_time(0), progress(0) {
 };
 
