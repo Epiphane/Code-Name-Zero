@@ -235,6 +235,7 @@ void InGameState::collide(GameObject *player, GameObject *other) {
 //add an obstacle to the world.
 //params: a vec3 for its position, which Track it's on, and which color it is
 void InGameState::addObstacle(Track track, Track color, ObstacleType objType, float travel_time) {
+   track = color;
    std::string extension;
    std::string obstacle;
    //set up a new obstacle object
