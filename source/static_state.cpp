@@ -83,7 +83,6 @@ void LoadingScreen::loadNext() {
 
 void LoadingScreen::update(float dt) {
    float progress = float(num_loaded) / num_to_load;
-   std::cout << "Progress: " << progress << std::endl;
    if (progress == 1) {
       fading_time += dt;
       
