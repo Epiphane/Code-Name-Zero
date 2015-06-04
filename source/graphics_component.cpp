@@ -67,7 +67,7 @@ void GraphicsComponent::renderOutline(glm::mat4 Model) {
 }
 
 void GraphicsComponent::tint(Track lane) {
-   glm::vec3 tint(0);
+   glm::vec3 tint(0.2);
    const float color_intensity = 0.6f;
    switch(lane) {
       case GREEN:
