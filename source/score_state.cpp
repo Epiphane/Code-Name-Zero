@@ -183,6 +183,7 @@ void ScoreState::initializeVariables() {
    retryLevel = false;
    toMainMenu = false;
    player_place = 0;
+   lastRenderedName = "";
    new_entry.value = "";
    new_entry.name = "";
    
