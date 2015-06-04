@@ -18,13 +18,13 @@ out vec4 vWorldSpace;
 void main()
 {
    vWorldSpace = uModelMatrix * aPosition;
+   
+   float offset = -1.0f * (vWorldSpace.z - 0); // Offset z by current ship position
+   vWorldSpace.y += 0.0002f * pow(offset, 2);
 
    gl_Position = uProjMatrix * uViewMatrix * vWorldSpace;
 
    vNormal = normalize((uModelMatrix * vec4(aNormal, 0)).xyz);
-   
-   float offset = -1.0f * (vWorldSpace.z - 0); // Offset z by current ship position
-   gl_Position.y += 0.0005f * pow(offset, 2);
    
    // and now Ryan makes up normals...
    // This makes normals behave with the upward curve of the track

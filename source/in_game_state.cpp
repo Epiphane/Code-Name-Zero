@@ -150,9 +150,10 @@ void InGameState::render(float dt) {
    shadowMap->enable();
    isShadowMapRender = true;
    glClear(GL_DEPTH_BUFFER_BIT);
-   player->render();
+   State::render(dt);
    isShadowMapRender = false;
    shadowMap->disable();
+   
    
    COMPUTE_BENCHMARK(25, "Shadowmap time: ", true)
    

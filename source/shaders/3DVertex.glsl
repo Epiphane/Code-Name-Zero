@@ -35,6 +35,9 @@ void main()
    vWorldSpace = uModelMatrix * aPosition;
 
    vCameraVec = normalize(uCameraPos - vWorldSpace.xyz);
+   
+   float offset = -1.0f * (vWorldSpace.z - 0); // Offset z by current ship position
+   vWorldSpace.y += 0.0002f * pow(offset, 2);
 
    gl_Position = uProjMatrix * uViewMatrix * vWorldSpace;
 
@@ -42,13 +45,12 @@ void main()
    vUV = aUV;
    vNormal = normalize((uModelMatrix * vec4(aNormal, 0)).xyz);
    
-   float offset = -1.0f * (vWorldSpace.z - 0); // Offset z by current ship position
-   gl_Position.y += 0.0005f * pow(offset, 2);
-   
    // and now Ryan makes up normals...
    // This makes normals behave with the upward curve of the track
-   vNormal.z += 0.00001f * offset * offset;
-   vNormal = normalize(vNormal);
+   if (uShipTint == vec3(0,0,0)){
+      vNormal.z += 0.00001f * offset * offset;
+      vNormal = normalize(vNormal);
+   }
 
-   vShadowCoord = uShadowProj * uShadowView * uModelMatrix * aPosition;
+   vShadowCoord = uShadowProj * uShadowView * vWorldSpace;
 }
