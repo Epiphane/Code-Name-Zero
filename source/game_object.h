@@ -61,6 +61,7 @@ public:
    GameObject(GraphicsComponent  *graphics, 
               PhysicsComponent   *physics);
    GameObject(GraphicsComponent  *graphics);
+   ~GameObject();
    
    bool isDead() { return remove; }
    void die()    { remove = true; }

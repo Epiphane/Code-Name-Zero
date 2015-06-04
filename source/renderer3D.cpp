@@ -86,6 +86,14 @@ Renderer3D::Renderer3D(Renderer3D *clone) : Renderer3D(true) {
    b_index = clone->b_index;
 };
 
+Renderer *Renderer3D::clone() {
+   Renderer3D *clone = new Renderer3D(this);
+   
+   memcpy((void*)clone, (void*)this, sizeof(Renderer3D));
+   
+   return clone;
+}
+
 void Renderer3D::render(glm::mat4 Model) {
    
    glUseProgram(program);

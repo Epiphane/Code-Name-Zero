@@ -27,7 +27,7 @@
 
 #define Z_EPSILON 5.0
 
-InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), score(0), sun_rotation(-45.0f) {
+InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), sun_rotation(-45.0f), score(0) {
    State::State();
    
    ShipModel* playerShip = ShipManager::instance()->getModel(player_ship);
@@ -37,10 +37,10 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    
    // Create player ships
    player_movement = new PlayerPhysicsComponent();
-   player = new GameObject(playerShip->getModelRenderer(),
-                           player_movement,
-                           new PlayerInputComponent,
-                           new PlayerCollisionComponent);
+   player = std::shared_ptr<GameObject>::make_shared(playerShip->getModelRenderer(),
+                      player_movement,
+                      new PlayerInputComponent,
+                      new PlayerCollisionComponent);
    addObject(player);
    
    camera_follow(player, glm::vec3(0, 1, 4));
@@ -55,9 +55,9 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    hud = new HUD();
    
    //initialize the lists of obstacles
-   obstacleLists = std::vector<std::vector<GameObject *>>();
+   obstacleLists = std::vector<std::vector<std::shared_ptr<GameObject>>>();
    for (int i = 0; i < NUM_TRACKS; i++) {
-      obstacleLists.push_back(std::vector<GameObject *>());
+      obstacleLists.push_back(std::vector<std::shared_ptr<GameObject>>());
       obstacleLists[i].reserve(32);
    }
    shadowMap = new ShadowMap;
@@ -123,7 +123,7 @@ void InGameState::update(float dt) {
    
    float latPos = player->getPosition().x;
    if (!obstacleLists[getTrackFromLatPos(latPos)].empty()) {
-      collide(player, obstacleLists[getTrackFromLatPos(latPos)].front());
+      collide(player.get(), obstacleLists[getTrackFromLatPos(latPos)].front().get());
    }
 
    for (int i = 0; i < NUM_TRACKS; i++) {
@@ -173,7 +173,7 @@ void InGameState::render(float dt) {
    
    glDisable(GL_DEPTH_TEST);
    for (int i = 0; i < NUM_TRACKS; i++) {
-      std::vector<GameObject *>::iterator it = obstacleLists[i].begin();
+      std::vector<std::shared_ptr<GameObject>>::iterator it = obstacleLists[i].begin();
       while (it < obstacleLists[i].end()) {
          (*it)->renderOutline();
          it ++;
@@ -234,7 +234,7 @@ void InGameState::collide(GameObject *player, GameObject *other) {
 
 //add an obstacle to the world.
 //params: a vec3 for its position, which Track it's on, and which color it is
-GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objType, float travel_time) {
+void InGameState::addObstacle(Track track, Track color, ObstacleType objType, float travel_time) {
    std::string extension;
    std::string obstacle;
    //set up a new obstacle object
@@ -266,23 +266,21 @@ GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objT
    }
 
    switch (objType) {
-      case METEOR:
-         obstacle = "meteor";
-         break;
       case WALL:
          obstacle = "wall";
          position.x = 0;
          break;
+      case METEOR:
       case SPIKE:
-         obstacle = "obstacle2";
+         obstacle = "shieldBall";
          break;
    }
    
-   std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
+   std::string baseDir = "models/obstacles/";
    ObstacleCollisionComponent *occ = new ObstacleCollisionComponent(track, color, objType);
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
    opc->init(travel_time);
-   GameObject *ob = new GameObject(ModelRenderer::load(baseDir + obstacle + "_" + extension + ".obj", baseDir), opc, nullptr, occ, track_manager);
+   std::shared_ptr<GameObject> ob(new GameObject(ModelRenderer::load(baseDir + obstacle + ".obj", baseDir), opc, nullptr, occ, track_manager));
    ob->setPosition(position);
    ob->getGraphics()->tint(color);
 
@@ -297,20 +295,16 @@ GameObject *InGameState::addObstacle(Track track, Track color, ObstacleType objT
    else {
       obstacleLists[track].push_back(ob);
    }
-   
-   return ob;
 }
 
-GameObject *InGameState::addGate(float travel_time) {
+void InGameState::addGate(float travel_time) {
    glm::vec3 position(0);
    position.z = -player_speed * travel_time;
 
    ObstaclePhysicsComponent *opc = new ObstaclePhysicsComponent;
    opc->init(travel_time);
-   GameObject *ob = new GameObject(ModelRenderer::load("models/Track/RBG_Gate_1.obj", "models/Track/"), opc, nullptr, nullptr, track_manager);
+   std::shared_ptr<GameObject> ob(new GameObject(ModelRenderer::load("models/Track/RBG_Gate_1.obj", "models/Track/"), opc, nullptr, nullptr, track_manager));
    
    addObject(ob);
    ob->setPosition(position);
-   
-   return ob;
 }

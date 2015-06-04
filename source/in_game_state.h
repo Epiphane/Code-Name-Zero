@@ -34,7 +34,7 @@ class InGameState : public State {
 private:
    std::string level;
    
-   GameObject *player;
+   std::shared_ptr<GameObject> player;
    PlayerPhysicsComponent *player_movement;
    float player_speed;
    
@@ -52,7 +52,7 @@ private:
    std::vector<ParticleSystem *> particles;
 
    HUD *hud;
-   std::vector<std::vector<GameObject *>> obstacleLists;
+   std::vector<std::vector<std::shared_ptr<GameObject>>> obstacleLists;
 public:
    InGameState(std::string levelname, Beat bpm, int playership);
    ~InGameState();
@@ -64,7 +64,7 @@ public:
    unsigned long getScore() { return score; }
    
    float getPlayerSpeed() { return player_speed; }
-   GameObject *getPlayer() { return player; }
+   GameObject *getPlayer() { return player.get(); }
    Music *getSoundtrack() { return soundtrack; }
    TrackManager *getTrackManager() {return track_manager;};
    
@@ -74,8 +74,8 @@ public:
    
    void send(std::string message, void *data);
    
-   GameObject *addObstacle(Track track, Track color, ObstacleType obj, float travel_time);
-   GameObject *addGate(float traveltime);
+   void addObstacle(Track track, Track color, ObstacleType obj, float travel_time);
+   void addGate(float traveltime);
 };
 
 #endif /* defined(__Project__in_game_state__) */

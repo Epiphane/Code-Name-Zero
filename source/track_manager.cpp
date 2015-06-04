@@ -16,7 +16,7 @@
 #include <math.h>
 
 // Static variables
-ModelRenderer *TrackManager::renderer;
+GraphicsComponent *TrackManager::renderer;
 
 TrackManager::TrackManager() : next_track_number(0), zpos(0), song_progress(0) {
    // Load track OBJ

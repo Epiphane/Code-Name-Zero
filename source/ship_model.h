@@ -25,7 +25,7 @@ public:
    std::string getFileName() { return fileName; }
    std::pair<std::vector<glm::vec3>::iterator, std::vector<glm::vec3>::iterator> getExhaustIterator();
    
-   ModelRenderer *getModelRenderer();
+   GraphicsComponent *getModelRenderer();
    
 private:
    std::string fileName;

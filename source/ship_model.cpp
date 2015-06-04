@@ -8,6 +8,6 @@ std::pair<std::vector<glm::vec3>::iterator, std::vector<glm::vec3>::iterator> Sh
    return std::make_pair(exhaustPositions.begin(), exhaustPositions.end());
 }
 
-ModelRenderer *ShipModel::getModelRenderer() {
+GraphicsComponent *ShipModel::getModelRenderer() {
    return ModelRenderer::load(fileName + "model.obj", fileName);
 }

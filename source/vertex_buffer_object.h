@@ -20,6 +20,7 @@ public:
    VBO(DataType type);
    VBO(DataType type, GLuint buffer);
    VBO(const VBO& other);
+   ~VBO();
    void init();
    
    VBO& operator=(const VBO& other);

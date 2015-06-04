@@ -54,6 +54,11 @@ VBO& VBO::operator=(const VBO &other) {
    
    return *this;
 }
+
+VBO::~VBO() {
+   std::cout << "Removing buffer " << buffer << std::endl;
+   buffer_references[buffer] --;
+}
  
 void VBO::init() {
    assert(buffer == GL_FALSE);

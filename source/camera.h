@@ -22,7 +22,7 @@ void camera_move(float dx, float dy, float dz);
 
 class GameObject;
 class State;
-void camera_follow(GameObject *follow, glm::vec3 offset);
+void camera_follow(std::shared_ptr<GameObject> follow, glm::vec3 offset);
 
 void camera_setDebug(bool debug);
 void camera_init(glm::vec3 position, glm::vec3 lookAt);

@@ -24,6 +24,13 @@ GameObject::GameObject(GraphicsComponent *g, PhysicsComponent *p, InputComponent
    setBounds(g->getBounds());
 }
 
+GameObject::~GameObject() {
+   delete graphics;
+   delete physics;
+   delete input;
+   delete collision;
+}
+
 float GameObject::getRadius() {
    float max = -1 * bounds.min_x;
 
@@ -56,42 +63,10 @@ glm::mat4 GameObject::getModel() {
    model *= glm::rotate(-rotation.x, 1.0f, 0.0f, 0.0f); // Pitch
    model *= glm::rotate(rotation.y, 0.0f, 1.0f, 0.0f); // Yaw
 
-   model *= glm::scale(getScale());
-   /*
-   MovementComponent *movement = dynamic_cast<MovementComponent *>(physics);
-   if (movement != nullptr) {
-      glm::vec3 speed = glm::normalize(movement->getSpeed());
-      
-      float pitch = asinf(speed.y);
-      float yaw = -atan2f(-speed.x, speed.z);
-      if (speed.z > 0) model *= glm::rotate(180.0f, 0.0f, 0.0f, 1.0f);
-      model *= glm::rotate(pitch * RADIANS_TO_DEG, 1.0f, 0.0f, 0.0f);
-      model *= glm::rotate(yaw * RADIANS_TO_DEG + 180, 0.0f, 1.0f, 0.0f);
-   }*/
-   
-   model *= this->Model;
+   model *= glm::scale(getScale()) * this->Model;
    
    return model;
 }
-/*
-void GameObject::collide(GameObject *other) {
-   if ((collidesWith & other->type) == 0)
-      return;
-   
-   if (!collision || !other->collision)
-      return;
-
-   float max_dist = getRadius() + other->getRadius();
-   float dx = position.x - other->position.x;
-   float dy = position.y - other->position.y;
-   float dz = position.z - other->position.z;
-
-   // Within each other's sphere
-   if (max_dist * max_dist >= dx * dx + dy * dy + dz * dz) {
-      // Collided
-      collision->collide(this, other);
-   }
-}*/
 
 void GameObject::update(State *world, float dt) {
    if (input)
