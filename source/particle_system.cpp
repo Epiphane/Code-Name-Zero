@@ -36,7 +36,7 @@ ParticleSystem::ParticleSystem(void) {
    ZERO_MEM(m_particleBuffer);
    
    const GLubyte *rend = glGetString(GL_RENDERER);
-   char * found = strstr((const char*)rend, "AMD" );
+   const char * found = strstr((const char*)rend, "AMD" );
    if (found != NULL) {
       // Disable particles
       transform_feedback_supported = 0;
