@@ -43,7 +43,7 @@ ScoreState::ScoreState(State *game) {
    
    addText(glm::vec2(0.0, 0.75f), "HIGH SCORES", glm::vec2(0.15));
    //Retrieve top scores from scores.txt
-   std::ifstream infile("./scores/scores.txt");
+   std::ifstream infile("./scores.txt");
    while (infile >> name >> value) {
       ScoreEntry se;
       se.name = name;
@@ -160,7 +160,7 @@ void ScoreState::saveToFile() {
       scores.pop_back();
    }
    
-   ofstream newFile("./scores/scores.txt");
+   ofstream newFile("./scores.txt");
    
    if(newFile.is_open())
    {
@@ -168,6 +168,10 @@ void ScoreState::saveToFile() {
       {
          newFile << entry.name + " " + entry.value << endl;
       }
+   }
+   else {
+      // Please create a scores/ folder!!!
+      assert(0);
    }
    newFile.close();
 }

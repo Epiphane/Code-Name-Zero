@@ -119,6 +119,10 @@ void Renderer2D::bufferData(DataType type, size_t size, void *data) {
 }
 
 void Renderer2D::bufferData(DataType type, const std::vector<float> &data) {
+   if (data.size() == 0) {
+      return;
+   }
+
    assert(type == Vertices || type == UVs || type == Opacities);
    if (type == Vertices)
       elements = data.size() * 2;
@@ -127,6 +131,10 @@ void Renderer2D::bufferData(DataType type, const std::vector<float> &data) {
 }
 
 void Renderer2D::bufferData(DataType type, const std::vector<glm::vec2> &data) {
+   if (data.size() == 0) {
+      return;
+   }
+
    assert(type == Vertices || type == UVs);
    if (type == Vertices)
       elements = data.size();
