@@ -30,7 +30,7 @@ public:
    void setAccel(glm::vec3 a) { accel = a; }
 };
 
-class PlayerPhysicsComponent 2 public PhysicsComponent {
+class PlayerPhysicsComponent : public PhysicsComponent {
 private:
    float lat_destination = 0;
    float accel, accel_time;
