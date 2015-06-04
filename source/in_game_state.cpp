@@ -128,6 +128,10 @@ void InGameState::update(float dt) {
 
    for (int i = 0; i < NUM_TRACKS; i++) {
       while (!obstacleLists[i].empty() && obstacleLists[i].front()->isDead()) {
+         // Decelerate player for missing an object
+         if (obstacleLists[i].begin()->get()->getCollision() != nullptr)
+            player_movement->decelerate(2, 0.75f);
+         
          obstacleLists[i].erase(obstacleLists[i].begin());
       }
    }

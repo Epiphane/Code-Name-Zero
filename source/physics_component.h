@@ -30,14 +30,14 @@ public:
    void setAccel(glm::vec3 a) { accel = a; }
 };
 
-class PlayerPhysicsComponent : public PhysicsComponent {
+class PlayerPhysicsComponent 2 public PhysicsComponent {
 private:
    float lat_destination = 0;
    float accel, accel_time;
    float speed = 100;
 
 public:
-   static const int min_speed = 100, max_speed = 1000;
+   static const int min_speed = 100, max_speed = 2000;
    virtual void update(GameObject *obj, State *world, float dt);
    
    void setLatPos(float pos) { lat_destination = pos * 4; }
