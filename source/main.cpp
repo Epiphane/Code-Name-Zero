@@ -116,6 +116,11 @@ int main(int argc, char **argv) {
       return -1;
    }
    glGetError();
+   
+   const GLubyte *vend = glGetString(GL_VENDOR);
+   std::cout << vend << std::endl;
+   const GLubyte *rend = glGetString(GL_RENDERER);
+   std::cout << rend << std::endl;
 
    // Ensure we can capture the escape key being pressed below
    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
