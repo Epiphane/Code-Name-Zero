@@ -132,6 +132,10 @@ void InGameState::update(float dt) {
          obstacleLists[i].erase(obstacleLists[i].begin());
       }
    }
+   
+   if (soundtrack->getProgress() >= 0.5) {
+      setState(new ScoreState(this));
+   }
 }
 
 void InGameState::render(float dt) {

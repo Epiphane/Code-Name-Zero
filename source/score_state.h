@@ -13,6 +13,8 @@
 
 #include "renderer2D.h"
 #include "state.h"
+#include "input_manager.h"
+#include "in_game_state.h"
 
 #define MAX_SCORE_ENTRY 5
 #define MAX_NAME_LENGTH 10
@@ -31,14 +33,15 @@ private:
    
    std::vector<glm::vec2> positions, uvs;
    std::vector<float> opacities;
-   
-   void addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size);
 
+   void removeLastText();
+   void clearAllText();
+   void initializeVariables();
+   void addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size);
+   void saveToFile();
    
 public:
    ScoreState(State *game);
-   
-   void printScores();
    
    void update(float dt);
    void render(float dt);
