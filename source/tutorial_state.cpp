@@ -86,16 +86,19 @@ void TutorialState::send(std::string message, void *data) {
       }
       else if (current_beat == 80) {
          // Check speed, make sure they did it right
-         if (getPlayerSpeed() - playerStartSpeed < 45) {
+         if (getPlayerSpeed() - playerStartSpeed < 20) {
             getSoundtrack()->rewind(48);
-            addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try that again");
-            addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.25f), "Press \5");
+            addTextEvent(new TextEvent(44, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try that again");
+            addTextEvent(new TextEvent(44, 72, 2, 4), glm::vec2(0, 0.25f), "Press \5");
          }
          else {
             addTextEvent(new TextEvent(86, 102, 4, 4), glm::vec2(0, 0.5f), "Good!");
             
             addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0.25f), "You can also use");
-            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0), "\2 \3 and \4 for each lane.");
+            addTextEvent(new TextEvent(90, 106, 4, 4), glm::vec2(0, 0), "\6 to move right");
+            
+            addTextEvent(new TextEvent(114, 120, 4, 4), glm::vec2(0, 0.5f), "Or \2 \3 \4");
+            addTextEvent(new TextEvent(114, 120, 4, 4), glm::vec2(0, 0.25f), "For each lane");
 
             addTextEvent(new TextEvent(140, 144, 4, 4), glm::vec2(0, 0.5f), "SHALL WE?");
          }
