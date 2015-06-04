@@ -45,8 +45,8 @@ void forwardOneFrame() { moveOneFrame = true; }
 
 GLFWwindow* window;
 
-const int w_width = 1200;
-const int w_height = 900;
+const int w_width = 900;
+const int w_height = 600;
 const char *w_title = "RGB Zero";
 
 /*
