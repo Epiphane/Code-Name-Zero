@@ -303,6 +303,8 @@ void InGameState::addObstacle(Track track, Track color, ObstacleType objType, fl
    std::shared_ptr<GameObject> ob(new GameObject(ModelRenderer::load(baseDir + obstacle + ".obj", baseDir), opc, nullptr, occ, track_manager));
    ob->setPosition(position);
    ob->getGraphics()->tint(color);
+   if (objType != WALL)
+      ob->setScale(glm::vec3(2));
 
    //set its position and let the world know it exists
    addObject(ob);

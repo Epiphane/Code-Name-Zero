@@ -108,7 +108,7 @@ void Renderer3D::render(glm::mat4 Model) {
    glm::vec3 camPos = camera_getPosition();
    // TODO: Add a way to get the sun vector into this render function for sweet lighting trix
    glm::vec3 shadowLightPos = glm::vec3(0.0f, 100.0f, -40.0f);
-   glm::vec3 lightPos = glm::vec3(0.0f,1000.0f,-100.0f);
+   glm::vec3 lightPos = glm::vec3(0.0f,1000.0f,0.0f);
    
    glm::mat4 shadowView = glm::lookAt(shadowLightPos, glm::vec3(0,-20.0f,0), glm::vec3(0.0f, 1.0f, 0.0f));
    /*(left, right, bottom, top, zNear, zFar) changes 'dimensions' of shadow map*/
