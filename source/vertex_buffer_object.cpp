@@ -50,13 +50,10 @@ VBO& VBO::operator=(const VBO &other) {
    
    buffer_references[buffer] ++;
    
-   std::cout << "Buffer " << buffer << " copied. Refs: " << buffer_references[buffer] << std::endl;
-   
    return *this;
 }
 
 VBO::~VBO() {
-   std::cout << "Removing buffer " << buffer << std::endl;
    buffer_references[buffer] --;
 }
  
