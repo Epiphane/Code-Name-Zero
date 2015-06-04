@@ -82,6 +82,7 @@ public:
    void addCollision (unsigned int _t) { collidesWith |= _t; }
    void remCollision (unsigned int _t) { collidesWith &= ~_t; }
    
+   void clearModel  (void)             { Model = glm::mat4(1.0f); }
    void transform   (glm::mat4 _t) { Model = _t * Model; }
    void setPosition (glm::vec3 _p) { position = _p; }
    void setScale    (glm::vec3 _s) { scale    = _s; }

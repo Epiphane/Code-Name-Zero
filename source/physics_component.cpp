@@ -62,6 +62,9 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    glm::vec3 pos = obj->getPosition();
    pos.x += (lat_destination - pos.x) / 4;
    obj->setPosition(pos);
+
+   float lean = -4.0f * (lat_destination - pos.x);
+   obj->setRotation(glm::vec3(0.0f, 0.0f, lean)); // Add banking
    
    // Tint the player
    Track current_track = GREEN;

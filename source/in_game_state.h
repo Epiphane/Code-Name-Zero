@@ -42,6 +42,8 @@ private:
 
    const static int SCORE_MULT = 1;
    unsigned long score;
+   
+   int playerShipIndex;
 
    ShadowMap *shadowMap;
    SkyRenderer *skyRender;
@@ -71,6 +73,8 @@ public:
    void collide(GameObject *player, GameObject *other);
    void update(float dt);
    void render(float dt);
+   
+   int getShipIndex() { return playerShipIndex; }
    
    void send(std::string message, void *data);
    

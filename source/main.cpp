@@ -28,12 +28,6 @@
 using namespace std;
 
 bool DEBUG = false;
-void toggleDebug() {
-   DEBUG = !DEBUG;
-   
-   audio_setPaused(DEBUG);
-   camera_setDebug(DEBUG);
-}
 
 bool showDebugLog = false;
 bool isShadowMapRender = false;
@@ -51,8 +45,8 @@ void forwardOneFrame() { moveOneFrame = true; }
 
 GLFWwindow* window;
 
-const int w_width = 1200;
-const int w_height = 900;
+const int w_width = 900;
+const int w_height = 600;
 const char *w_title = "RGB Zero";
 
 /*
@@ -116,6 +110,11 @@ int main(int argc, char **argv) {
       return -1;
    }
    glGetError();
+   
+   const GLubyte *vend = glGetString(GL_VENDOR);
+   std::cout << vend << std::endl;
+   const GLubyte *rend = glGetString(GL_RENDERER);
+   std::cout << rend << std::endl;
 
    // Ensure we can capture the escape key being pressed below
    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
@@ -123,7 +122,6 @@ int main(int argc, char **argv) {
    
    input_init(window);
    input_set_callback(GLFW_KEY_I, forwardOneFrame);
-   input_set_callback(GLFW_KEY_ENTER, toggleDebug);
    input_set_callback(GLFW_KEY_P, toggleDebugLog);
    
    glEnable(GL_MULTISAMPLE);
@@ -136,8 +134,11 @@ int main(int argc, char **argv) {
    
    shaders_init();
    audio_init();
+
    currentState = new TitleScreen();
+
    currentState->start();
+
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();

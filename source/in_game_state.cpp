@@ -30,9 +30,17 @@
 
 #define Z_EPSILON 5.0
 
+void toggleDebug() {
+   DEBUG = !DEBUG;
+   
+   audio_setPaused(DEBUG);
+   camera_setDebug(DEBUG);
+}
+
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), sun_rotation(-45.0f), score(0) {
    State::State();
    
+   playerShipIndex = player_ship;
    ShipModel* playerShip = ShipManager::instance()->getModel(player_ship);
    
    // Move camera
@@ -89,6 +97,9 @@ void InGameState::start() {
    event_listener = new BeatEventListener;
    event_listener->init("./beatmaps/" + level + ".beatmap", this);
    soundtrack->play();
+   
+   DEBUG = false;
+   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
 }
 
 void InGameState::unpause() {
@@ -150,9 +161,10 @@ void InGameState::render(float dt) {
    shadowMap->enable();
    isShadowMapRender = true;
    glClear(GL_DEPTH_BUFFER_BIT);
-   player->render();
+   State::render(dt);
    isShadowMapRender = false;
    shadowMap->disable();
+   
    
    COMPUTE_BENCHMARK(25, "Shadowmap time: ", true)
    
@@ -175,7 +187,7 @@ void InGameState::render(float dt) {
 //		   blurRate += 20;
 		   brightness = 0.15f;
 	   }
-	   blurRate = (player_speed / 10.0f + player_movement->getAccel() * 60.0f + 9 * blurRate) / 10;
+	   blurRate = (player_speed / 7.0f + player_movement->getAccel() * 50.0f + 4 * blurRate) / 5;
 	   brightness = std::fmax(brightness - 0.5f * dt, 0.009f);
    }
    else {
@@ -302,6 +314,8 @@ void InGameState::addObstacle(Track track, Track color, ObstacleType objType, fl
    std::shared_ptr<GameObject> ob(new GameObject(ModelRenderer::load(baseDir + obstacle + ".obj", baseDir), opc, nullptr, occ, track_manager));
    ob->setPosition(position);
    ob->getGraphics()->tint(color);
+   if (objType != WALL)
+      ob->setScale(glm::vec3(2));
 
    //set its position and let the world know it exists
    addObject(ob);

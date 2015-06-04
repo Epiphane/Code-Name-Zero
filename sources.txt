@@ -30,6 +30,7 @@ set(HEADERS
    in_game_state.h
    static_state.h
    tutorial_state.h
+   ship_select_state.h
 
    bounds.h
    game_object.h
@@ -82,6 +83,7 @@ set(SOURCES
    in_game_state.cpp
    static_state.cpp
    tutorial_state.cpp
+   ship_select_state.cpp
 
    game_object.cpp
    graphics_component.cpp

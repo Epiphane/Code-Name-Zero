@@ -77,7 +77,7 @@ void main() {
    // Calculate a visibility value
    float bias = 0.005 * tan(acos(Id));
    bias = clamp(bias, 0.0, 0.01);
-   float visibility = clamp(texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias)), 0.2, 1.0);
+   float visibility = clamp(texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias)), 0.1, 1.0);
    
    if (vMaterial < 0) {
       // Placeholder: Basic metal
