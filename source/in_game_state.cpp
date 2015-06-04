@@ -187,7 +187,7 @@ void InGameState::render(float dt) {
 //		   blurRate += 20;
 		   brightness = 0.15f;
 	   }
-	   blurRate = (player_speed / 7.0f + player_movement->getAccel() * 50.0f + 4 * blurRate) / 5;
+	   blurRate = (player_speed / 20.0f + player_movement->getAccel() * 15.0f + 4 * blurRate) / 5;
 	   brightness = std::fmax(brightness - 0.5f * dt, 0.009f);
    }
    else {
