@@ -10,6 +10,7 @@
 #define __Project__state__
 
 #include <vector>
+#include <memory>
 
 #include "game_object.h"
 
@@ -19,8 +20,8 @@ struct Plane {
 
 class State {
 private:
-   std::vector<GameObject *> objects;
-   std::vector<GameObject *> rendererQueue;
+   std::vector<std::shared_ptr<GameObject>> objects;
+   std::vector<std::shared_ptr<GameObject>> rendererQueue;
     
    void updateRendererQueue();
    bool toCull(const Plane &plane, GameObject *obj);
@@ -37,10 +38,10 @@ public:
    
    virtual void send(std::string message, void *data);
    
-   void addObject(GameObject *obj);
-   void removeObject(GameObject *obj);
+   void addObject(std::shared_ptr<GameObject>obj);
+   void removeObject(std::shared_ptr<GameObject>obj);
    //InGameState defines collide
-   virtual void collide(GameObject *obj, GameObject *other) {};
+   virtual void collide(std::shared_ptr<GameObject> obj, std::shared_ptr<GameObject> other) {};
 };
 
 #endif /* defined(__Project__state__) */

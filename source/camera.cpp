@@ -18,7 +18,7 @@
 noise::module::Perlin shake;
 float t = 0;
 
-GameObject *following = nullptr;
+std::shared_ptr<GameObject> following = nullptr;
 glm::vec3 followOffset = glm::vec3(0, 1, 4);
 
 glm::vec3 position;
@@ -54,7 +54,7 @@ void camera_init(glm::vec3 _position, glm::vec3 lookAt) {
    camera_lookAt(lookAt);
 }
 
-void camera_follow(GameObject *follow, glm::vec3 offset) {
+void camera_follow(std::shared_ptr<GameObject> follow, glm::vec3 offset) {
    following = follow;
    transformation = destination = following->getModel();
    followOffset = offset;

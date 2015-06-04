@@ -30,6 +30,15 @@ GraphicsComponent *GraphicsComponent::clone() {
    return copy;
 }
 
+GraphicsComponent::~GraphicsComponent() {
+   std::vector<Renderer *>::iterator iterator = renderers.begin();
+   while (renderers.size() > 0) {
+      Renderer *r = *iterator;
+      iterator = renderers.erase(iterator);
+      delete r;
+   }
+}
+
 void GraphicsComponent::clone(GraphicsComponent *copy) {
    // Copy bounds
    memcpy((void *)&copy->bounds, (void *)&bounds, sizeof(Bounds));
@@ -137,12 +146,12 @@ GroundRenderer::GroundRenderer(float size) {
 }
 
 std::unordered_map<std::string, std::string> baseDirs;
-std::unordered_map<std::string, ModelRenderer *> modelRenderers;
+std::unordered_map<std::string, GraphicsComponent *> modelRenderers;
 
-ModelRenderer *ModelRenderer::load(std::string filename, std::string baseDir) {
+GraphicsComponent *ModelRenderer::load(std::string filename, std::string baseDir) {
    if (baseDirs[filename] == baseDir) {
       if (modelRenderers[filename]) {
-         return modelRenderers[filename];
+         return modelRenderers[filename]->clone();
       }
    }
 
@@ -195,9 +204,6 @@ ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {
       renderer->setMaterials(baseDir, materials);
       
       renderers.push_back(renderer);
-      
-      baseDirs[filename] = baseDir;
-      modelRenderers.emplace(filename, this);
    }
    
    // Compute bounds
@@ -213,4 +219,7 @@ ModelRenderer::ModelRenderer(std::string filename, std::string baseDir) {
          if(shapes[i].mesh.positions[3*v+2] > bounds.max_z) bounds.max_z = shapes[i].mesh.positions[3*v+2];
       }
    }
+   
+   baseDirs[filename] = baseDir;
+   modelRenderers.emplace(filename, this->clone());
 }

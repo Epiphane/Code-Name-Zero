@@ -37,7 +37,7 @@ private:
    float speed = 100;
 
 public:
-   static const int min_speed = 100, max_speed = 1000;
+   static const int min_speed = 100, max_speed = 2000;
    virtual void update(GameObject *obj, State *world, float dt);
    
    void setLatPos(float pos) { lat_destination = pos * 4; }

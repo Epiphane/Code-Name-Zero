@@ -30,7 +30,7 @@ private:
    const static glm::mat4 Z_TRANSLATE;
 
    // Track model
-   static ModelRenderer *renderer;
+   static GraphicsComponent *renderer;
 
    // State of the track
    int next_track_number;
@@ -48,6 +48,7 @@ public:
 
    glm::mat4 getTransform(int track_num);
    glm::mat4 translate(glm::vec3 position);
+   float nextTrackAngle(int track_number);
    
    void update(float dt, State *world);
    void render();

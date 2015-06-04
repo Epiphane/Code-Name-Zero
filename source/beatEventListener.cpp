@@ -42,11 +42,13 @@ void BeatEventListener::init(std::string filename, State *world) {
    int totalBeats = floor((m->getLength()/1000.0f) * (bpm/60.0f));
    
    if (stat (filename.c_str(), &buffer) != 0) {
+      srand(time(NULL));
+      
       // File does not exist, create randomly generated beatmap
       while (beat < totalBeats) {
          Event e;
          // TODO: Add stuff to State to set difficulty, then limit randFLoat by that value.
-         beat += (rand()%16) + 1;
+         beat += (rand()%4) + 1;
          e.object = rand()%TOTAL_OBSTACLES;
          
          if (e.object == WALL) {

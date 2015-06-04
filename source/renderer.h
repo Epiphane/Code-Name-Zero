@@ -59,7 +59,7 @@ protected:
     
 public:
    Renderer();
-   ~Renderer();
+   virtual ~Renderer();
     
    unsigned int getNumElements() { return elements; }
    void setNumElements(unsigned long num) { elements = num; }

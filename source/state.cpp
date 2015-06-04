@@ -20,12 +20,12 @@ void State::update(float dt) {
    INIT_BENCHMARK
    //call each object's update method and clean up dead objects
    
-   std::vector<GameObject *>::iterator iterator = objects.begin();
+   std::vector<std::shared_ptr<GameObject>>::iterator iterator = objects.begin();
    while(iterator < objects.end()) {
-      GameObject *obj = *iterator;
-      obj->update(this, dt);
-      if (obj->isDead())
+      iterator->get()->update(this, dt);
+      if (iterator->get()->isDead()) {
          iterator = objects.erase(iterator);
+      }
       else
          iterator ++;
    }
@@ -45,7 +45,7 @@ void normalizePlane(Plane &plane) {
 }
 
 void State::updateRendererQueue() {
-   std::vector<GameObject *>::iterator iterator;
+   std::vector<std::shared_ptr<GameObject>>::iterator iterator;
    glm::mat4 camMatrix = camera_getMatrix();
    
    rendererQueue.clear();
@@ -95,9 +95,10 @@ void State::updateRendererQueue() {
     
     
    for(iterator = objects.begin(); iterator < objects.end(); iterator ++) {
-      if (!toCull(far, *iterator) && !toCull(near, *iterator) &&
-          !toCull(left, *iterator) && !toCull(right, *iterator) &&
-          !toCull(bottom, *iterator) && !toCull(top, *iterator)) {
+      if (!toCull(far, iterator->get()) && !toCull(near, iterator->get()) &&
+          !toCull(left, iterator->get()) && !toCull(right, iterator->get()) &&
+          !toCull(bottom, iterator->get()) && !toCull(top, iterator->get())) {
+         assert(*iterator != nullptr);
          rendererQueue.push_back(*iterator);
       }
    }
@@ -111,16 +112,16 @@ bool State::toCull(const Plane &plane, GameObject *obj) {
 }
 
 void State::render(float dt) {
-   std::vector<GameObject *>::iterator iterator;
+   std::vector<std::shared_ptr<GameObject>>::iterator iterator;
    updateRendererQueue();
    
    // Render all elements. NOTE: They are only added to be batch rendered if they use
    // Renderer3D stuff.
    for(iterator = rendererQueue.begin(); iterator < rendererQueue.end(); iterator ++) {
-      (*iterator)->render();
+      iterator->get()->render();
 
       if (DEBUG)
-         (*iterator)->_debug_render();
+         iterator->get()->_debug_render();
    }
 }
 
@@ -128,10 +129,10 @@ void State::send(std::string message, void *data) {
    // Do nothing...
 }
 
-void State::addObject(GameObject *obj) {
+void State::addObject(std::shared_ptr<GameObject> obj) {
    objects.push_back(obj);
 }
 
-void State::removeObject(GameObject *obj) {
+void State::removeObject(std::shared_ptr<GameObject> obj) {
    obj->die();
 }

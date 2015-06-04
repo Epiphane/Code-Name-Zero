@@ -47,7 +47,7 @@ void main()
    
    // and now Ryan makes up normals...
    // This makes normals behave with the upward curve of the track
-   vNormal.z += 0.0000001f * offset * offset;
+   vNormal.z += 0.00001f * offset * offset;
    vNormal = normalize(vNormal);
 
    vShadowCoord = uShadowProj * uShadowView * uModelMatrix * aPosition;

@@ -117,6 +117,8 @@ set(SHADERS
    2DVertex.glsl
    3DFragment.glsl
    3DVertex.glsl
+   3DOutlineFragment.glsl
+   3DOutlineVertex.glsl
    TextFragment.glsl
    TextVertex.glsl
    PostProcFragment.glsl

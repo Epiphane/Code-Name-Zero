@@ -26,6 +26,7 @@ protected:
    
 public:
    GraphicsComponent();
+   ~GraphicsComponent();
    
    Bounds *getBounds() { return &bounds; }
    virtual void render(glm::mat4 Model);
@@ -43,7 +44,7 @@ private:
    ModelRenderer(std::string filename, std::string baseDir);
 
 public:
-   static ModelRenderer *load(std::string filename, std::string baseDir);
+   static GraphicsComponent *load(std::string filename, std::string baseDir);
 };
 
 class GroundRenderer : public GraphicsComponent {

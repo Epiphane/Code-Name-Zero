@@ -57,6 +57,8 @@ public:
    Renderer3D(bool isClone = false);
    Renderer3D(Renderer3D *clone);
    
+   Renderer *clone();
+   
    void setTint(glm::vec3 t) { tint = t; }
    void setPowerup(float p) { powerup = p; }
    
