@@ -138,6 +138,7 @@ void audio_play_music(Music *music) {
    FMOD::Channel *channel = music->getChannel();
    if (!channel) {
       check(audio_system->playSound(music->getSound(), sounds, true, &channel), "music play");
+      channel->setPosition(46000, FMOD_TIMEUNIT_MS);
       
       if (!channel) {
          std::cerr << "Unable to play music" << std::endl;

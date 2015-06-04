@@ -9,6 +9,7 @@
 #include "score_state.h"
 #include "tutorial_state.h"
 #include "main.h"
+#include "ship_select_state.h"
 
 #include <string>
 #include <fstream>
@@ -224,7 +225,7 @@ void ScoreState::update(float dt) {
    } else if (toMainMenu) {
       //TODO: set state to the actual main menu
       initializeVariables();
-      setState(new TutorialState(playerShipIndex));
+      setState(new ShipSelect());
    } else if (retryLevel) {
       //TODO: set state to appropriate "level" it won't aways be tutorial
       initializeVariables();
