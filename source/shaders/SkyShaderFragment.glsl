@@ -9,6 +9,7 @@ uniform mat4 uInvViewMatrix;
 uniform vec3 uLightDir; // Direction /to/ the light
 uniform vec4 uViewport;
 uniform vec2 uFramebufferResolution;
+uniform float uBrightness;
 
 out vec4 color;
 
@@ -20,7 +21,7 @@ const float mieBrightness = 0.1;
 const float spotBrightness = 1000.0;
 const float scatterStrength = 0.028;
 const float rayleighStrength = 0.139;
-const float mieStrength = 0.264;
+//const float mieStrength = 0.0264;
 const float rayleighCollectionPower = 0.81;
 const float mieCollectionPower = 0.39;
 const vec3 Kr = vec3(0.18867780436772762, 0.4978442963618773, 0.6616065586417131);
@@ -100,6 +101,8 @@ vec3 absorb(float dist, vec3 color, float factor) {
 void main() {
    vec3 eyeDir = getWorldNormal();
    float alpha = dot(eyeDir, uLightDir);
+//   float mieBrightness = uBrightness;
+   float mieStrength = uBrightness;
 
    float rayleighFactor = phase(alpha, RAYLEIGH_CONSTANT) * rayleighBrightness;
    float mieFactor = phase(alpha, MIE_CONSTANT) * mieBrightness;
