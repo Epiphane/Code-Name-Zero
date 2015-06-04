@@ -7,6 +7,7 @@
 //
 
 #include "tutorial_state.h"
+#include "score_state.h"
 
 TutorialState::TextEvent::TextEvent(Beat in, Beat out, float fadeIn, float fadeOut) : done(false), buffer_index(-1) {
    keyframes[0] = in - fadeIn;

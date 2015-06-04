@@ -26,6 +26,8 @@
 #include "beatEventListener.h"
 #include "rendererSky.h"
 
+#include "score_state.h"
+
 #define Z_EPSILON 5.0
 
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), sun_rotation(-45.0f), score(0) {
@@ -79,7 +81,6 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
       }
       particles.push_back(ps);
    }
-
 }
 
 void InGameState::start() {
@@ -135,6 +136,10 @@ void InGameState::update(float dt) {
          
          obstacleLists[i].erase(obstacleLists[i].begin());
       }
+   }
+   
+   if (soundtrack->getProgress() >= 0.999) {
+      setState(new ScoreState(this));
    }
 }
 

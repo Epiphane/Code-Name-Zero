@@ -19,8 +19,8 @@ out float ParticleAge;
 #define PARTICLE_TYPE_SHELL 1.0f
 #define PARTICLE_TYPE_SECONDARY_SHELL 2.0f
 #define ICON_SIZE 8.0f
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 768
+#define WINDOW_WIDTH 1200
+#define WINDOW_HEIGHT 900
 #define SHELL_AGE 900.0f
 
 void main()
