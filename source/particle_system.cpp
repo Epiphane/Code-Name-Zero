@@ -34,6 +34,14 @@ ParticleSystem::ParticleSystem(void) {
    
    ZERO_MEM(m_transformFeedback);
    ZERO_MEM(m_particleBuffer);
+   
+   const GLubyte *rend = glGetString(GL_RENDERER);
+   char * found = strstr((const char*)rend, "AMD" );
+   if (found != NULL) {
+      // Disable particles
+      transform_feedback_supported = 0;
+      std::cout << "Disabling transform feedback" << std::endl;
+   }
 }
 
 bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
