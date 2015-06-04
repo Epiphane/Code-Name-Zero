@@ -34,6 +34,7 @@ ShipSelect::ShipSelect() {
 
    shipManager = ShipManager::instance();
    
+   ships.clear();
    
    for (int i = 0; i < MAX_SHIPS; i++) {
       std::cout << shipManager->getModel(i)->getFileName() << std::endl;
