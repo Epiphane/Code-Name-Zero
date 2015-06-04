@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <memory>
 
 #include "input_manager.h"
 #include "audio_manager.h"
@@ -37,7 +38,7 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    
    // Create player ships
    player_movement = new PlayerPhysicsComponent();
-   player = std::shared_ptr<GameObject>::make_shared(playerShip->getModelRenderer(),
+   player = std::make_shared<GameObject>(playerShip->getModelRenderer(),
                       player_movement,
                       new PlayerInputComponent,
                       new PlayerCollisionComponent);

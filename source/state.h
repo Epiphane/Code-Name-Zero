@@ -10,6 +10,7 @@
 #define __Project__state__
 
 #include <vector>
+#include <memory>
 
 #include "game_object.h"
 

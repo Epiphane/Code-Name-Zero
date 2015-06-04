@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <glm/glm.hpp>
+#include <memory>
 
 void camera_setPosition(glm::vec3 position);
 void camera_lookAt(glm::vec3 dest);
