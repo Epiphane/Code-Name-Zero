@@ -112,7 +112,7 @@ void Renderer3D::render(glm::mat4 Model) {
    
    glm::mat4 shadowView = glm::lookAt(shadowLightPos, glm::vec3(0,-20.0f,0), glm::vec3(0.0f, 1.0f, 0.0f));
    /*(left, right, bottom, top, zNear, zFar) changes 'dimensions' of shadow map*/
-   glm::mat4 shadowProj = glm::ortho(-20.0f, 20.0f, -250.0f, 20.0f, 0.0f, 110.0f);
+   glm::mat4 shadowProj = glm::ortho(-20.0f, 20.0f, -180.0f, 20.0f, 30.0f, 110.0f);
    // Bias matrix to make window coordinates and texture coordinates cooperate.
    glm::mat4 biasMatrix(0.5, 0.0, 0.0, 0.0,
                         0.0, 0.5, 0.0, 0.0,

@@ -28,12 +28,6 @@
 using namespace std;
 
 bool DEBUG = false;
-void toggleDebug() {
-   DEBUG = !DEBUG;
-   
-   audio_setPaused(DEBUG);
-   camera_setDebug(DEBUG);
-}
 
 bool showDebugLog = false;
 bool isShadowMapRender = false;
@@ -128,7 +122,6 @@ int main(int argc, char **argv) {
    
    input_init(window);
    input_set_callback(GLFW_KEY_I, forwardOneFrame);
-   input_set_callback(GLFW_KEY_ENTER, toggleDebug);
    input_set_callback(GLFW_KEY_P, toggleDebugLog);
    
    glEnable(GL_MULTISAMPLE);

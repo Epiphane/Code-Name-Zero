@@ -30,6 +30,13 @@
 
 #define Z_EPSILON 5.0
 
+void toggleDebug() {
+   DEBUG = !DEBUG;
+   
+   audio_setPaused(DEBUG);
+   camera_setDebug(DEBUG);
+}
+
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), sun_rotation(-45.0f), score(0) {
    State::State();
    
@@ -90,6 +97,9 @@ void InGameState::start() {
    event_listener = new BeatEventListener;
    event_listener->init("./beatmaps/" + level + ".beatmap", this);
    soundtrack->play();
+   
+   DEBUG = false;
+   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
 }
 
 void InGameState::unpause() {
