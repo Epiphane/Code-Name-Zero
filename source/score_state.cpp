@@ -59,7 +59,6 @@ ScoreState::ScoreState(State *game) {
    // Retrieve the player's score
    InGameState *s = dynamic_cast<InGameState *>(game_state);
    long player_score = s->getScore();
-   
    // find the player's placement among the scorers
    std::vector<ScoreEntry>::iterator it = scores.begin();
    while (it < scores.end()) {
@@ -70,9 +69,9 @@ ScoreState::ScoreState(State *game) {
       player_place ++;
    }
    
-   if (player_place < MAX_SCORE_ENTRY) {
-      new_entry.value = std::to_string(player_score);
-   } else {
+   new_entry.value = std::to_string(player_score);
+   srand(atoi(new_entry.value.c_str()));
+   if (player_place >= MAX_SCORE_ENTRY) {
       madeHighScore = false;
    }
    
