@@ -77,9 +77,7 @@ void main() {
    // Calculate a visibility value
    float bias = 0.005 * tan(acos(Id));
    bias = clamp(bias, 0.0, 0.01);
-   float visibility = (texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias)) +0.2);
-   
-   
+   float visibility = clamp(texture(uShadowMap, vec3(vShadowCoord.xy, vShadowCoord.z - bias)), 0.2, 1.0);
    
    if (vMaterial < 0) {
       // Placeholder: Basic metal
@@ -108,7 +106,7 @@ void main() {
          fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * visibility + (textureColor*1.5), 1);
       }
       else {
-   		 float Is = specular(cameraVec, vNormal, lightVector, 0.5f, 0.01f);
+   		 float Is = specular(cameraVec, vNormal, lightVector, 0.25f, 0.01f);
          
          fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
       }
