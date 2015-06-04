@@ -133,7 +133,7 @@ void InGameState::update(float dt) {
       }
    }
    
-   if (soundtrack->getProgress() >= 0.5) {
+   if (soundtrack->getProgress() >= 0.999) {
       setState(new ScoreState(this));
    }
 }
