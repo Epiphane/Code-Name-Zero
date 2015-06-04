@@ -106,7 +106,7 @@ void main() {
          fragColor = vec4(Is * vec3(1)  * visibility + Id * textureColor * visibility + (textureColor*1.5), 1);
       }
       else {
-         float Is = 0;//specular(cameraVec, vNormal, lightVector, 0.25f, 0.01f);
+         float Is = specular(cameraVec, vNormal, lightVector, 0.25f, 0.01f);
          
          fragColor = vec4(Is * sColor * visibility + Id * dColor * visibility + (aColor*1.5), 1);
       }
