@@ -11,6 +11,7 @@ set(HEADERS
    renderer2D.h
    renderer3D.h
    rendererSky.h
+   rendererStars.h
    renderer.h
    rendererPostProcess.h
    texture.h
@@ -62,6 +63,7 @@ set(SOURCES
    rendererDebug.cpp
    renderer2D.cpp
    rendererSky.cpp
+   rendererStars.cpp
    renderer3D.cpp
    renderer.cpp
    rendererPostProcess.cpp

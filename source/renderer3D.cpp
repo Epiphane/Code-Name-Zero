@@ -107,12 +107,12 @@ void Renderer3D::render(glm::mat4 Model) {
    // LIGHT POSITION. HARDCODED. YEE BREH
    glm::vec3 camPos = camera_getPosition();
    // TODO: Add a way to get the sun vector into this render function for sweet lighting trix
-   glm::vec3 shadowLightPos = glm::vec3(-5.0f, 10.0f, 5.0f);
-   glm::vec3 lightPos = glm::vec3(0.0f,10.0f,0.0f);
+   glm::vec3 shadowLightPos = glm::vec3(-5.0f, 20.0f, 0);
+   glm::vec3 lightPos = glm::vec3(0.0f,500.0f,-60.0f);
    
    glm::mat4 shadowView = glm::lookAt(shadowLightPos, glm::vec3(0), glm::vec3(0.0f, 1.0f, 0.0f));
    /*(left, right, bottom, top, zNear, zFar) changes 'dimensions' of shadow map*/
-   glm::mat4 shadowProj = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.0f, 120.0f);
+   glm::mat4 shadowProj = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 0.0f, 30.0f);
    // Bias matrix to make window coordinates and texture coordinates cooperate.
    glm::mat4 biasMatrix(0.5, 0.0, 0.0, 0.0,
                         0.0, 0.5, 0.0, 0.0,

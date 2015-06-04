@@ -15,7 +15,7 @@
 #include "graphics_component.h"
 
 #define TRACK_LENGTH 27.5f
-#define TRACK_OBJECT "models/Track/RGB_TrackOnly_Curved.obj"
+#define TRACK_OBJECT "models/Track/TrackPiece.obj"
 
 #define TRACK_OFFSET_BLUE -3.8
 #define TRACK_OFFSET_GREEN 0
