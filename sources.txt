@@ -31,6 +31,8 @@ set(HEADERS
    static_state.h
    tutorial_state.h
    ship_select_state.h
+   score_state.h
+   pause_state.h
 
    bounds.h
    game_object.h
@@ -48,8 +50,6 @@ set(HEADERS
 
    ship_model.h
    ship_manager.h
-
-   score_state.h
 )
 
 # List all .c / .cpp files here
@@ -84,6 +84,8 @@ set(SOURCES
    static_state.cpp
    tutorial_state.cpp
    ship_select_state.cpp
+   score_state.cpp
+   pause_state.cpp
 
    game_object.cpp
    graphics_component.cpp
@@ -101,7 +103,6 @@ set(SOURCES
    ship_model.cpp
    ship_manager.cpp
 
-   score_state.cpp
 )
 
 # List resources to copy to build directory
