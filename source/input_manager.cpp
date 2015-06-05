@@ -35,8 +35,6 @@ void input_init(GLFWwindow *_window) {
    input_window = _window;
    
    glfwSetKeyCallback(input_window, key_callback);
-   
-   input_clear();
 }
 
 void input_clear() {

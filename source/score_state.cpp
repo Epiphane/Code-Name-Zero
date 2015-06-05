@@ -96,6 +96,10 @@ ScoreState::ScoreState(State *game) {
    input_set_callback(GLFW_KEY_ENTER, enterKeyPressed);
 }
 
+void ScoreState::regenFrameBuffers() {
+   game_state->regenFrameBuffers();
+}
+
 void ScoreState::addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size = glm::vec2(0.16f)) {
    const float font_spacing = font_size.x / 2.0f;
    

@@ -55,12 +55,8 @@ Renderer *Renderer::clone() {
    return NULL;
 }
 
-void shaders_init() {
-   GLuint VertexArrayID;
-   glGenVertexArrays(1, &VertexArrayID);
-   glBindVertexArray(VertexArrayID);
-   
-   Projection = glm::perspective(45.0f, (float) w_width / w_height, 0.01f, 6400.0f);
+void shaders_init() {   
+   Projection = glm::perspective(25.0f, (float) w_width / w_height, 0.01f, 6400.0f);
    currentMVP = glm::mat4(1.0f);
    MatrixStack.empty();
 }

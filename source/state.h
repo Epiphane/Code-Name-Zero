@@ -35,6 +35,8 @@ public:
    virtual void unpause();
    virtual void update(float dt);
    virtual void render(float dt);
+
+   virtual void regenFrameBuffers();
    
    virtual void send(std::string message, void *data);
    

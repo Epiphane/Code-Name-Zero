@@ -95,6 +95,8 @@ Renderer *Renderer3D::clone() {
 }
 
 void Renderer3D::render(glm::mat4 Model) {
+   GLenum error = glGetError();
+   assert(error == 0);
    
    glUseProgram(program);
    
@@ -103,6 +105,8 @@ void Renderer3D::render(glm::mat4 Model) {
       glUniform2f(uWinScale, (float)w_height / w_width, 1);
    else
       glUniform2f(uWinScale, 1, (float)w_width / w_height);
+    error = glGetError();
+   assert(error == 0);
    
    // LIGHT POSITION. HARDCODED. YEE BREH
    glm::vec3 camPos = camera_getPosition();
@@ -128,6 +132,8 @@ void Renderer3D::render(glm::mat4 Model) {
    } else {
       shadowProj = biasMatrix * shadowProj;
    }
+    error = glGetError();
+   assert(error == 0);
    
    // Learn matrix pointers from the pro, scrub
    glUniformMatrix4fv(uShadowView, 1, GL_FALSE, glm::value_ptr(shadowView));
@@ -143,6 +149,8 @@ void Renderer3D::render(glm::mat4 Model) {
    glUniformMatrix4fv(uView, 1, GL_FALSE, &View[0][0]);
    glUniformMatrix4fv(uProj, 1, GL_FALSE, &Proj[0][0]);
    glUniformMatrix4fv(uModel, 1, GL_FALSE, &Model[0][0]);
+    error = glGetError();
+   assert(error == 0);
    
    glUniform3fv(uAColor, numMaterials, (float *)ambient);
    glUniform3fv(uDColor, numMaterials, (float *)diffuse);
@@ -159,9 +167,13 @@ void Renderer3D::render(glm::mat4 Model) {
    
    glUniform3f(uLightPos, lightPos.x, lightPos.y, lightPos.z);
    glUniform3f(uCameraPos, camPos.x, camPos.y, camPos.z);
-   
+
+    error = glGetError();
+   assert(error == 0);
    // Bind attributes...
-   b_vertex  .attribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+   b_vertex.attribPointer(LOCATION_POSITION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+    error = glGetError();
+   assert(error == 0);
    b_normal  .attribPointer(LOCATION_NORMAL,   3, GL_FLOAT, GL_FALSE, 0, 0);
    b_uv      .attribPointer(LOCATION_UV,       2, GL_FLOAT, GL_FALSE, 0, 0);
    b_material.attribPointer(LOCATION_MATERIAL, 1, GL_FLOAT, GL_FALSE, 0, 0);

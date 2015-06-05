@@ -30,13 +30,14 @@ void Particles();
 
 class ParticleSystem {
 public:
-    ParticleSystem();
+   ParticleSystem();
+   ~ParticleSystem();
     
     bool InitParticleSystem(glm::vec3 Position);
     void Render(int DeltaTimeMillis, const glm::mat4 &View, const glm::mat4 &Projection, const glm::vec3 &CameraPos);
     void UpdateParticles(int DeltaTimeMillis, float playerSpeed);
     void RenderParticles(const glm::mat4 &View, const glm::mat4 &Projection, const glm::vec3 &CameraPos);
-    
+
 private:
     int m_isFirst; // Indicator if Render has been called
     unsigned int m_currVB;

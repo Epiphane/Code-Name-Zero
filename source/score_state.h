@@ -45,6 +45,8 @@ public:
    
    void update(float dt);
    void render(float dt);
+
+   void regenFrameBuffers();
 };
 
 #endif /* defined(__RGBZero__score_state__) */

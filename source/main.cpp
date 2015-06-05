@@ -13,6 +13,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <fstream>
 #include <cassert>
 #include <cmath>
 #include <stdio.h>
@@ -43,10 +44,12 @@ void setState(State *state) {
 bool moveOneFrame = false;
 void forwardOneFrame() { moveOneFrame = true; }
 
-GLFWwindow* window;
+GLFWwindow* window = nullptr;
 
-const int w_width = 900;
-const int w_height = 600;
+int w_width = -1;
+int w_height = -1;
+float aspect_ratio = 0;
+bool fullscreen = false;
 const char *w_title = "RGB Zero";
 
 /*
@@ -79,12 +82,51 @@ glm::vec3 randPoint(float r) {
    return glm::vec3(randB * r * cos(angle), randB * r * sin(angle), 0);
 }
 
-int main(int argc, char **argv) {
-   // Initialise GLFW
-   if(!glfwInit()) {
-      fprintf( stderr, "Failed to initialize GLFW\n" );
-      return -1;
+void writeConfig() {
+   ofstream new_config("./.config");
+
+   if (!new_config.is_open()) {
+      std::cerr << "Error opening .config" << std::endl;
    }
+
+   new_config << "window_width " << w_width << std::endl;
+   new_config << "window_height " << w_height << std::endl;
+   new_config << "fullscreen " << fullscreen << std::endl;
+}
+
+void setWindowSize(int width, int height) {
+   aspect_ratio = float(width) / height;
+   // Only 16/9 and 16/10 supported
+   float midrange = ((16.0f / 9) + (1.6f)) / 2.0f;
+   if (aspect_ratio < midrange) {
+      // Window too tall!
+      aspect_ratio = 1.6f;
+      w_width = width;
+      w_height = w_width / aspect_ratio;
+   }
+   else {
+      // Window too wide!
+      aspect_ratio = 16.0f / 9;
+      w_height = height;
+      w_width = w_height * aspect_ratio;
+   }
+
+   if (window != nullptr) {
+      glfwSetWindowSize(window, w_width, w_height);
+   }
+}
+
+void setDefaultWindowSize() {
+   const GLFWvidmode * mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+   setWindowSize(mode->width, mode->height);
+
+   writeConfig();
+}
+
+GLuint VertexArrayID;
+void setFullscreen(bool full) {
+   fullscreen = full;
+   writeConfig();
 
    glfwWindowHint(GLFW_SAMPLES, 4);
    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -92,24 +134,92 @@ int main(int argc, char **argv) {
    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-   // Open a window and create its OpenGL context
-   window = glfwCreateWindow(w_width, w_height, w_title, NULL, NULL);
-   if(window == NULL) {
+   GLFWwindow *newWindow = glfwCreateWindow(w_width, w_height, w_title, fullscreen ? glfwGetPrimaryMonitor() : NULL, window);
+   if (newWindow == NULL) {
       std::cerr << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible.\n" << std::endl;
       glfwTerminate();
-      return -1;
+      exit(1);
    }
 
+   if (window != nullptr) {
+      glfwDestroyWindow(window);
+   }
+   window = newWindow;
+   input_init(window);
    glfwMakeContextCurrent(window);
+   GLenum error = glGetError();
+   assert(error == 0);
 
-   // Initialize GLEW
-   glewExperimental = true;
    if (glewInit() != GLEW_OK) {
       fprintf(stderr, "Failed to initialize GLEW\n");
-      return -1;
+      exit(1);
    }
    glGetError();
+
+   glGenVertexArrays(1, &VertexArrayID);
+   glBindVertexArray(VertexArrayID);
+   error = glGetError();
+   assert(error == 0);
+
+   glEnable(GL_MULTISAMPLE);
+   glEnable(GL_BLEND);
+   glEnable(GL_DEPTH_TEST);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+   if (currentState != nullptr) {
+      currentState->regenFrameBuffers();
+   }
+}
+
+void toggleFullscreen() {
+   setFullscreen(!fullscreen);
+   GLenum error = glGetError();
+   assert(error == 0);
+}
+
+int main(int argc, char **argv) {
+   ifstream config_file("./.config");
+   if (config_file.is_open()) {
+      int width = -1, height = -1;
+      std::string input;
+
+      while (!config_file.eof()) {
+         config_file >> input;
+         if (input == "window_width") {
+            config_file >> width;
+         }
+         if (input == "window_height") {
+            config_file >> height;
+         }
+         if (input == "fullscreen") {
+            config_file >> fullscreen;
+         }
+
+         input = "";
+      }
+
+      if (width >= 0 && height >= 0) {
+         setWindowSize(width, height);
+      }
+   }
+
+   // Initialise GLFW
+   if(!glfwInit()) {
+      fprintf( stderr, "Failed to initialize GLFW\n" );
+      return -1;
+   }
+
+   // Create defaults if they don't exist
+   if (w_width < 0 || w_height < 0) {
+      setDefaultWindowSize();
+   }
+
+   // Open a window and create its OpenGL context
+   glewExperimental = true;
+   setFullscreen(fullscreen);
    
    const GLubyte *vend = glGetString(GL_VENDOR);
    std::cout << vend << std::endl;
@@ -120,17 +230,10 @@ int main(int argc, char **argv) {
    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
    glfwSetCursorPos(window, w_width / 2, w_height / 2);
    
-   input_init(window);
+   input_clear();
    input_set_callback(GLFW_KEY_I, forwardOneFrame);
+   input_set_callback(GLFW_KEY_O, toggleFullscreen);
    input_set_callback(GLFW_KEY_P, toggleDebugLog);
-   
-   glEnable(GL_MULTISAMPLE);
-   glEnable (GL_BLEND);
-   glEnable(GL_DEPTH_TEST);
-   glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   
-   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    shaders_init();
    audio_init();

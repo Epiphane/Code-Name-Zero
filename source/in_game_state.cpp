@@ -54,7 +54,7 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
                       new PlayerCollisionComponent);
    addObject(player);
    
-   camera_follow(player, glm::vec3(0, 1, 4));
+   camera_follow(player, glm::vec3(0, 1, 6));
    
    // Set up track manager
    track_manager = new TrackManager();
@@ -77,9 +77,37 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    RendererPostProcess::shaders_init();
    skyRender = new SkyRenderer;
    
-   
    std::pair<std::vector<glm::vec3>::iterator, std::vector<glm::vec3>::iterator> iterator
     = playerShip->getExhaustIterator();
+   for (; iterator.first != iterator.second; iterator.first++)
+   {
+      glm::vec3 pos = *(iterator.first);
+      ParticleSystem *ps = new ParticleSystem();
+      if (!ps->InitParticleSystem(pos)) {
+         exit(1);
+      }
+      particles.push_back(ps);
+   }
+}
+
+void InGameState::regenFrameBuffers() {
+   delete shadowMap;
+
+   shadowMap = new ShadowMap;
+   shadowMap->init(4096);
+
+   RendererPostProcess::shaders_init();
+
+   std::vector<ParticleSystem *>::iterator it = particles.begin();
+   while (particles.size() > 0) {
+      ParticleSystem *ps = *it;
+      it = particles.erase(it);
+      delete ps;
+   }
+
+   ShipModel* playerShip = ShipManager::instance()->getModel(playerShipIndex);
+   std::pair<std::vector<glm::vec3>::iterator, std::vector<glm::vec3>::iterator> iterator
+      = playerShip->getExhaustIterator();
    for (; iterator.first != iterator.second; iterator.first++)
    {
       glm::vec3 pos = *(iterator.first);
@@ -165,7 +193,6 @@ void InGameState::render(float dt) {
    isShadowMapRender = false;
    shadowMap->disable();
    
-   
    COMPUTE_BENCHMARK(25, "Shadowmap time: ", true)
    
    // Bind Shadow map texture as active
@@ -195,12 +222,12 @@ void InGameState::render(float dt) {
    }
    
    // Render DA SKY!
-   glm::vec4 sunLowAngle(-0.3f, 0.0f, -0.7f, 1.0f);
+   glm::vec4 sunLowAngle(-0.3f, 0.0f, -0.9f, 1.0f);
    float percent_done = (powf(soundtrack->getProgress() - 0.5f, 3.0f) + 0.125f) / 0.25f;
    float angle = 270.0f * percent_done - 45.0f;
    sun_rotation += (angle - sun_rotation) / 16;
    glm::vec3 sunAngle = glm::vec3(glm::rotate(sun_rotation, 0.0f, 0.0f, -1.0f) * sunLowAngle);
-   skyRender->render(sunAngle, brightness);
+   skyRender->render(sunAngle, brightness / 2);
 
    // Render scene
    track_manager->render();

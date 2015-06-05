@@ -11,7 +11,6 @@ private:
 public:
    RendererPostProcess();
    ~RendererPostProcess();
-   static void create();
    static void setupBufferData(int screenWidth, int screenHeight);
    static void render(int blur);
    static void capture();

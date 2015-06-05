@@ -1,9 +1,11 @@
 build/*
 .DS_Store
+.source/.config
 source/.DS_STORE
 source/RGBzero.exe
 source/RGBzero.lik
 source/RGBzero
 source/scores/scores.txt
 source/scores.txt
+source/textures/*.xcf
 build/scores.txt

@@ -44,6 +44,11 @@ ParticleSystem::ParticleSystem(void) {
    }
 }
 
+ParticleSystem::~ParticleSystem() {
+   glDeleteTransformFeedbacks(2, m_transformFeedback);
+   glDeleteBuffers(2, m_particleBuffer);
+}
+
 bool ParticleSystem::InitParticleSystem(glm::vec3 Position) {
    Particle Particles[MAX_PARTICLES];
    ZERO_MEM(Particles);
@@ -144,26 +149,6 @@ void ParticleSystem::UpdateParticles(int DeltaTimeMillis, float playerSpeed)
    }
    else {
       glDrawTransformFeedback(GL_POINTS, m_transformFeedback[m_currVB]);
-   }
-   
-   // Determine tranform support
-   if (transform_feedback_supported < 0) {
-      GLuint drawnQuery;
-      int result = 0;
-      glGenQueries(1, &drawnQuery);
-      glBeginQuery(GL_PRIMITIVES_GENERATED, drawnQuery);
-      glEndQuery(GL_PRIMITIVES_GENERATED);
-      while (result == 0)
-         glGetQueryObjectiv(drawnQuery, GL_QUERY_RESULT_AVAILABLE, &result);
-      
-      glGetQueryObjectiv(drawnQuery, GL_QUERY_RESULT, &result);
-      if (result == 0) {
-         // No primitives generated = no support
-         transform_feedback_supported = 0;
-      }
-      else {
-         transform_feedback_supported = 1;
-      }
    }
    
    glEndTransformFeedback();

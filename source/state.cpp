@@ -125,6 +125,8 @@ void State::render(float dt) {
    }
 }
 
+void State::regenFrameBuffers() {}
+
 void State::send(std::string message, void *data) {
    // Do nothing...
 }

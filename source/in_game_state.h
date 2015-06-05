@@ -29,7 +29,6 @@ class SkyRenderer;
 class TrackManager;
 class BeatEventListener;
 
-
 class InGameState : public State {
 private:
    std::string level;
@@ -62,6 +61,7 @@ public:
    void start();
    void unpause();
    void pause();
+   void regenFrameBuffers();
    
    unsigned long getScore() { return score; }
    

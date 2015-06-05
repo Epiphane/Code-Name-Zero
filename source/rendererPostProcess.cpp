@@ -20,6 +20,7 @@ using namespace std;
 int programID;
 GLuint PostProc_v_coord, PostProc_fbo_texture, PostProc_blur;
 GLuint PostProc_fbo, Local_fbo_texture, PostProc_rbo_depth;
+bool PostProc_initialized = false;
 
 GLuint PostProc_vbo_fbo_vertices;
 GLfloat PostProc_fbo_vertices[] = {
@@ -30,25 +31,34 @@ GLfloat PostProc_fbo_vertices[] = {
 };
 
 void RendererPostProcess::shaders_init() {
-	programID = LoadShaders("./shaders/PostProcVertex.glsl", "./shaders/PostProcFragment.glsl");
-	PostProc_v_coord = glGetAttribLocation(programID, "v_coord");
-	PostProc_fbo_texture = glGetUniformLocation(programID, "fbo_texture");
-	PostProc_blur = glGetUniformLocation(programID, "blur");
+   if (!PostProc_initialized) {
+      programID = LoadShaders("./shaders/PostProcVertex.glsl", "./shaders/PostProcFragment.glsl");
+      PostProc_v_coord = glGetAttribLocation(programID, "v_coord");
+      PostProc_fbo_texture = glGetUniformLocation(programID, "fbo_texture");
+      PostProc_blur = glGetUniformLocation(programID, "blur");
+   }
 
-	create();
 	setupBufferData(w_width, w_height);
-}
-
-void RendererPostProcess::create() {
-	glGenBuffers(1, &PostProc_vbo_fbo_vertices);
-	glBindBuffer(GL_ARRAY_BUFFER, PostProc_vbo_fbo_vertices);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(PostProc_fbo_vertices), PostProc_fbo_vertices, GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void RendererPostProcess::setupBufferData(int screenWidth, int screenHeight) {
 	/* init_resources */
 	/* Create back-buffer, used for post-processing */
+   if (PostProc_initialized) {
+      // Remove old materials
+      glDeleteTextures(1, &Local_fbo_texture);
+      glDeleteRenderbuffers(1, &PostProc_rbo_depth);
+      glDeleteFramebuffers(1, &PostProc_fbo);
+      glDeleteBuffers(1, &PostProc_vbo_fbo_vertices);
+   }
+
+   PostProc_initialized = true;
+
+   /* Vertices */
+   glGenBuffers(1, &PostProc_vbo_fbo_vertices);
+   glBindBuffer(GL_ARRAY_BUFFER, PostProc_vbo_fbo_vertices);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(PostProc_fbo_vertices), PostProc_fbo_vertices, GL_STATIC_DRAW);
+   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	/* Texture */
 	glActiveTexture(GL_TEXTURE0);
