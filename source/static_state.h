@@ -28,7 +28,7 @@ private:
    static bool loading_screen_loaded;
 
 public:
-   TitleScreen() : StaticState("./textures/title_screen.png") {};
+   TitleScreen() : StaticState("title_screen") {};
 
    void update(float dt);
 };

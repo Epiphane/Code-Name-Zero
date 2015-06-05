@@ -174,8 +174,9 @@ void setFullscreen(bool full) {
    }
 }
 
+bool toggleFullScreen = false;
 void toggleFullscreen() {
-   setFullscreen(!fullscreen);
+   toggleFullScreen = true;
    GLenum error = glGetError();
    assert(error == 0);
 }
@@ -247,6 +248,11 @@ int main(int argc, char **argv) {
    double clock = glfwGetTime();
    INIT_BENCHMARK
    do {
+      if (toggleFullScreen) {
+         setFullscreen(!fullscreen);
+         toggleFullScreen = false;
+      }
+      
       assert(currentState != NULL);
       if (nextState != NULL) {
          currentState->pause();
