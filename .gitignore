@@ -1,6 +1,6 @@
 build/*
 .DS_Store
-.source/.config
+source/.config
 source/.DS_STORE
 source/RGBzero.exe
 source/RGBzero.lik
