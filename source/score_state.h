@@ -10,6 +10,7 @@
 #define __RGBZero__score_state__
 
 #include <vector>
+#include <string>
 
 #include "renderer2D.h"
 #include "state.h"
@@ -29,6 +30,8 @@ class ScoreState : public State {
 private:
    Renderer2D *helper;
    State *game_state;
+   std::string level;
+
    std::vector<ScoreEntry> scores;
    
    std::vector<glm::vec2> positions, uvs;
@@ -41,7 +44,7 @@ private:
    void saveToFile();
    
 public:
-   ScoreState(State *game);
+   ScoreState(State *game, std::string level);
    
    void update(float dt);
    void render(float dt);

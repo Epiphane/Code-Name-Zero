@@ -14,6 +14,7 @@ endif()
 
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/source")
 set(DEP_DIR "${PROJECT_SOURCE_DIR}/dependencies")
+set(BUILD_DIR "${PROJECT_SOURCE_DIR}/build")
 
 # Source / header files
 include("sources.txt")
@@ -44,6 +45,16 @@ list(APPEND INCLUDES
 #glm
 list(APPEND INCLUDES
    ${DEP_DIR}
+)
+
+#curl
+add_subdirectory("${DEP_DIR}/curl")
+list(APPEND INCLUDES
+   "${DEP_DIR}/curl/include"
+   "${BUILD_DIR}/${DEP_DIR}/curl/include"
+)
+list(APPEND LIBS
+   libcurl
 )
 
 #noise
