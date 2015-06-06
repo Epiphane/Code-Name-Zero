@@ -27,7 +27,7 @@ void modelCarouselLeft();
 void modelCarouselRight();
 
 ShipSelect::ShipSelect() {
-   camera_setPosition(glm::vec3(0, 0, -5));
+   camera_setPosition(glm::vec3(0, 1, -10));
    camera_lookAt(glm::vec3(0, 0, 0));
    bg = new StaticState("ship_select_background", 1.5);
    background = new Renderer2D("ship_select_background", true, 0);
