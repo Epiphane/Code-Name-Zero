@@ -35,6 +35,7 @@ public:
    virtual void unpause();
    virtual void update(float dt);
    virtual void render(float dt);
+   virtual void regen_resources();
    
    virtual void send(std::string message, void *data);
    

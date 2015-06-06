@@ -129,6 +129,10 @@ void State::send(std::string message, void *data) {
    // Do nothing...
 }
 
+void State::regen_resources() {
+   // Do nothing...
+}
+
 void State::addObject(std::shared_ptr<GameObject> obj) {
    objects.push_back(obj);
 }
