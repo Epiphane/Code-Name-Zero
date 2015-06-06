@@ -37,7 +37,7 @@ void main()
    vCameraVec = normalize(uCameraPos - vWorldSpace.xyz);
    
    float offset = -1.0f * (vWorldSpace.z - 0); // Offset z by current ship position
-   vWorldSpace.y += 0.0002f * pow(offset, 2);
+   vWorldSpace.y += 0.0001f * pow(offset, 2);
 
    gl_Position = uProjMatrix * uViewMatrix * vWorldSpace;
 

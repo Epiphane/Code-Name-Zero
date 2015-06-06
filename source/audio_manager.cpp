@@ -118,7 +118,7 @@ FMOD::Sound *audio_load_sound(std::string fileName) {
 
 Music *audio_load_music(std::string fileName, Beat bpm) {
    FMOD::Sound *sound = audio_load_sound(fileName);
-   check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_NORMAL), "sound looping", Error);
+   check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_OFF), "sound looping", Error);
    check(sound->setLoopCount(-1), "sound->setLoopCount(-1)", Error);
    
    Music *music = new Music(sound, bpm);
