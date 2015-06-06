@@ -16,7 +16,7 @@
 #include <cassert>
 #include <cmath>
 #include <stdio.h>
- 
+
 #include "main.h"
 #include "audio_manager.h"
 #include "input_manager.h"

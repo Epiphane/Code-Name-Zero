@@ -46,6 +46,15 @@ list(APPEND INCLUDES
    ${DEP_DIR}
 )
 
+#curl
+add_subdirectory("${DEP_DIR}/curl")
+list(APPEND INCLUDES
+   "${DEP_DIR}/curl/include"
+)
+list(APPEND LIBS
+   libcurl
+)
+
 #noise
 set(NOISE_DIR "${DEP_DIR}/libnoise")
 add_subdirectory(${NOISE_DIR})

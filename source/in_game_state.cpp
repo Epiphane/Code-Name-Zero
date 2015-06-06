@@ -150,7 +150,7 @@ void InGameState::update(float dt) {
    }
    
    if (soundtrack->getProgress() >= 0.999) {
-      setState(new ScoreState(this));
+      setState(new ScoreState(this, level));
    }
 }
 
@@ -210,7 +210,7 @@ void InGameState::render(float dt) {
       RendererDebug::instance()->render(glm::mat4(1));
    COMPUTE_BENCHMARK(25, "Render elements time: ", true)
    
-   glDisable(GL_DEPTH_TEST);
+   //glDisable(GL_DEPTH_TEST);
    for (int i = 0; i < NUM_TRACKS; i++) {
       std::vector<std::shared_ptr<GameObject>>::iterator it = obstacleLists[i].begin();
       while (it < obstacleLists[i].end()) {
@@ -218,7 +218,7 @@ void InGameState::render(float dt) {
          it ++;
       }
    }
-   glEnable(GL_DEPTH_TEST);
+   //glEnable(GL_DEPTH_TEST);
    COMPUTE_BENCHMARK(25, "Render outlines time: ", true);
    
    if (!DEBUG) {
