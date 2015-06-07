@@ -12,23 +12,28 @@
 #include "state.h"
 #include "ship_manager.h"
 #include "game_object.h"
+#include "static_state.h"
 
-
-class ShipSelect : public State {
+class ShipSelect : public StaticState {
 private:
    std::vector<std::string> levelNames;
    ShipManager *shipManager;
    
+   int currentShip = 0;
+   float carouselRotation = 0;
+   float currentShipRotation = 0.0f;
+   std::vector<shared_ptr<GameObject>> ships;
+   std::vector<glm::mat4> carouselTransforms;
+   
 public:
+   static ShipSelect *currentInstance;
+   int getCurrentShip() { return currentShip; }
+   void rotate(bool right);
+   
    ShipSelect();
-   //void addObject(GameObject *obj);
-   //void removeObject(GameObject *obj);
    
    void start();
-   void pause();
    void update(float dt);
-   void render(float dt);
-
    
    std::string getLevelName();
 };
