@@ -8,6 +8,7 @@ set(HEADERS
    main.h
    camera.h
    rendererDebug.h
+   rendererText.h
    renderer2D.h
    renderer3D.h
    rendererSky.h
@@ -61,6 +62,7 @@ set(SOURCES
    main.cpp
    camera.cpp
    rendererDebug.cpp
+   rendererText.cpp
    renderer2D.cpp
    rendererSky.cpp
    renderer3D.cpp
