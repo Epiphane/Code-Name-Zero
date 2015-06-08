@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 
-#include "renderer2D.h"
+#include "rendererText.h"
 #include "state.h"
 #include "input_manager.h"
 #include "in_game_state.h"
@@ -28,19 +28,13 @@ struct ScoreEntry {
 
 class ScoreState : public State {
 private:
-   Renderer2D *helper;
+   RendererText *helper;
    State *game_state;
    std::string level;
 
    std::vector<ScoreEntry> scores;
    
-   std::vector<glm::vec2> positions, uvs;
-   std::vector<float> opacities;
-
-   void removeLastText();
-   void clearAllText();
    void initializeVariables();
-   void addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size);
    void saveToFile();
    
 public:
