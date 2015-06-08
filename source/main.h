@@ -54,8 +54,10 @@
 
 extern bool DEBUG;
 extern bool isShadowMapRender;
-const extern int w_width;
-const extern int w_height;
+extern int w_width;
+extern int w_height;
+extern float aspect_ratio;
+extern bool fullscreen;
 
 class State;
 

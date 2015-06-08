@@ -15,6 +15,13 @@
 #include "ship_select_state.h"
 
 StaticState::StaticState(std::string background, float z) {
+   background = "./textures/" + background;
+   if (aspect_ratio == 1.6f) {
+      background += "_16_10.png";
+   }
+   else {
+      background += "_16_9.png";
+   }
    renderer = new Renderer2D(background, true, z);
    
    std::vector<glm::vec2> positions, uvs;
@@ -32,23 +39,7 @@ StaticState::StaticState(std::string background, float z) {
    renderer->bufferData(UVs, uvs);
 }
 
-StaticState::StaticState(std::string background) {
-   renderer = new Renderer2D(background, true, 0);
-   
-   std::vector<glm::vec2> positions, uvs;
-   positions.push_back(glm::vec2(-1, 1));
-   positions.push_back(glm::vec2(1, -1));
-   uvs.push_back(glm::vec2(0));
-   uvs.push_back(glm::vec2(1));
-   
-   std::vector<float> opacities;
-   opacities.push_back(1);
-   opacities.push_back(1);
-   
-   renderer->bufferData(Opacities, opacities);
-   renderer->bufferData(Vertices, positions);
-   renderer->bufferData(UVs, uvs);
-}
+StaticState::StaticState(std::string background) : StaticState(background, 0) {};
 
 void StaticState::render(float dt) {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -58,19 +49,13 @@ void StaticState::render(float dt) {
    assert(error == 0);
 }
 
-bool TitleScreen::loading_screen_loaded = false;
 void TitleScreen::update(float dt) {
-   if (!loading_screen_loaded) {
-      texture_load("./textures/loading_screen.png");
-      loading_screen_loaded = true;
-   }
-
    if (input_keyDown(GLFW_KEY_SPACE)) {
       setState(new ShipSelect());
    }
 }
 
-LoadingScreen::LoadingScreen(int shipIndex) : StaticState("./textures/loading_screen.png"), fading_time(0), progress(0), ship(shipIndex) {};
+LoadingScreen::LoadingScreen(int shipIndex) : StaticState("loading_screen"), fading_time(0), progress(0), ship(shipIndex) {};
 
 void loadObstacleModel(std::string obstacle, std::string extension) {
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";

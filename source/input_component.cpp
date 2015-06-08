@@ -21,11 +21,11 @@ void PlayerInputComponent::update(GameObject *obj) {
    if (movement != NULL) {
       if (!DEBUG) {
          Track currentTrack = getTrackFromLatPos(obj->getPosition().x);
-         if (input_keyDown(GLFW_KEY_A) && currentTrack != BLUE) {
+         if ((input_keyDown(GLFW_KEY_LEFT) || input_keyDown(GLFW_KEY_A)) && currentTrack != BLUE) {
             int nextLatPos = (currentTrack == GREEN) ? -1 : 0;
             movement->setLatPos(nextLatPos);
          }
-         if (input_keyDown(GLFW_KEY_D) && currentTrack != RED) {
+         if ((input_keyDown(GLFW_KEY_RIGHT) || input_keyDown(GLFW_KEY_D)) && currentTrack != RED) {
             int nextLatPos = (currentTrack == GREEN) ? 1 : 0;
             movement->setLatPos(nextLatPos);
          }

@@ -13,7 +13,8 @@
 
 #include <string>
 #include <fstream>
-
+#include <sstream>
+#include <curl/curl.h>
 
 const char *entry_place[] = { "1st: ", "2nd: ", "3rd: ", "4th: ", "5th: " };
 ScoreEntry new_entry;
@@ -32,35 +33,69 @@ void enterKeyPressed();
 void retry();
 void mainMenu();
 
-ScoreState::ScoreState(State *game) {
+char response_buffer[4096];
+int response_length = 0;
+size_t write_score_data(void *buffer, size_t size, size_t nmemb, void *userp) {
+   assert(response_length + size * nmemb < 4095);
+   memcpy(response_buffer + response_length, buffer, size * nmemb);
+   response_length += size * nmemb;
+
+   response_buffer[response_length + 1] = 0;
+
+   return size * nmemb;
+}
+
+bool send_score_request(std::vector<ScoreEntry> &scores, std::string level) {
+   response_length = 0;
+
+   std::string url = "http://thomassteinke.com/RGBZero/scores.php?level=" + level + "&amt=5";
+   CURL *handle = curl_easy_init();
+   curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+   curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_score_data);
+   CURLcode success = curl_easy_perform(handle);
+
+   if (success == CURLE_OK) {
+      // Expect 5 score spaces in entries
+      std::stringstream stream(std::string(response_buffer), std::ios_base::in);
+
+      std::string name;
+      std::string value;
+      while (stream >> name >> value) {
+         ScoreEntry se;
+         se.name = name;
+         while (se.name.length() < MAX_NAME_LENGTH) se.name += ' ';
+         se.value = value;
+         if (se.value.length() < MAX_SCORE_LENGTH) se.value.insert(0, MAX_SCORE_LENGTH - se.value.length(), ' ');
+         scores.push_back(se);
+      }
+   }
+   else {
+      return false;
+   }
+}
+
+ScoreState::ScoreState(State *game, std::string level) {
+   this->level = level;
+
    std::string name;
    std::string value;
    int count = 0;
    
-   
    initializeVariables();
    
    game_state = game;
-   
+
    helper = new Renderer2D("./textures/speed_font.png", true, 0);
-   
    addText(glm::vec2(0.0, 0.75f), "HIGH SCORES", glm::vec2(0.15));
-   //Retrieve top scores from scores.txt
-   std::ifstream infile("./scores.txt");
-   while (infile >> name >> value) {
-      ScoreEntry se;
-      se.name = name;
-      while (se.name.length() < MAX_NAME_LENGTH) se.name +=' ';
-      se.value = value;
-      if (se.value.length() < MAX_SCORE_LENGTH) se.value.insert(0, MAX_SCORE_LENGTH - se.value.length(), ' ');
-      scores.push_back(se);
-      addText(glm::vec2(0.0, 0.6f - (count/10.0f) * 1.3 ), entry_place[count] + se.name + " " + se.value, glm::vec2(0.14 - count/100.0f));
-      
-      count++;
+   //Retrieve top scores
+   if (!send_score_request(scores, level)) {
+      std::cerr << "Error getting scores" << std::endl;
    }
+   std::cout << "Num scores: " << scores.size() << std::endl;
    
    // Retrieve the player's score
    InGameState *s = dynamic_cast<InGameState *>(game_state);
+   assert(s != NULL);
    long player_score = s->getScore();
    playerShipIndex = s->getShipIndex();
    
@@ -68,6 +103,9 @@ ScoreState::ScoreState(State *game) {
    std::vector<ScoreEntry>::iterator it = scores.begin();
    while (it < scores.end()) {
       ScoreEntry se = *it;
+      addText(glm::vec2(0.0, 0.6f - (count / 10.0f) * 1.3), entry_place[count] + se.name + " " + se.value, glm::vec2(0.14 - count / 100.0f));
+      count++;
+
       long entry_value = std::atol(se.value.c_str());
       if (entry_value < player_score) break;
       it ++;
@@ -159,25 +197,23 @@ void mainMenu() {
 }
 
 void ScoreState::saveToFile() {
-   // only want to save top 5
-   while (scores.size() > MAX_SCORE_ENTRY) {
-      scores.pop_back();
-   }
-   
-   ofstream newFile("./scores.txt");
-   
-   if(newFile.is_open())
-   {
-      for (auto entry : scores) // access by reference to avoid copying
-      {
-         newFile << entry.name + " " + entry.value << endl;
-      }
+   response_length = 0;
+
+   std::string url = "http://thomassteinke.com/RGBZero/scores.php";
+   std::string params = "name=" + new_entry.name + "&level=" + level + "&score=" + new_entry.value;
+   CURL *handle = curl_easy_init();
+   curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
+   curl_easy_setopt(handle, CURLOPT_POSTFIELDS, params.c_str());
+   curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_score_data);
+   curl_easy_setopt(handle, CURLOPT_CUSTOMREQUEST, "POST");
+   CURLcode success = curl_easy_perform(handle);
+
+   if (success == CURLE_OK) {
+      std::cout << "Score submitted!" << std::endl;
    }
    else {
-      // Please create a scores/ folder!!!
-      assert(0);
+      std::cerr << "Error getting scores: " << curl_easy_strerror(success) << std::endl;
    }
-   newFile.close();
 }
 
 void ScoreState::initializeVariables() {
