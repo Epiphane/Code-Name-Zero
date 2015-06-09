@@ -30,6 +30,7 @@ public:
    void setMakerName(std::string name) { makerName = name; }
    void setEngineName(std::string name) { engineName = name; }
    void setWeight(std::string weight) { this->weight = weight; }
+   void setAccFactor(float accFactor) { this->accFactor = accFactor; }
    
 private:
    std::string fileName;
@@ -39,6 +40,8 @@ private:
    std::string makerName;
    std::string engineName;
    std::string weight;
+   
+   float accFactor;
    
 };
 

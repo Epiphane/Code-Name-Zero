@@ -19,14 +19,15 @@
 
 void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    ObstacleCollisionComponent *occ = dynamic_cast<ObstacleCollisionComponent *>(other->getCollision());
-   
    PlayerPhysicsComponent *playerMovement = dynamic_cast<PlayerPhysicsComponent *>(player->getPhysics());
    
+   ShipModel* playerShip = ShipManager::instance()->getModel(this->shipIndex);
+   
    if (occ->shouldAcceleratePlayer(getTrackFromLatPos(playerMovement->getLatPos()))) {
-      playerMovement->accelerate(ACCELERATION_AMT);
+      playerMovement->accelerate(ACCELERATION_AMT * playerShip->accFactor);
    }
    else {
-      playerMovement->decelerate(DECELERATION_AMT);
+      playerMovement->decelerate(DECELERATION_AMT * playerShip->accFactor);
    }
 }
 

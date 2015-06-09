@@ -19,6 +19,7 @@ ShipManager::ShipManager() {
    one->setEngineName(" CY96-Z1x1");
    one->setMakerName("Cyber Stick, Inc.");
    one->setWeight("1330 kg");
+   one->setAccFactor(1.00f);
    
    models[0] = one;
    
@@ -27,6 +28,7 @@ ShipManager::ShipManager() {
    two->setEngineName("CY97-X4x1");
    two->setMakerName("Abinus Company");
    two->setWeight("1010 kg");
+   two->setAccFactor(1.25f);
    
    models[1] = two;
    
@@ -36,6 +38,7 @@ ShipManager::ShipManager() {
    three->setEngineName("AM9021-Rx2");
    three->setMakerName("Asteroid Motors");
    three->setWeight("2110 kg");
+   three->setAccFactor(0.75f);
    
    models[2] = three;
    
@@ -46,6 +49,7 @@ ShipManager::ShipManager() {
    four->setEngineName("N/A");
    four->setMakerName("Milk Do Shamshu");
    four->setWeight("1330 kg");
+   four->setAccFactor(1.00f);
    
    models[3] = four;
    
@@ -55,6 +59,7 @@ ShipManager::ShipManager() {
    five->setEngineName("FGS-C024Mx2");
    five->setMakerName("Space Dynamics");
    five->setWeight("1390 kg");
+   five->setAccFactor(1.00f);
    
    models[4] = five;
 }
