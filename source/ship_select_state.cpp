@@ -70,7 +70,7 @@ void ShipSelect::update(float dt) {
       
       ships[i]->transform(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f)));
       ships[i]->transform(glm::rotate(glm::mat4(1.0f), rotationDegrees, glm::vec3(0.0f, 1.0f, 0.0f)));
-      //ships[i]->transform(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, 5.0f)));
+      //ships[i]->transform(glm::translate(glm::mat4(1.0f), glm::vec3(3.5f, 0.0f, 0.0f)));
    }
 }
 
