@@ -16,6 +16,7 @@
 #include "input_manager.h"
 #include "audio_manager.h"
 #include "in_game_state.h"
+#include "pause_state.h"
 #include "camera.h"
 #include "renderer.h"
 #include "rendererPostProcess.h"
@@ -99,11 +100,11 @@ void InGameState::start() {
    soundtrack->play();
    
    DEBUG = false;
-   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
 }
 
 void InGameState::unpause() {
    soundtrack->play();
+   input_set_callback(GLFW_KEY_SPACE, toggleDebug);
    input_setMouseLock(true);
 }
 
@@ -151,6 +152,10 @@ void InGameState::update(float dt) {
    
    if (soundtrack->getProgress() >= 0.999) {
       setState(new ScoreState(this, level));
+   }
+   
+   if (DEBUG) { // assumes this.update is not called from pausestate
+      setState(new PauseState(this));
    }
 }
 
@@ -206,8 +211,6 @@ void InGameState::render(float dt) {
    track_manager->render();
    State::render(dt);
    visualizer->render();
-   if (DEBUG)
-      RendererDebug::instance()->render(glm::mat4(1));
    COMPUTE_BENCHMARK(25, "Render elements time: ", true)
    
    //glDisable(GL_DEPTH_TEST);
