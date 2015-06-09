@@ -32,10 +32,10 @@
 #define Z_EPSILON 5.0
 
 void toggleDebug() {
-   DEBUG = !DEBUG;
+   PAUSED = !PAUSED;
    
-   audio_setPaused(DEBUG);
-   camera_setDebug(DEBUG);
+   audio_setPaused(PAUSED);
+   camera_setDebug(PAUSED);
 }
 
 InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : level(levelname), player_speed(100), sun_rotation(-45.0f), score(0) {
@@ -99,7 +99,7 @@ void InGameState::start() {
    event_listener->init("./beatmaps/" + level + ".beatmap", this);
    soundtrack->play();
    
-   DEBUG = false;
+   PAUSED = false;
 }
 
 void InGameState::unpause() {
@@ -154,7 +154,7 @@ void InGameState::update(float dt) {
       setState(new ScoreState(this, level));
    }
    
-   if (DEBUG) { // assumes this.update is not called from pausestate
+   if (PAUSED) {
       setState(new PauseState(this));
    }
 }
@@ -186,7 +186,7 @@ void InGameState::render(float dt) {
    static float brightness = 0.1f;
    static int previousBeat = (int)soundtrack->getBeat();
 
-   if (!DEBUG) {
+   if (!PAUSED) {
 	   if (soundtrack->getBeat() != previousBeat) {
 		   previousBeat = soundtrack->getBeat();
 //		   blurRate += 20;
@@ -224,7 +224,7 @@ void InGameState::render(float dt) {
    //glEnable(GL_DEPTH_TEST);
    COMPUTE_BENCHMARK(25, "Render outlines time: ", true);
    
-   if (!DEBUG) {
+   if (!PAUSED) {
       glm::vec3 carPos = player->getPosition();
       glm::mat4 transform = glm::translate(carPos.x, carPos.y, carPos.z);
       std::vector<ParticleSystem *>::iterator iterator = particles.begin();

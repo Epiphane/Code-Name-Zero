@@ -5,10 +5,10 @@
 #include "camera.h"
 
 void togglePauseDebug() {
-   DEBUG = !DEBUG;
+   PAUSED = !PAUSED;
    
-   audio_setPaused(DEBUG);
-   camera_setDebug(DEBUG);
+   audio_setPaused(PAUSED);
+   camera_setDebug(PAUSED);
 }
 
 void resumeGame();
