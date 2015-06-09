@@ -27,9 +27,19 @@ public:
    
    GraphicsComponent *getModelRenderer();
    
+   void setMakerName(std::string name) { makerName = name; }
+   void setEngineName(std::string name) { engineName = name; }
+   void setWeight(std::string weight) { this->weight = weight; }
+   
 private:
    std::string fileName;
    std::vector<glm::vec3> exhaustPositions;
+   
+   //fun misc. facts
+   std::string makerName;
+   std::string engineName;
+   std::string weight;
+   
 };
 
 #endif /* defined(__RGBZero__ship_model__) */
