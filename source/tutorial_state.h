@@ -9,7 +9,7 @@
 #ifndef __Project__tutorial_state__
 #define __Project__tutorial_state__
 
-#include "renderer2D.h"
+#include "rendererText.h"
 #include "in_game_state.h"
 
 class TutorialState : public InGameState {
@@ -32,13 +32,9 @@ private:
    };
 
    std::vector<TextEvent *> events;
-   std::vector<glm::vec2> positions, uvs;
-   std::vector<float> opacities;
 
-   Renderer2D *helper;
+   RendererText *helper;
    void addTextEvent(TextEvent *e, glm::vec2 topLeft, std::string message);
-
-   float song_progress;
 
 public:
    TutorialState(int playership);

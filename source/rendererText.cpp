@@ -3,6 +3,9 @@
 
 bool RendererText::initialized = false;
 
+std::vector<glm::vec2> saved_positions, saved_uvs;
+std::vector<float> saved_opacities;
+
 void RendererText::init() {
    helper = new Renderer2D("./textures/speed_font.png", true, 0);
    
@@ -24,7 +27,7 @@ RendererText *RendererText::instance() {
    return inst;
 }
 
-void RendererText::addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size) {
+void RendererText::addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size, float start_opacity) {
    const float font_spacing = font_size.x / 2.0f;
    
    topLeft.x -= float(message.length()) * font_spacing / 2;
@@ -38,8 +41,8 @@ void RendererText::addText(glm::vec2 topLeft, std::string message, glm::vec2 fon
       positions.push_back(topLeft + glm::vec2(font_size.x, 0));
       uvs.push_back(characterUV(message[i]));
       uvs.push_back(characterUV(message[i]) + glm::vec2(1.0f / 16.0f));
-      opacities.push_back(1.0f);
-      opacities.push_back(1.0f);
+      opacities.push_back(start_opacity);
+      opacities.push_back(start_opacity);
       
       topLeft.x += font_spacing;
    }
@@ -60,6 +63,19 @@ void RendererText::clearLastChar() {
       opacities.pop_back();
       opacities.pop_back();
    }
+}
+
+void RendererText::saveBuffers() {
+   saved_positions = std::vector<glm::vec2>(positions);
+   saved_uvs = std::vector<glm::vec2>(uvs);
+   saved_opacities = std::vector<float>(opacities);
+}
+
+void RendererText::reloadBuffers() {
+   clearAllText();
+   opacities = std::vector<float>(saved_opacities);
+   uvs = std::vector<glm::vec2>(saved_uvs);
+   positions = std::vector<glm::vec2>(saved_positions);
 }
 
 void RendererText::updateBuffers() {

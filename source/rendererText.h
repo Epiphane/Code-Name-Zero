@@ -23,9 +23,6 @@ class RendererText {
 private:
    Renderer2D *helper;
    
-   std::vector<glm::vec2> positions, uvs;
-   std::vector<float> opacities;
-   
    static bool initialized;
    void init();
    
@@ -34,10 +31,16 @@ private:
 public:
    static RendererText *instance();
    
-   void addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size = glm::vec2(0.16f));
+   
+   std::vector<glm::vec2> positions, uvs;
+   std::vector<float> opacities;
+   
+   void addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size = glm::vec2(0.16f), float start_opacity = 1.0f);
    void clearAllText();
    void clearLastChar();
    void updateBuffers();
+   void saveBuffers();
+   void reloadBuffers();
    
    void render() { helper->render(glm::mat4(1.0f)); } 
 };
