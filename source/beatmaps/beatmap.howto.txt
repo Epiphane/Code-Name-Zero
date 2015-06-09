@@ -1,0 +1,38 @@
+### BEATMAP FILE STRUCTURE                             ###
+### Line 1 - SONG TITLE                                ###
+### Line 2 - SONG BPM                                  ###
+### Line 3 - 6 digits to make track curviness equation ###
+### Line 4+ - The final beat map                       ###
+##########################################################
+
+
+### HOW TO CREATE A BEATMAP ###
+- A beat event looks like:
+32 1 1 1
+
+Where the [32] is the Beat the object will hit the player on,
+the first [1] is the object type (see below), and the last two
+[1]s are the LANE (Red, Green, Blue) and COLOR (RGB) of the object.
+
+The first beat of a song is beat 1, not beat 0.
+
+### Obstacle INT Codes ###
+Obj: {
+   OBSTACLE = 0,
+   WALL = 1,
+};
+
+Lane/Color: {
+   BLUE = 0,
+   GREEN = 1,
+   RED = 2
+};
+
+### EXAMPLE BEATMAP ###
+My Song
+120
+1 2 3 4 5 6
+4 1 2 2
+7 0 1 1
+8 0 0 0
+12 1 0 0
