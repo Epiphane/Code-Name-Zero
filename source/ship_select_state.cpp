@@ -50,7 +50,6 @@ void ShipSelect::update(float dt) {
    ships[currentShip]->transform(glm::rotate(glm::mat4(1.0f), currentShipRotation, glm::vec3(0.0f, 1.0f, 0.0f)));
    
    float carouselTargetRotation = currentShip * -360 / MAX_SHIPS;
-   std::cout << carouselTargetRotation << " vs " << carouselRotation << std::endl;
    carouselRotation += (carouselTargetRotation - carouselRotation) / 4;
    for (int i = 0; i < MAX_SHIPS; i++) {
       float rotationDegrees = carouselRotation + i * 360/MAX_SHIPS;
