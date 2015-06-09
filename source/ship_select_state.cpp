@@ -15,6 +15,7 @@
 #include "input_manager.h"
 #include "main.h"
 #include "camera.h"
+#include "song_select_state.h"
 
 //input callbacks
 void startLevel();
@@ -220,7 +221,8 @@ void ShipSelect::clearAllRendered() {
 
 void startLevel() {
    ShipSelect::currentInstance->clearAllRendered();
-   setState(new LoadingScreen(ShipSelect::currentInstance->getCurrentShip()));
+   setState(new SongSelect(ShipSelect::currentInstance->getCurrentShip()));
+
 }
 
 void modelCarouselLeft() {

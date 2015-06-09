@@ -1,0 +1,6 @@
+RGB_Happy_Electro
+RGB_Hardcore
+RGB_MuteCity
+RGB_Persistence
+RGB_Tutorial
+spook

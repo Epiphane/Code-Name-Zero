@@ -33,7 +33,6 @@
 
 ShipModel* playerShip;
 
-
 void toggleDebug() {
    PAUSED = !PAUSED;
    

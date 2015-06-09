@@ -14,7 +14,10 @@
 #include "ship_manager.h"
 #include "ship_select_state.h"
 
+
+#define TUTORIAL_FILENAME "RGB_Tutorial"
 StaticState::StaticState(std::string background, Music *s, float z) : soundtrack(s) {
+
    background = "./textures/" + background;
    if (aspect_ratio == 1.6f) {
       background += "_16_10.png";
@@ -70,7 +73,7 @@ void TitleScreen::update(float dt) {
    }
 }
 
-LoadingScreen::LoadingScreen(int shipIndex) : StaticState("loading_screen"), fading_time(0), progress(0), ship(shipIndex) {};
+LoadingScreen::LoadingScreen(int shipIndex, LevelInfo level) : StaticState("loading_screen"), fading_time(0), progress(0), ship(shipIndex) , levelInfo(level) {};
 
 void loadObstacleModel(std::string obstacle, std::string extension) {
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
@@ -112,7 +115,13 @@ void LoadingScreen::loadNext() {
    case 10:
          //      game = new InGameState("Mambo5", 174, 4);
          //      game = new InGameState("BRODYQUEST", 190, 4);
-      game = new TutorialState(ship);
+         if (levelInfo.filename == TUTORIAL_FILENAME) {
+            game = new TutorialState(ship);
+         } else {
+            game = new InGameState(levelInfo.filename,
+                                   levelInfo.bpm,
+                                   ship);
+         }
       game->start();
       break;
    }
