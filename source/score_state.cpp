@@ -14,6 +14,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 #include <curl/curl.h>
 
 const char *entry_place[] = { "1st: ", "2nd: ", "3rd: ", "4th: ", "5th: " };
@@ -60,14 +61,22 @@ bool send_score_request(std::vector<ScoreEntry> &scores, std::string level) {
 
       std::string name;
       std::string value;
-      while (stream >> name >> value) {
+      std::string ship;
+      while (stream >> name >> value >> ship) {
          ScoreEntry se;
          se.name = name;
          while (se.name.length() < MAX_NAME_LENGTH) se.name += ' ';
+         
          se.value = value;
          if (se.value.length() < MAX_SCORE_LENGTH) se.value.insert(0, MAX_SCORE_LENGTH - se.value.length(), ' ');
+         
+         std::replace(ship.begin(), ship.end(), '_', ' ');
+         se.ship = ship;
+         
          scores.push_back(se);
       }
+      
+      return true;
    }
    else {
       return false;
@@ -91,7 +100,6 @@ ScoreState::ScoreState(State *game, std::string level) {
    if (!send_score_request(scores, level)) {
       std::cerr << "Error getting scores" << std::endl;
    }
-   std::cout << "Num scores: " << scores.size() << std::endl;
    
    // Retrieve the player's score
    InGameState *s = dynamic_cast<InGameState *>(game_state);
@@ -113,9 +121,13 @@ ScoreState::ScoreState(State *game, std::string level) {
    }
    
    new_entry.value = std::to_string(player_score);
+   new_entry.ship  = ShipManager::instance()->getModel(s->getShipIndex())->getFileName();
    srand(atoi(new_entry.value.c_str()));
    if (player_place >= MAX_SCORE_ENTRY) {
       madeHighScore = false;
+      
+      new_entry.name = "Anonymous";
+      saveToFile();
    }
    
    if (madeHighScore) {
@@ -199,8 +211,9 @@ void mainMenu() {
 void ScoreState::saveToFile() {
    response_length = 0;
 
+   std::replace(new_entry.ship.begin(), new_entry.ship.end(), ' ', '_');
    std::string url = "http://thomassteinke.com/RGBZero/scores.php";
-   std::string params = "name=" + new_entry.name + "&level=" + level + "&score=" + new_entry.value;
+   std::string params = "name=" + new_entry.name + "&level=" + level + "&score=" + new_entry.value + "&ship=" + new_entry.ship;
    CURL *handle = curl_easy_init();
    curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
    curl_easy_setopt(handle, CURLOPT_POSTFIELDS, params.c_str());
@@ -249,6 +262,9 @@ void ScoreState::update(float dt) {
          scores.insert(scores.begin() + player_place, new_entry);
          saveToFile();
          madeHighScore = false;
+      }
+      else {
+         
       }
       clearAllText();
       
