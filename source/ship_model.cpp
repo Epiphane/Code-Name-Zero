@@ -9,5 +9,5 @@ std::pair<std::vector<glm::vec3>::iterator, std::vector<glm::vec3>::iterator> Sh
 }
 
 GraphicsComponent *ShipModel::getModelRenderer() {
-   return ModelRenderer::load(fileName + "model.obj", fileName);
+   return ModelRenderer::load("models/" + fileName + "/model.obj", "models/" + fileName + "/");
 }

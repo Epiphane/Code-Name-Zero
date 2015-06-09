@@ -39,14 +39,13 @@ StaticState::StaticState(std::string background, float z) {
    renderer->bufferData(UVs, uvs);
 }
 
-StaticState::StaticState(std::string background) : StaticState(background, 0) {};
+StaticState::StaticState(std::string background) : StaticState(background, 1.5) {};
 
 void StaticState::render(float dt) {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    
    renderer->render(glm::mat4(1));
-   GLenum error = glGetError();
-   assert(error == 0);
+   State::render(dt);
 }
 
 void TitleScreen::update(float dt) {

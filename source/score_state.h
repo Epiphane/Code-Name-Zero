@@ -24,6 +24,7 @@
 struct ScoreEntry {
    std::string name; // Cannot be deliminated by space
    std::string value;
+   std::string ship;
 };
 
 class ScoreState : public State {
