@@ -52,7 +52,7 @@
    _clock = glfwGetTime(); /* Chain debugging */ \
    }
 
-extern bool DEBUG;
+extern bool PAUSED;
 extern bool isShadowMapRender;
 extern int w_width;
 extern int w_height;

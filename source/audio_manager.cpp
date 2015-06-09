@@ -75,7 +75,7 @@ void audio_init() {
    }
    
    check(audio_system->createChannelGroup("music", &sounds), "channel group creation");
-   check(sounds->setPaused(DEBUG), "sound pause setup");
+   check(sounds->setPaused(PAUSED), "sound pause setup");
 }
 
 void audio_setPaused(bool paused) {

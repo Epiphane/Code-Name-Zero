@@ -65,7 +65,7 @@ void camera_setPosition(glm::vec3 _position) {
 }
 
 void camera_update(float dt, State *world) {
-   if (DEBUG) {
+   if (PAUSED) {
       if (input_keyDown(GLFW_KEY_A)) {
          camera_move(-CAMERA_MOVE, 0, 0);
       }
@@ -114,7 +114,7 @@ glm::vec3 camera_getLookAt() {
    float y = yaw;
    float p = pitch;
    
-   if (!DEBUG && following != nullptr) {
+   if (!PAUSED && following != nullptr) {
       y += shake.GetValue(0, t, 0) * SHAKE_SCALE;
       p += shake.GetValue(t, 0, 0) * SHAKE_SCALE;
    }
