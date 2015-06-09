@@ -32,6 +32,8 @@ public:
    void setWeight(std::string weight) { this->weight = weight; }
    void setAccFactor(float accFactor) { this->accFactor = accFactor; }
    
+   float getAccFactor() { return accFactor; }
+   
 private:
    std::string fileName;
    std::vector<glm::vec3> exhaustPositions;
