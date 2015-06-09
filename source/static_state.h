@@ -29,7 +29,7 @@ private:
 
 public:
    TitleScreen() : StaticState("title_screen") {};
-
+   
    void update(float dt);
 };
 

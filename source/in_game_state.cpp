@@ -301,8 +301,7 @@ void InGameState::addObstacle(Track track, Track color, ObstacleType objType, fl
          obstacle = "wall";
          position.x = 0;
          break;
-      case METEOR:
-      case SPIKE:
+      default:
          obstacle = "shieldBall";
          break;
    }
