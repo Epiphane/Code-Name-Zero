@@ -32,7 +32,8 @@ private:
    std::vector<glm::mat4> carouselTransforms;
    
    void renderBox();
-   void rateShipAccDecc(float factor, glm::vec2 start_position);
+   void rateShipAcc(float factor, glm::vec2 start_position);
+   void rateShipWeight(int factor, glm::vec2 start_position);
    
 public:
    static ShipSelect *currentInstance;

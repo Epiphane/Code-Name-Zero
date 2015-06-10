@@ -88,17 +88,49 @@ void ShipSelect::update(float dt) {
    helper->addText(glm::vec2(0.6, 0.55), currentShipModel->getFileName(), glm::vec2(0.075), 1.0f);
    helper->addText(glm::vec2(0.6, 0.40), "Maker- " + currentShipModel->getMakerName(), glm::vec2(0.04), 1.0f);
    helper->addText(glm::vec2(0.6, 0.35), "Engine- " + currentShipModel->getEngineName(), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.6, 0.30), "Weight- " + currentShipModel->getWeight(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.55, 0.30), "Weight- " , glm::vec2(0.04), 1.0f);
+   rateShipWeight(currentShipModel->getWeight(), glm::vec2(0.67, 0.28));
    helper->addText(glm::vec2(0.52, 0.25), "Acceleration- ", glm::vec2(0.04), 1.0f);
-   rateShipAccDecc(currentShipModel->getAccFactor(), glm::vec2(0.67, 0.23));
-   helper->addText(glm::vec2(0.52, 0.20), "Decceleration- ", glm::vec2(0.04), 1.0f);
-   rateShipAccDecc(currentShipModel->getDeccFactor(), glm::vec2(0.67, 0.18));
-   
+   rateShipAcc(currentShipModel->getAccFactor(), glm::vec2(0.67, 0.23));
+
    helper->updateBuffers();
    ratingsRenderer->updateBuffers();
 }
 
-void ShipSelect::rateShipAccDecc(float factor, glm::vec2 start_position) {
+void ShipSelect::rateShipWeight(int factor, glm::vec2 start_position) {
+   if (factor >= 2000) {
+      ratingsRenderer->addRating(start_position, Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.10, 0), Full, glm::vec2(0.045f));
+   } else if (factor >= 1800) {
+      ratingsRenderer->addRating(start_position, Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.10, 0), Half, glm::vec2(0.045f));
+   } else if (factor >= 1600) {
+      ratingsRenderer->addRating(start_position, Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.10, 0), Empty, glm::vec2(0.045f));
+   } else if (factor >= 1400) {
+      ratingsRenderer->addRating(start_position, Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Half, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.10, 0), Empty, glm::vec2(0.045f));
+   } else if (factor >= 1200) {
+      ratingsRenderer->addRating(start_position, Full, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Empty, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.10, 0), Empty, glm::vec2(0.045f));
+   } else if (factor >= 1000) {
+      ratingsRenderer->addRating(start_position, Half, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Empty, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.10, 0), Empty, glm::vec2(0.045f));
+   } else {
+      ratingsRenderer->addRating(start_position, Empty, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Empty, glm::vec2(0.045f));
+      ratingsRenderer->addRating(start_position + glm::vec2(0.10, 0), Empty, glm::vec2(0.045f));
+   }
+
+}
+
+void ShipSelect::rateShipAcc(float factor, glm::vec2 start_position) {
    if (factor >= 1.20f) {
       ratingsRenderer->addRating(start_position, Full, glm::vec2(0.045f));
       ratingsRenderer->addRating(start_position + glm::vec2(0.05, 0), Full, glm::vec2(0.045f));

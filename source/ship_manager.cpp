@@ -18,9 +18,8 @@ ShipManager::ShipManager() {
    one->addExhuast(glm::vec3(0.05, -1.6, -0.5));
    one->setEngineName(" CY96-Z1x1");
    one->setMakerName("Cyber Stick, Inc.");
-   one->setWeight("1330 kg");
+   one->setWeight(1330);
    one->setAccFactor(1.05f);
-   one->setDeccFactor(1.00f);
    
    models[0] = one;
    
@@ -28,9 +27,8 @@ ShipManager::ShipManager() {
    two->addExhuast(glm::vec3 (0.05, -1.6, -0.5));
    two->setEngineName("CY97-X4x1");
    two->setMakerName("Abinus Company");
-   two->setWeight("1010 kg");
+   two->setWeight(1010);
    two->setAccFactor(1.20f);
-   two->setDeccFactor(0.85f);
    
    models[1] = two;
    
@@ -39,9 +37,8 @@ ShipManager::ShipManager() {
    three->addExhuast(glm::vec3 (0.25, -1.66, -0.5));
    three->setEngineName("AM9021-Rx2");
    three->setMakerName("Asteroid Motors");
-   three->setWeight("2110 kg");
+   three->setWeight(2110);
    three->setAccFactor(0.90f);
-   three->setDeccFactor(1.15f);
    
    models[2] = three;
    
@@ -51,9 +48,8 @@ ShipManager::ShipManager() {
    four->addExhuast(glm::vec3 (0.25, -1.0, -0.5));
    four->setEngineName("");
    four->setMakerName("Milk Do Shamshu");
-   four->setWeight("1330 kg");
+   four->setWeight(1330);
    four->setAccFactor(1.10f);
-   four->setDeccFactor(0.90f);
    
    models[3] = four;
    
@@ -62,9 +58,8 @@ ShipManager::ShipManager() {
    five->addExhuast(glm::vec3 (0.55, -1.50, -0.5));
    five->setEngineName("FGS-C024Mx2");
    five->setMakerName("Space Dynamics");
-   five->setWeight("1390 kg");
+   five->setWeight(1400);
    five->setAccFactor(1.00f);
-   five->setDeccFactor(1.05f);
    
    models[4] = five;
 }

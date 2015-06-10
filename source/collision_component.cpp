@@ -29,7 +29,7 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
       playerMovement->accelerate(ACCELERATION_AMT * playerShip->getAccFactor());
    }
    else {
-      playerMovement->decelerate(DECELERATION_AMT / playerShip->getDeccFactor());
+      playerMovement->decelerate(DECELERATION_AMT * playerShip->getAccFactor());
    }
 }
 
