@@ -20,6 +20,8 @@ ShipManager::ShipManager() {
    one->setMakerName("Cyber Stick, Inc.");
    one->setWeight(1330);
    one->setAccFactor(1.05f);
+   one->setStreakNumber(7);
+   one->setBoost("1.1x acceleration");
    
    models[0] = one;
    
@@ -29,6 +31,8 @@ ShipManager::ShipManager() {
    two->setMakerName("Abinus Company");
    two->setWeight(1010);
    two->setAccFactor(1.20f);
+   two->setStreakNumber(50);
+   two->setBoost("Travels at light speed");
    
    models[1] = two;
    
@@ -39,6 +43,8 @@ ShipManager::ShipManager() {
    three->setMakerName("Asteroid Motors");
    three->setWeight(2110);
    three->setAccFactor(0.90f);
+   three->setStreakNumber(4);
+   three->setBoost("Doubles current speed");
    
    models[2] = three;
    
@@ -50,6 +56,8 @@ ShipManager::ShipManager() {
    four->setMakerName("Milk Do Shamshu");
    four->setWeight(1330);
    four->setAccFactor(1.10f);
+   four->setStreakNumber(40);
+   four->setBoost("Doubles current score");
    
    models[3] = four;
    
@@ -60,6 +68,8 @@ ShipManager::ShipManager() {
    five->setMakerName("Space Dynamics");
    five->setWeight(1400);
    five->setAccFactor(1.00f);
+   five->setStreakNumber(6);
+   five->setBoost("2x speed for 100 beats");
    
    models[4] = five;
 }
