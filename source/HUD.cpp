@@ -53,7 +53,13 @@ HUD::HUD() {
    posBuf.push_back(glm::vec2(score_marker_w + score_marker_x, score_marker_y));
    uvBuf.push_back(glm::vec2(score_marker_tx, score_marker_ty));
    uvBuf.push_back(glm::vec2(score_marker_tx + score_marker_tw, score_marker_ty + score_marker_th));
-   
+
+/*   // Combo Streak Marker
+   posBuf.push_back(glm::vec2(combo_marker_x, combo_marker_h + combo_marker_y));
+   posBuf.push_back(glm::vec2(combo_marker_x + combo_marker_h, combo_marker_y));
+   uvBuf.push_back(glm::vec2(combo_marker_tx, combo_marker_ty));
+   uvBuf.push_back(glm::vec2(combo_marker_tx + combo_marker_tw, combo_marker_ty + combo_marker_th));
+*/   
    renderer = new Renderer2D("./textures/HUD.png");
    
    renderer->setNumElements(posBuf.size());

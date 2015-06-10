@@ -80,6 +80,15 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
 }
 
 void PlayerPhysicsComponent::accelerate(float time, float _accel) {
+	if (_accel > 0) {
+		if (++comboStreak >= 6) {
+			_accel *= 3;
+			resetComboStreak();
+		}
+	}
+	else {
+		resetComboStreak();
+	}
    accel = _accel;
    accel_time = time;
 }
