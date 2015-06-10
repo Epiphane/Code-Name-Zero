@@ -1,8 +1,10 @@
 ### BEATMAP FILE STRUCTURE                             ###
 ### Line 1 - SONG TITLE                                ###
 ### Line 2 - SONG BPM                                  ###
-### Line 3 - 6 digits to make track curviness equation ###
-### Line 4+ - The final beat map                       ###
+### Line 3 - 1 float to determine when curves start    ###
+### Line 4 - 7 floats to make track magnitude equation ###
+### Line 5 - 7 floats to make track frequency equation ###
+### Line 6+ - The final beat map                       ###
 ##########################################################
 
 
