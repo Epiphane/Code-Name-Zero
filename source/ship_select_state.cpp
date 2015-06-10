@@ -18,9 +18,15 @@ void startLevel();
 void modelCarouselLeft();
 void modelCarouselRight();
 
+ShipModel *currentShipModel;
+
 ShipSelect *ShipSelect::currentInstance;
 ShipSelect::ShipSelect() : StaticState("ship_select_background") {
    currentInstance = this;
+   
+   helper = RendererText::instance();
+   boxRenderer = new Renderer2D("./textures/darkbluebg.png", true, 0.5f);
+   renderBox();
    
    camera_setPosition(glm::vec3(0, 1, -10));
    camera_lookAt(glm::vec3(0, 0, 0));
@@ -37,7 +43,22 @@ ShipSelect::ShipSelect() : StaticState("ship_select_background") {
       carouselTransforms.push_back(glm::mat4(1.0f));
       addObject(ship);
    }
+}
+
+void ShipSelect::renderBox() {
+   std::vector<glm::vec2> positions, uvs;
+   positions.push_back(glm::vec2(0.30, 0.9));
+   positions.push_back(glm::vec2(0.93, 0.2));
+   uvs.push_back(glm::vec2(0));
+   uvs.push_back(glm::vec2(1));
    
+   std::vector<float> opacities;
+   opacities.push_back(1);
+   opacities.push_back(1);
+   
+   boxRenderer->bufferData(Opacities, opacities);
+   boxRenderer->bufferData(Vertices, positions);
+   boxRenderer->bufferData(UVs, uvs);
 }
 
 void ShipSelect::update(float dt) {
@@ -48,6 +69,7 @@ void ShipSelect::update(float dt) {
    currentShipRotation += 60.0f * dt;
 
    ships[currentShip]->transform(glm::rotate(glm::mat4(1.0f), currentShipRotation, glm::vec3(0.0f, 1.0f, 0.0f)));
+   currentShipModel = shipManager->getModel(currentShip);
    
    float carouselTargetRotation = currentShip * -360 / MAX_SHIPS;
    carouselRotation += (carouselTargetRotation - carouselRotation) / 4;
@@ -56,8 +78,23 @@ void ShipSelect::update(float dt) {
       
       ships[i]->transform(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f)));
       ships[i]->transform(glm::rotate(glm::mat4(1.0f), rotationDegrees, glm::vec3(0.0f, 1.0f, 0.0f)));
-      //ships[i]->transform(glm::translate(glm::mat4(1.0f), glm::vec3(3.5f, 0.0f, 0.0f)));
    }
+   
+   //display ship information
+   helper->clearAllText();
+   helper->addText(glm::vec2(0.6, 0.8), currentShipModel->getFileName(), glm::vec2(0.075), 1.0f);
+   helper->addText(glm::vec2(0.6, 0.70), "Maker- " + currentShipModel->getMakerName(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.6, 0.65), "Engine- " + currentShipModel->getEngineName(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.6, 0.60), "Weight- " + currentShipModel->getWeight(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.6, 0.55), "Acceleration- " + std::to_string((int) (currentShipModel->getAccFactor() * 100)) + " Percent", glm::vec2(0.04), 1.0f);
+   
+   helper->updateBuffers();
+}
+
+void ShipSelect::render(float dt) {
+   this->StaticState::render(dt);
+   helper->render();
+   boxRenderer->render(glm::mat4(1.0f));
 }
 
 void ShipSelect::start() {
@@ -85,7 +122,12 @@ void ShipSelect::rotate(bool right) {
    }
 }
 
+void ShipSelect::clearText() {
+   helper->clearAllText();
+}
+
 void startLevel() {
+   ShipSelect::currentInstance->clearText();
    setState(new LoadingScreen(ShipSelect::currentInstance->getCurrentShip()));
 }
 

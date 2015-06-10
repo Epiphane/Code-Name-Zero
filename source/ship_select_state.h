@@ -13,9 +13,13 @@
 #include "ship_manager.h"
 #include "game_object.h"
 #include "static_state.h"
+#include "rendererText.h"
 
 class ShipSelect : public StaticState {
 private:
+   RendererText *helper;
+   Renderer2D *boxRenderer;
+   
    std::vector<std::string> levelNames;
    ShipManager *shipManager;
    
@@ -25,15 +29,19 @@ private:
    std::vector<shared_ptr<GameObject>> ships;
    std::vector<glm::mat4> carouselTransforms;
    
+   void renderBox();
+   
 public:
    static ShipSelect *currentInstance;
    int getCurrentShip() { return currentShip; }
    void rotate(bool right);
+   void clearText();
    
    ShipSelect();
    
    void start();
    void update(float dt);
+   void render(float dt);
    
    std::string getLevelName();
 };

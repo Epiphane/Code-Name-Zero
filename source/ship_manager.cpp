@@ -28,7 +28,7 @@ ShipManager::ShipManager() {
    two->setEngineName("CY97-X4x1");
    two->setMakerName("Abinus Company");
    two->setWeight("1010 kg");
-   two->setAccFactor(1.25f);
+   two->setAccFactor(1.20f);
    
    models[1] = two;
    
@@ -46,10 +46,10 @@ ShipManager::ShipManager() {
    four->addExhuast(glm::vec3 (-0.22, -1.0, -0.5));
    four->addExhuast(glm::vec3 (0, -1.0, -0.5));
    four->addExhuast(glm::vec3 (0.25, -1.0, -0.5));
-   four->setEngineName("N/A");
+   four->setEngineName("");
    four->setMakerName("Milk Do Shamshu");
    four->setWeight("1330 kg");
-   four->setAccFactor(1.00f);
+   four->setAccFactor(1.10f);
    
    models[3] = four;
    

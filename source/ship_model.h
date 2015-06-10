@@ -33,6 +33,9 @@ public:
    void setAccFactor(float accFactor) { this->accFactor = accFactor; }
    
    float getAccFactor() { return accFactor; }
+   std::string getEngineName() { return engineName; }
+   std::string getMakerName() { return makerName; }
+   std::string getWeight() { return weight; }
    
 private:
    std::string fileName;
