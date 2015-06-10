@@ -48,16 +48,14 @@ void TutorialState::TextEvent::update(float current_beat, TutorialState *state) 
    }
 
    for (int i = buffer_index; i < buffer_index + 2 * length; i++)
-      state->opacities[i] = opacity;
+      state->helper->opacities[i] = opacity;
 }
 
 TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, playership) {
-   helper = new Renderer2D("./textures/speed_font.png", true, 0);
+   helper = RendererText::instance();
 
    events.clear();
-   positions.clear();
-   uvs.clear();
-   opacities.clear();
+   helper->clearAllText();
 
    addTextEvent(new TextEvent(8, 18, 4, 8), glm::vec2(0, 0.5f), "Hello, Commander.");
    addTextEvent(new TextEvent(16, 18, 8, 8), glm::vec2(0, 0.25f), "Welcome to RGB-Zero.");
@@ -71,9 +69,7 @@ TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, 
    addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try it now");
    addTextEvent(new TextEvent(54, 72, 2, 4), glm::vec2(0, 0.25f), "Press \5");
 
-   helper->bufferData(Vertices, positions);
-   helper->bufferData(UVs, uvs);
-   helper->bufferData(Opacities, opacities);
+   helper->updateBuffers();
 }
 
 void TutorialState::send(std::string message, void *data) {
@@ -107,28 +103,10 @@ void TutorialState::send(std::string message, void *data) {
 }
 
 void TutorialState::addTextEvent(TutorialState::TextEvent *e, glm::vec2 topLeft, std::string message) {
-   e->setStringInfo(positions.size(), message.length());
+   e->setStringInfo(helper->positions.size(), message.length());
    events.push_back(e);
 
-   const glm::vec2 font_size(0.16f);
-   const float font_spacing = font_size.x / 2.0f;
-
-   topLeft.x -= float(message.length()) * font_spacing / 2;
-   topLeft.y -= font_size.y / 2;
-   for (int i = 0; i < message.length(); i++) {
-      // Space out capital letters a bit more
-      if (message[i] >= 'A' && message[i] <= 'Z' && i > 0)
-         topLeft.x += 0.01f;
-
-      positions.push_back(topLeft + glm::vec2(0, font_size.y));
-      positions.push_back(topLeft + glm::vec2(font_size.x, 0));
-      uvs.push_back(characterUV(message[i]));
-      uvs.push_back(characterUV(message[i]) + glm::vec2(1.0f / 16.0f));
-      opacities.push_back(0);
-      opacities.push_back(0);
-
-      topLeft.x += font_spacing;
-   }
+   helper->addText(topLeft, message, glm::vec2(0.16f) ,0.0f);
 }
 
 void TutorialState::update(float dt) {
@@ -143,13 +121,11 @@ void TutorialState::update(float dt) {
       else
          it++;
    }
-   helper->bufferData(Vertices, positions);
-   helper->bufferData(UVs, uvs);
-   helper->bufferData(Opacities, opacities);
+   helper->updateBuffers();
 }
 
 void TutorialState::render(float dt) {
    InGameState::render(dt);
 
-   helper->render(glm::mat4(1));
+   helper->render();
 }

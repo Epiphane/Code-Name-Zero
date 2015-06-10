@@ -51,7 +51,7 @@ void State::updateRendererQueue() {
    rendererQueue.clear();
    Plane top, bottom, right, left, far, near;
    
-   if (DEBUG) {
+   if (PAUSED) {
       camMatrix = camera_savedMatrix();
    }
    
@@ -120,7 +120,7 @@ void State::render(float dt) {
    for(iterator = rendererQueue.begin(); iterator < rendererQueue.end(); iterator ++) {
       iterator->get()->render();
 
-      if (DEBUG)
+      if (PAUSED)
          iterator->get()->_debug_render();
    }
 }

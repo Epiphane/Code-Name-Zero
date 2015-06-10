@@ -14,7 +14,7 @@ ShipManager *ShipManager::instance() {
 }
 
 ShipManager::ShipManager() {
-   ShipModel *one = new ShipModel("Red Razelle/");
+   ShipModel *one = new ShipModel("Red Razelle");
    one->addExhuast(glm::vec3(0.05, -1.6, -0.5));
    one->setEngineName(" CY96-Z1x1");
    one->setMakerName("Cyber Stick, Inc.");
@@ -23,7 +23,7 @@ ShipManager::ShipManager() {
    
    models[0] = one;
    
-   ShipModel *two = new ShipModel("Sonic Phantom/");
+   ShipModel *two = new ShipModel("Sonic Phantom");
    two->addExhuast(glm::vec3 (0.05, -1.6, -0.5));
    two->setEngineName("CY97-X4x1");
    two->setMakerName("Abinus Company");
@@ -32,7 +32,7 @@ ShipManager::ShipManager() {
    
    models[1] = two;
    
-   ShipModel *three = new ShipModel("Wild Boar/");
+   ShipModel *three = new ShipModel("Wild Boar");
    three->addExhuast(glm::vec3 (-0.22, -1.66, -0.5));
    three->addExhuast(glm::vec3 (0.25, -1.66, -0.5));
    three->setEngineName("AM9021-Rx2");
@@ -42,7 +42,7 @@ ShipManager::ShipManager() {
    
    models[2] = three;
    
-   ShipModel *four = new ShipModel("Magic Seagull/");
+   ShipModel *four = new ShipModel("Magic Seagull");
    four->addExhuast(glm::vec3 (-0.22, -1.0, -0.5));
    four->addExhuast(glm::vec3 (0, -1.0, -0.5));
    four->addExhuast(glm::vec3 (0.25, -1.0, -0.5));
@@ -53,7 +53,7 @@ ShipManager::ShipManager() {
    
    models[3] = four;
    
-   ShipModel *five = new ShipModel("Little Wyvern/");
+   ShipModel *five = new ShipModel("Little Wyvern");
    five->addExhuast(glm::vec3 (-0.55, -1.50, -0.5));
    five->addExhuast(glm::vec3 (0.55, -1.50, -0.5));
    five->setEngineName("FGS-C024Mx2");

@@ -6,6 +6,7 @@
 //
 //
 #include <fstream>
+#include <random>
 #include <sys/stat.h>
 #include <math.h>
 #include "beatEventListener.h"
@@ -24,8 +25,18 @@ BeatEventListener::~BeatEventListener() {
    events.clear();
 }
 
-// Beat File Format:
-// <Beat# float>,<Object int[0-3]>,<Lane int[0-3]>,<Color int[0-3]>
+/******* BEAT FILE FORMAT *********/
+/*-------------------*/
+/* LINE | CONTENT    */
+/*-------------------*/
+// 1    | SONG NAME  //
+/*-------------------*/
+// 2    | SONG BPM   //
+/*-------------------*/
+// 3    | TRACK VALS //
+/*-------------------*/
+// 4+   | BEATMAP    //
+/******** END FILE ****************/
 
 void BeatEventListener::init(std::string filename, State *world) {
    struct stat buffer;
@@ -42,28 +53,49 @@ void BeatEventListener::init(std::string filename, State *world) {
    int totalBeats = floor((m->getLength()/1000.0f) * (bpm/60.0f));
    
    if (stat (filename.c_str(), &buffer) != 0) {
-      srand(time(NULL));
+      std::random_device device;
+      std::mt19937 gen(device());
+      std::bernoulli_distribution coin_flip(0.4);
       
-      // File does not exist, create randomly generated beatmap
+      beat = 5;
       while (beat < totalBeats) {
          Event e;
-         // TODO: Add stuff to State to set difficulty, then limit randFLoat by that value.
          beat += (rand()%4) + 1;
-         e.object = rand()%TOTAL_OBSTACLES;
+         bool outcome = coin_flip(gen);
          
+         if (outcome){
+            e.object = WALL;
+         }
+         else {
+            e.object = METEOR;
+         }
+         
+         lane = rand()%TOTAL_OBSTACLES;
          if (e.object == WALL) {
             e.lane = GREEN;
          }
          else {
-            e.lane = rand()%TOTAL_OBSTACLES;
+            e.lane = lane;
          }
-         e.color = rand()%TOTAL_OBSTACLES;
-         // Spawn offset required since we do not want
+         e.color = lane;
+
          events.emplace(beat, e);
       }
    }
    else {
       std::ifstream infile(filename);
+      
+      std::string songName = "";
+      int bpm = 0;
+      int eq1, eq2, eq3, eq4, eq5, eq6 = 0;
+      
+      // INSIST that each beatmap has a song name.
+      assert(getline(infile, songName));
+      
+      // Get the BPM
+      infile >> bpm;
+      // Get the track wave equation values from the beatmap
+      infile >> eq1 >> eq2 >> eq3 >> eq4 >> eq5 >> eq6;
       
       while (infile >> beat >> obj >> lane >> color) {
          if (beat <= totalBeats) {

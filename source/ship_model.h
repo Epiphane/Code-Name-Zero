@@ -19,7 +19,7 @@ using namespace std;
 
 class ShipModel {
 public:
-   ShipModel(std::string name) { fileName = "models/" + name; }
+   ShipModel(std::string name) { fileName = name; }
    
    void addExhuast(glm::vec3 pos);
    std::string getFileName() { return fileName; }

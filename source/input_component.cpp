@@ -19,7 +19,7 @@ const float PLAYER_SPEED = 100;
 void PlayerInputComponent::update(GameObject *obj) {
    PlayerPhysicsComponent *movement = dynamic_cast<PlayerPhysicsComponent *>(obj->getPhysics());
    if (movement != NULL) {
-      if (!DEBUG) {
+      if (!PAUSED) {
          Track currentTrack = getTrackFromLatPos(obj->getPosition().x);
          if ((input_keyDown(GLFW_KEY_LEFT) || input_keyDown(GLFW_KEY_A)) && currentTrack != BLUE) {
             int nextLatPos = (currentTrack == GREEN) ? -1 : 0;
