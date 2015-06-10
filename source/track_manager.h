@@ -41,6 +41,11 @@ private:
    std::vector<glm::mat4> tracks;
    void addTrack();
 
+   // Track Curve Equation Setup
+   float curveBegin = 0;
+   float mag[7] = {};
+   float frq[7] = {};
+
 public:
    TrackManager();
 
@@ -50,6 +55,10 @@ public:
    glm::mat4 translate(glm::vec3 position);
    float nextTrackAngle(int track_number);
    
+   void initCurveEq(float startCurves,
+                    float mag1, float mag2, float mag3, float mag4, float mag5, float mag6, float mag7,
+                    float frq1, float frq2, float frq3, float frq4, float frq5, float frq6, float frq7);
+
    void update(float dt, State *world);
    void render();
 };

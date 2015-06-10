@@ -33,9 +33,13 @@ BeatEventListener::~BeatEventListener() {
 /*-------------------*/
 // 2    | SONG BPM   //
 /*-------------------*/
-// 3    | TRACK VALS //
+// 3    | CURVE START//
 /*-------------------*/
-// 4+   | BEATMAP    //
+// 4    | MAG VALS   //
+/*-------------------*/
+// 5    | FREQ VALS  //
+/*-------------------*/
+// 6+   | BEATMAP    //
 /******** END FILE ****************/
 
 void BeatEventListener::init(std::string filename, State *world) {
@@ -87,16 +91,28 @@ void BeatEventListener::init(std::string filename, State *world) {
       
       std::string songName = "";
       int bpm = 0;
-      int eq1, eq2, eq3, eq4, eq5, eq6 = 0;
+
+      float percentDelay = 0;
+      float mag1, mag2, mag3, mag4, mag5, mag6, mag7 = 0;
+      float frq1, frq2, frq3, frq4, frq5, frq6, frq7 = 0;
       
       // INSIST that each beatmap has a song name.
       assert(getline(infile, songName));
       
       // Get the BPM
       infile >> bpm;
-      // Get the track wave equation values from the beatmap
-      infile >> eq1 >> eq2 >> eq3 >> eq4 >> eq5 >> eq6;
-      
+
+      // Percentage into the song that the curves start
+      infile >> percentDelay;
+      // Get the track wave magnitude equation values from the beatmap
+      infile >> mag1 >> mag2 >> mag3 >> mag4 >> mag5 >> mag6 >> mag7;
+      // Get the track wave frequency equation values from the beatmap
+      infile >> frq1 >> frq2 >> frq3 >> frq4 >> frq5 >> frq6 >> frq7;
+
+      TrackManager* tm = s->getTrackManager();
+      tm->initCurveEq(percentDelay,mag1,mag2,mag3,mag4,mag5,mag6,mag7,
+                                   frq1,frq2,frq3,frq4,frq5,frq6,frq7);
+
       while (infile >> beat >> obj >> lane >> color) {
          if (beat <= totalBeats) {
             Event e;

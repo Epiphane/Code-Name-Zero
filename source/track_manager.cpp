@@ -42,9 +42,9 @@ glm::mat4 TrackManager::getTransform(int track_number) {
 float TrackManager::nextTrackAngle(int track_number) {
    float angle = 0;
    float x = song_progress;
-   float magnitude = -471.81 * pow(x,6) + 1348.9 * pow(x,5) - 1387.4 * pow(x,4) + 606.06 * pow(x,3) - 100.84 * pow(x,2) + 5.2972 * x - 0.0016;
-   float freq = 147.83 * pow(x,6) - 491.38 * pow(x,5) + 601.78 * pow(x,4) - 329.06 * pow(x,3) + 76.725 * pow(x,2) - 5.5047 * x + 1.0101;
-   if (song_progress > 0.27f) // Right after intro
+   float magnitude = mag[0] * pow(x, 6) + mag[1] * pow(x, 5) + mag[2] * pow(x, 4) + mag[3] * pow(x, 3) + mag[4] * pow(x, 2) + mag[5] * x + mag[6];
+   float freq = frq[0] * pow(x, 6) + frq[1] * pow(x, 5) + frq[2] * pow(x, 4) + frq[3] * pow(x, 3) + frq[4] * pow(x, 2) + frq[5] * x + frq[6];
+   if (song_progress > curveBegin) // Right after intro
       angle = magnitude * (sinf(freq * (track_number / 10.0f)) + 0.73 * cosf(freq * (track_number / 10.0f)));
    return angle;
 }
@@ -169,4 +169,27 @@ void TrackManager::render() {
    }
 
    COMPUTE_BENCHMARK(25, "Track render: ", true)
+}
+
+void TrackManager::initCurveEq(float startCurves,
+   float mag1, float mag2, float mag3, float mag4, float mag5, float mag6, float mag7,
+   float frq1, float frq2, float frq3, float frq4, float frq5, float frq6, float frq7) {
+
+   curveBegin = startCurves;
+
+   mag[0] = mag1;
+   mag[1] = mag2;
+   mag[2] = mag3;
+   mag[3] = mag4;
+   mag[4] = mag5;
+   mag[5] = mag6;
+   mag[6] = mag7;
+
+   frq[0] = frq1;
+   frq[1] = frq2;
+   frq[2] = frq3;
+   frq[3] = frq4;
+   frq[4] = frq5;
+   frq[5] = frq6;
+   frq[6] = frq7;
 }
