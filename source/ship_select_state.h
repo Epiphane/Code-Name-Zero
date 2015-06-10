@@ -14,10 +14,12 @@
 #include "game_object.h"
 #include "static_state.h"
 #include "rendererText.h"
+#include "rendererRatings.h"
 
 class ShipSelect : public StaticState {
 private:
    RendererText *helper;
+   RendererRatings *ratingsRenderer;
    Renderer2D *boxRenderer;
    
    std::vector<std::string> levelNames;
@@ -30,12 +32,13 @@ private:
    std::vector<glm::mat4> carouselTransforms;
    
    void renderBox();
+   void rateShipAccDecc(float factor, glm::vec2 start_position);
    
 public:
    static ShipSelect *currentInstance;
    int getCurrentShip() { return currentShip; }
    void rotate(bool right);
-   void clearText();
+   void clearAllRendered();
    
    ShipSelect();
    

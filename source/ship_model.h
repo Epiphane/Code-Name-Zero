@@ -31,8 +31,10 @@ public:
    void setEngineName(std::string name) { engineName = name; }
    void setWeight(std::string weight) { this->weight = weight; }
    void setAccFactor(float accFactor) { this->accFactor = accFactor; }
+   void setDeccFactor(float deccFactor) { this->deccFactor = deccFactor; }
    
    float getAccFactor() { return accFactor; }
+   float getDeccFactor() { return deccFactor; }
    std::string getEngineName() { return engineName; }
    std::string getMakerName() { return makerName; }
    std::string getWeight() { return weight; }
@@ -47,6 +49,7 @@ private:
    std::string weight;
    
    float accFactor;
+   float deccFactor;
    
 };
 
