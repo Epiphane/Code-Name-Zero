@@ -1,10 +1,11 @@
 ### BEATMAP FILE STRUCTURE                             ###
 ### Line 1 - SONG TITLE                                ###
 ### Line 2 - SONG BPM                                  ###
-### Line 3 - 1 float to determine when curves start    ###
-### Line 4 - 7 floats to make track magnitude equation ###
-### Line 5 - 7 floats to make track frequency equation ###
-### Line 6+ - The final beat map                       ###
+### Line 3 - SONG LENGTH (in seconds)                  ###
+### Line 4 - 1 float to determine when curves start    ###
+### Line 5 - 7 floats to make track magnitude equation ###
+### Line 6 - 7 floats to make track frequency equation ###
+### Line 7+ - The final beat map                       ###
 ##########################################################
 
 
@@ -33,7 +34,10 @@ Lane/Color: {
 ### EXAMPLE BEATMAP ###
 My Song
 120
-1 2 3 4 5 6
+200
+0.05
+1.3 2.2 3.5 42.2 5.01 6.2
+6.009 5.232 4.44 3.14 2.42 1.0
 4 1 2 2
 7 0 1 1
 8 0 0 0
