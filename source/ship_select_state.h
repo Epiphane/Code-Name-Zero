@@ -25,8 +25,8 @@ private:
    std::vector<std::string> levelNames;
    ShipManager *shipManager;
    
-   int currentShip = 0;
-   float carouselRotation = 0;
+   int currentShip = 4;
+   float carouselRotation = -288;
    float currentShipRotation = 0.0f;
    std::vector<shared_ptr<GameObject>> ships;
    std::vector<glm::mat4> carouselTransforms;

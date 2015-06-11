@@ -21,8 +21,6 @@ void startLevel();
 void modelCarouselLeft();
 void modelCarouselRight();
 
-ShipModel *currentShipModel;
-
 ShipSelect *ShipSelect::currentInstance;
 ShipSelect::ShipSelect() : StaticState("ship_select_background", audio_load_music("./audio/RGBZeroMenu.mp3", 135, true)) {
    currentInstance = this;
@@ -80,7 +78,7 @@ void ShipSelect::update(float dt) {
    currentShipRotation += 60.0f * dt;
    
    ships[currentShip]->transform(glm::rotate(glm::mat4(1.0f), currentShipRotation, glm::vec3(0.0f, 1.0f, 0.0f)));
-   currentShipModel = shipManager->getModel(currentShip);
+   ShipModel *currentShipModel = shipManager->getModel(currentShip);
    
    float carouselTargetRotation = currentShip * -360 / MAX_SHIPS;
    carouselRotation += (carouselTargetRotation - carouselRotation) / 4;
