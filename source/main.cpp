@@ -227,7 +227,7 @@ int main(int argc, char **argv) {
    shaders_init();
    audio_init();
 
-   nextState = new TitleScreen();
+   nextState = new LoadingScreen();
 
    RendererDebug::instance()->log("Hey there handsome \2", true);
    

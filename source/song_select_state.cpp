@@ -6,6 +6,7 @@
 //
 
 #include "song_select_state.h"
+#include "tutorial_state.h"
 #include "main.h"
 #include "ship_manager.h"
 #include <fstream>
@@ -129,8 +130,14 @@ void SongSelect::update(float dt) {
    currentLevel = allSongs[currentSong];
 }
 
+#define TUTORIAL_FILENAME "RGB_Tutorial"
 void nextState() {
-   setState(new LoadingScreen(shipIndex, *currentLevel));
+   if (currentLevel->songTitle == TUTORIAL_FILENAME) {
+      setState(new TutorialState(shipIndex));
+   }
+   else {
+      setState(new InGameState(currentLevel->songTitle, currentLevel->bpm, shipIndex));
+   }
 }
 
 void scrollUp() {

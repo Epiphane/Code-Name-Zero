@@ -45,13 +45,10 @@ public:
 class LoadingScreen : public StaticState {
 private:
    float fading_time, progress;
-   const int num_to_load = 11;
+   const int num_to_load = 14;
    int num_loaded = -1;
-   int ship;
-   State *game = nullptr;
-   LevelInfo levelInfo;
 public:
-   LoadingScreen(int shipIndex, LevelInfo level);
+   LoadingScreen();
 
    void loadNext();
    
