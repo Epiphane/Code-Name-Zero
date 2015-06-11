@@ -16,8 +16,8 @@
 #include "ship_manager.h"
 
 
-#define ACCELERATION_AMT 0.75f
-#define DECELERATION_AMT 0.75f
+#define ACCELERATION_AMT 0.25f
+#define DECELERATION_AMT 0.35f
 
 void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    ObstacleCollisionComponent *occ = dynamic_cast<ObstacleCollisionComponent *>(other->getCollision());

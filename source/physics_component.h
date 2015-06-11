@@ -41,7 +41,7 @@ private:
    int comboStreak = 0;
 
 public:
-   static const int min_speed = 100, max_speed = 1400;
+   static const int min_speed = 300, max_speed = 1400;
    virtual void update(GameObject *obj, State *world, float dt);
    
    void setLatPos(float pos) { lat_destination = pos * 4; }
