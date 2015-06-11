@@ -37,7 +37,7 @@ void nextState();
 void scrollDown();
 void scrollUp();
 
-SongSelect::SongSelect(int shipndx) : StaticState("level_select_screen") {
+SongSelect::SongSelect(int shipndx) : StaticState("level_select_screen", audio_load_music("./audio/RGBZeroMenu.mp3", 135, true)) {
    shipIndex = shipndx;
    
    helper = RendererText::instance();
