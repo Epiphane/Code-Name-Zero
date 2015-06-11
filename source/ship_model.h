@@ -28,7 +28,7 @@ private:
    //fun misc. facts
    std::string makerName;
    std::string engineName;
-   std::string boost;
+   float boost;
    int weight;
    int streakNumber;
 
@@ -47,7 +47,7 @@ public:
    void setWeight(int weight) { this->weight = weight; }
    void setAccFactor(float accFactor) { this->accFactor = accFactor; }
    void setStreakNumber(int streak_number) { this->streakNumber = streak_number; }
-   void setBoost(std::string boost) { this->boost = boost; }
+   void setBoost(float boost) { this->boost = boost; }
    
    std::string getFileName() { return fileName; }
    float getAccFactor() { return accFactor; }
@@ -55,9 +55,9 @@ public:
    std::string getMakerName() { return makerName; }
    int getWeight() { return weight; }
    int getStreakNumber() { return streakNumber; }
-   std::string getBoostEffect() { return boost; }
 
    std::string getFontString();
+   float getBoostEffect() { return boost; }
 };
 
 #endif /* defined(__RGBZero__ship_model__) */

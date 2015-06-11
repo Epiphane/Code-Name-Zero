@@ -6,6 +6,9 @@
 //
 //
 
+#include <iomanip>
+#include <sstream>
+
 #include "ship_select_state.h"
 #include "static_state.h"
 #include "in_game_state.h"
@@ -62,6 +65,13 @@ void ShipSelect::renderBox() {
    boxRenderer->bufferData(UVs, uvs);
 }
 
+std::string to_string_with_precision(float a_value, const int n = 6)
+{
+   std::ostringstream out;
+   out << std::setprecision(n) << a_value;
+   return out.str();
+}
+
 void ShipSelect::update(float dt) {
    for (int i = 0; i < MAX_SHIPS; i++) {
       ships[i]->clearModel();
@@ -93,7 +103,7 @@ void ShipSelect::update(float dt) {
    helper->addText(glm::vec2(0.47, 0.25), "Acceleration- ", glm::vec2(0.04), 1.0f);
    rateShipAcc(currentShipModel->getAccFactor(), glm::vec2(0.67, 0.23));
    helper->addText(glm::vec2(0.55, 0.20), "Boost Streak- " + std::to_string(currentShipModel->getStreakNumber()), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.55, 0.15), "Boost- " + currentShipModel->getBoostEffect(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.55, 0.15), "Boost- " + to_string_with_precision(currentShipModel->getBoostEffect(), 3) + "x", glm::vec2(0.04), 1.0f);
    
    helper->updateBuffers();
    ratingsRenderer->updateBuffers();

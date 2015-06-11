@@ -9,6 +9,9 @@
 #ifndef __Project__physics_component__
 #define __Project__physics_component__
 
+
+#include "ship_model.h"
+
 class GameObject;
 class State;
 
@@ -44,8 +47,8 @@ public:
    void setLatPos(float pos) { lat_destination = pos * 4; }
    float getLatPos() { return lat_destination; }
 
-   void accelerate(float time, float accel = 1);
-   void decelerate(float time, float decel = 1);
+   void accelerate(ShipModel *playerShip, float time, float accel = 1);
+   void decelerate(ShipModel *playerShip, float time, float decel = 1);
 
    float getSpeed() { return speed; }
    float getAccel() { return accel; }

@@ -31,6 +31,9 @@
 
 #define Z_EPSILON 5.0
 
+ShipModel* playerShip;
+
+
 void toggleDebug() {
    PAUSED = !PAUSED;
    
@@ -42,7 +45,7 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    State::State();
    
    playerShipIndex = player_ship;
-   ShipModel* playerShip = ShipManager::instance()->getModel(player_ship);
+   playerShip = ShipManager::instance()->getModel(player_ship);
    
    // Move camera
    camera_init(glm::vec3(0, 2, 0), glm::vec3(0, 2, -10));
@@ -145,7 +148,7 @@ void InGameState::update(float dt) {
       while (!obstacleLists[i].empty() && obstacleLists[i].front()->isDead()) {
          // Decelerate player for missing an object
          if (obstacleLists[i].begin()->get()->getCollision() != nullptr)
-            player_movement->decelerate(2, 0.75f);
+            player_movement->decelerate(playerShip, 2, 0.75f);
          
          obstacleLists[i].erase(obstacleLists[i].begin());
       }

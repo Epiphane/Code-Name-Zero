@@ -79,10 +79,10 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    }
 }
 
-void PlayerPhysicsComponent::accelerate(float time, float _accel) {
+void PlayerPhysicsComponent::accelerate(ShipModel *playerShip, float time, float _accel) {
 	if (_accel > 0) {
-		if (++comboStreak >= 6) {
-			_accel *= 3;
+		if (++comboStreak >= playerShip->getStreakNumber()) {
+			_accel *= playerShip->getBoostEffect();
 			resetComboStreak();
 		}
 	}
@@ -93,6 +93,6 @@ void PlayerPhysicsComponent::accelerate(float time, float _accel) {
    accel_time = time;
 }
 
-void PlayerPhysicsComponent::decelerate(float time, float _decel) {
-   accelerate(time, -_decel);
+void PlayerPhysicsComponent::decelerate(ShipModel *playerShip, float time, float _decel) {
+   accelerate(playerShip, time, -_decel);
 }
