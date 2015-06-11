@@ -44,6 +44,8 @@ private:
    unsigned long score;
    
    int playerShipIndex;
+   
+   bool game_over = false;
 
    ShadowMap *shadowMap;
    SkyRenderer *skyRender;

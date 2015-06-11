@@ -126,8 +126,10 @@ void InGameState::send(std::string message, void *data) {
 }
 
 void InGameState::update(float dt) {
-   player_speed = player_movement->getSpeed();
-   score += player_speed * SCORE_MULT * dt;
+   if (!game_over) {
+      player_speed = player_movement->getSpeed();
+      score += player_speed * SCORE_MULT * dt;
+   }
 
    // Update all objects and the camera
    State::update(dt);
@@ -153,8 +155,10 @@ void InGameState::update(float dt) {
       }
    }
    
-   if (soundtrack->getProgress() >= 0.999) {
+   if (soundtrack->getProgress() >= 0.999 && !game_over) {
       setState(new ScoreState(this, level));
+      
+      game_over = true;
    }
    
    if (PAUSED) {

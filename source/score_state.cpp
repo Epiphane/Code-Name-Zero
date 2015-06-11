@@ -46,40 +46,35 @@ size_t write_score_data(void *buffer, size_t size, size_t nmemb, void *userp) {
    return size * nmemb;
 }
 
-bool send_score_request(std::vector<ScoreEntry> &scores, std::string level) {
+void send_score_request(std::string level) {
    response_length = 0;
-
+   
    std::string url = "http://thomassteinke.com/RGBZero/scores.php?level=" + level + "&amt=5";
    CURL *handle = curl_easy_init();
    curl_easy_setopt(handle, CURLOPT_URL, url.c_str());
    curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, write_score_data);
    CURLcode success = curl_easy_perform(handle);
+}
 
-   if (success == CURLE_OK) {
-      // Expect 5 score spaces in entries
-      std::stringstream stream(std::string(response_buffer), std::ios_base::in);
+bool parse_score_request(std::vector<ScoreEntry> &scores) {
+   // Expect 5 score spaces in entries
+   std::stringstream stream(std::string(response_buffer), std::ios_base::in);
 
-      std::string name;
-      std::string value;
-      std::string ship;
-      while (stream >> name >> value >> ship) {
-         ScoreEntry se;
-         se.name = name;
-         while (se.name.length() < MAX_NAME_LENGTH) se.name += ' ';
-         
-         se.value = value;
-         if (se.value.length() < MAX_SCORE_LENGTH) se.value.insert(0, MAX_SCORE_LENGTH - se.value.length(), ' ');
-         
-         std::replace(ship.begin(), ship.end(), '_', ' ');
-         se.ship = ship;
-         
-         scores.push_back(se);
-      }
+   std::string name;
+   std::string value;
+   std::string ship;
+   while (stream >> name >> value >> ship) {
+      ScoreEntry se;
+      se.name = name;
+      while (se.name.length() < MAX_NAME_LENGTH) se.name += ' ';
       
-      return true;
-   }
-   else {
-      return false;
+      se.value = value;
+      if (se.value.length() < MAX_SCORE_LENGTH) se.value.insert(0, MAX_SCORE_LENGTH - se.value.length(), ' ');
+      
+      std::replace(ship.begin(), ship.end(), '_', ' ');
+      se.ship = ship;
+      
+      scores.push_back(se);
    }
 }
 
@@ -103,9 +98,7 @@ ScoreState::ScoreState(State *game, std::string level) {
 
    helper->addText(glm::vec2(0.0, 0.75f), "HIGH SCORES", glm::vec2(0.15));
    //Retrieve top scores
-   if (!send_score_request(scores, level)) {
-      std::cerr << "Error getting scores" << std::endl;
-   }
+   parse_score_request(scores);
    
    // Retrieve the player's score
    InGameState *s = dynamic_cast<InGameState *>(game_state);
@@ -227,7 +220,7 @@ void ScoreState::pause() {
 }
 
 void ScoreState::update(float dt) {
-   //game_state->update(dt);
+   game_state->update(dt);
    
    if (nextScreen) {
       input_clear();

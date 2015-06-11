@@ -5,6 +5,7 @@
 //
 //
 
+#include "score_state.h"
 #include "song_select_state.h"
 #include "tutorial_state.h"
 #include "main.h"
@@ -169,7 +170,9 @@ void triggerShipLeave() {
 
 #define TUTORIAL_FILENAME "RGB_Tutorial"
 void SongSelect::toNextState() {
-   if (currentLevel->songTitle == TUTORIAL_FILENAME) {
+   input_set_callback(GLFW_KEY_SPACE, nullptr);
+   send_score_request(currentLevel->filename);
+   if (currentLevel->filename == TUTORIAL_FILENAME) {
       setState(new TutorialState(shipIndex));
    }
    else {

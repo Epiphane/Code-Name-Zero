@@ -23,6 +23,8 @@
 #define MAX_NAME_LENGTH 10
 #define MAX_SCORE_LENGTH 6
 
+void send_score_request(std::string level);
+
 struct ScoreEntry {
    std::string name; // Cannot be deliminated by space
    std::string value;
