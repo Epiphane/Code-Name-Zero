@@ -10,6 +10,7 @@
 #include <string>
 #include "level_info.h"
 
+
 LevelInfo::LevelInfo(std::string fn, std::string st, int beats, bool beatmap) {
    filename = fn;
    songTitle = st;

@@ -9,6 +9,9 @@
 #ifndef RGBZero_level_info_h
 #define RGBZero_level_info_h
 
+
+#define TUTORIAL_FILENAME "RGB_Tutorial"
+
 class LevelInfo {
 public:
    LevelInfo(std::string fn, std::string st, int beats, bool beatmap);

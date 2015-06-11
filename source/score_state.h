@@ -18,6 +18,7 @@
 #include "state.h"
 #include "input_manager.h"
 #include "in_game_state.h"
+#include "level_info.h"
 
 #define MAX_SCORE_ENTRY 5
 #define MAX_NAME_LENGTH 10
@@ -46,7 +47,7 @@ private:
    void saveToFile();
    
 public:
-   ScoreState(State *game, std::string level);
+   ScoreState(State *game, std::string level, LevelInfo *levelinfo);
    
    void update(float dt);
    void render(float dt);
