@@ -11,6 +11,7 @@
 
 #include "state.h"
 #include "audio_manager.h"
+#include "level_info.h"
 #include "renderer2D.h"
 
 class StaticState : public State {
@@ -48,8 +49,9 @@ private:
    int num_loaded = -1;
    int ship;
    State *game = nullptr;
+   LevelInfo levelInfo;
 public:
-   LoadingScreen(int shipIndex);
+   LoadingScreen(int shipIndex, LevelInfo level);
 
    void loadNext();
    

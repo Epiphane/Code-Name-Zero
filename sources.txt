@@ -35,6 +35,7 @@ set(HEADERS
    ship_select_state.h
    score_state.h
    pause_state.h
+   song_select_state.h
 
    bounds.h
    game_object.h
@@ -52,6 +53,7 @@ set(HEADERS
 
    ship_model.h
    ship_manager.h
+   level_info.h
 )
 
 # List all .c / .cpp files here
@@ -90,6 +92,7 @@ set(SOURCES
    ship_select_state.cpp
    score_state.cpp
    pause_state.cpp
+   song_select_state.cpp
 
    game_object.cpp
    graphics_component.cpp
@@ -106,7 +109,7 @@ set(SOURCES
 
    ship_model.cpp
    ship_manager.cpp
-
+   level_info.cpp
 )
 
 # List resources to copy to build directory
@@ -117,6 +120,7 @@ set(RESOURCES
    "textures"
    "audio"
    "beatmaps"
+   "songs.txt"
 )
 
 set(SHADERS
