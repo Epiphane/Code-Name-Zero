@@ -216,7 +216,7 @@ void InGameState::render(float dt) {
    // Render scene
    track_manager->render();
    State::render(dt);
-   visualizer->render();
+//   visualizer->render();
    COMPUTE_BENCHMARK(25, "Render elements time: ", true);
 
    glDisable(GL_DEPTH_TEST);
