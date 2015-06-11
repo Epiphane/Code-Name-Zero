@@ -64,7 +64,7 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    // Set up track manager
    track_manager = new TrackManager();
 
-   soundtrack = audio_load_music("./audio/" + level + ".mp3", bpm);
+   soundtrack = audio_load_music("./audio/" + level + ".mp3", bpm, false);
    
    visualizer = new AudioVisualizer(soundtrack);
    

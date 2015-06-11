@@ -24,7 +24,7 @@ void modelCarouselRight();
 ShipModel *currentShipModel;
 
 ShipSelect *ShipSelect::currentInstance;
-ShipSelect::ShipSelect() : StaticState("ship_select_background") {
+ShipSelect::ShipSelect() : StaticState("ship_select_background", audio_load_music("./audio/RGBZeroMenu.mp3", 135, true)) {
    currentInstance = this;
    
    helper = RendererText::instance();

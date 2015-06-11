@@ -10,17 +10,25 @@
 #define __RGBZero__static_state__
 
 #include "state.h"
+#include "audio_manager.h"
 #include "renderer2D.h"
 
 class StaticState : public State {
 protected:
    Renderer2D *renderer;
+
+   Music *soundtrack;
    
 public:
    StaticState(std::string background);
    StaticState(std::string background, float z);
+   StaticState(std::string background, Music *soundtrack);
+   StaticState(std::string background, Music *soundtrack, float z);
    Renderer2D *getRenderer() { return renderer; }
    void render(float dt);
+
+   void pause();
+   void unpause();
 };
 
 class TitleScreen : public StaticState {
@@ -28,7 +36,7 @@ private:
    static bool loading_screen_loaded;
 
 public:
-   TitleScreen() : StaticState("title_screen") {};
+   TitleScreen();
    
    void update(float dt);
 };

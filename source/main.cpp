@@ -227,18 +227,16 @@ int main(int argc, char **argv) {
    shaders_init();
    audio_init();
 
-   currentState = new TitleScreen();
-
-   currentState->start();
+   nextState = new TitleScreen();
 
    RendererDebug::instance()->log("Hey there handsome \2", true);
    
    double clock = glfwGetTime();
    INIT_BENCHMARK
    do {
-      assert(currentState != NULL);
       if (nextState != NULL) {
-         currentState->pause();
+         if (currentState != nullptr)
+            currentState->pause();
          
          currentState = nextState;
          if (!currentState->initialized)
@@ -248,6 +246,7 @@ int main(int argc, char **argv) {
          
          nextState = NULL;
       }
+      assert(currentState != NULL);
       
       double nextTime = glfwGetTime();
       if (nextTime - clock > SEC_PER_FRAME) {

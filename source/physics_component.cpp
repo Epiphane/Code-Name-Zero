@@ -10,6 +10,7 @@
 
 #include "main.h"
 #include "camera.h"
+#include "audio_manager.h"
 #include "physics_component.h"
 #include "game_object.h"
 #include "in_game_state.h"
@@ -84,7 +85,17 @@ void PlayerPhysicsComponent::accelerate(ShipModel *playerShip, float time, float
 		if (++comboStreak >= playerShip->getStreakNumber()) {
 			_accel *= playerShip->getBoostEffect();
 			resetComboStreak();
+
+         audio_play_sound("./audio/sfx/hit8.mp3");
 		}
+      else {
+         int hit = comboStreak * 8 / playerShip->getStreakNumber();
+         if (hit <= 0) {
+            hit = 1;
+         }
+
+         audio_play_sound("./audio/sfx/hit" + std::to_string(hit) + ".mp3");
+      }
 	}
 	else {
 		resetComboStreak();

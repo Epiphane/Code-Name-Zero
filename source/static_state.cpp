@@ -14,7 +14,7 @@
 #include "ship_manager.h"
 #include "ship_select_state.h"
 
-StaticState::StaticState(std::string background, float z) {
+StaticState::StaticState(std::string background, Music *s, float z) : soundtrack(s) {
    background = "./textures/" + background;
    if (aspect_ratio == 1.6f) {
       background += "_16_10.png";
@@ -39,7 +39,9 @@ StaticState::StaticState(std::string background, float z) {
    renderer->bufferData(UVs, uvs);
 }
 
-StaticState::StaticState(std::string background) : StaticState(background, 1.5) {};
+StaticState::StaticState(std::string background) : StaticState(background, nullptr, 1.5) {};
+StaticState::StaticState(std::string background, float z) : StaticState(background, nullptr, z) {};
+StaticState::StaticState(std::string background, Music *s) : StaticState(background, s, 1.5) {};
 
 void StaticState::render(float dt) {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -47,6 +49,20 @@ void StaticState::render(float dt) {
    renderer->render(glm::mat4(1));
    State::render(dt);
 }
+
+void StaticState::unpause() {
+   if (soundtrack) {
+      soundtrack->play();
+   }
+}
+
+void StaticState::pause() {
+   if (soundtrack) {
+      soundtrack->pause();
+   }
+}
+
+TitleScreen::TitleScreen() : StaticState("title_screen", audio_load_music("./audio/RGBZeroTitle.mp3", 145, true)) {};
 
 void TitleScreen::update(float dt) {
    if (input_keyDown(GLFW_KEY_SPACE)) {

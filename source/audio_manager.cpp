@@ -47,6 +47,11 @@ FMOD::ChannelGroup *sounds = nullptr;
 std::vector<Music *> musics;
 std::unordered_map<std::string, FMOD::Sound*> soundMap;
 
+float audio_latency = 0;
+float audio_getLatency() {
+   return audio_latency;
+}
+
 void audio_init() {
    soundMap.clear();
    
@@ -67,7 +72,23 @@ void audio_init() {
       return;
    }
    
-   check(audio_system->setDSPBufferSize(1024, 10), "buffer size set");
+   check(audio_system->setDSPBufferSize(256, 10), "buffer size set");
+
+   FMOD_RESULT result;
+   unsigned int blocksize;
+   int numblocks, samplerate;
+   float ms;
+
+   result = audio_system->getDSPBufferSize(&blocksize, &numblocks);
+   result = audio_system->getSoftwareFormat(&samplerate, 0, 0);
+
+   ms = (float)blocksize * 1000.0f / (float)samplerate;
+
+   audio_latency = ms * ((float)numblocks - 1.5f);
+
+   printf("Mixer blocksize        = %.02f ms\n", ms);
+   printf("Mixer Total buffersize = %.02f ms\n", ms * numblocks);
+   printf("Mixer Average Latency  = %.02f ms\n", ms * ((float)numblocks - 1.5f));
    
    if (!check(audio_system->init(MAX_CHANNELS, FMOD_INIT_NORMAL, nullptr), "audio system initialization", Fatal)) {
       audio_release();
@@ -113,12 +134,16 @@ FMOD::Sound *audio_load_sound(std::string fileName) {
       return nullptr;
    }
    
+   std::cout << "Loaded sound " << fileName << std::endl;
+
+   soundMap[fileName] = sound;
+
    return sound;
 }
 
-Music *audio_load_music(std::string fileName, Beat bpm) {
+Music *audio_load_music(std::string fileName, Beat bpm, bool looping) {
    FMOD::Sound *sound = audio_load_sound(fileName);
-   check(sound->setMode(FMOD_DEFAULT | FMOD_LOOP_OFF), "sound looping", Error);
+   check(sound->setMode(FMOD_DEFAULT | (looping ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF)), "sound looping", Error);
    check(sound->setLoopCount(-1), "sound->setLoopCount(-1)", Error);
    
    Music *music = new Music(sound, bpm);
@@ -157,7 +182,8 @@ void audio_play_sound(std::string fileName) {
    
    FMOD::Channel *channel;
    check(audio_system->playSound(sound, sounds, true, &channel), "sound play");
-   
+   check(channel->setVolume(0.20f), "Sound volume set");
+
    channel->setPaused(false);
 }
 
