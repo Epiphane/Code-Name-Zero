@@ -14,8 +14,6 @@
 #include "ship_manager.h"
 #include "ship_select_state.h"
 
-
-#define TUTORIAL_FILENAME "RGB_Tutorial"
 StaticState::StaticState(std::string background, Music *s, float z) : soundtrack(s) {
 
    background = "./textures/" + background;
@@ -73,7 +71,7 @@ void TitleScreen::update(float dt) {
    }
 }
 
-LoadingScreen::LoadingScreen(int shipIndex, LevelInfo level) : StaticState("loading_screen"), fading_time(0), progress(0), ship(shipIndex) , levelInfo(level) {};
+LoadingScreen::LoadingScreen() : StaticState("loading_screen"), fading_time(0), progress(0) {};
 
 void loadObstacleModel(std::string obstacle, std::string extension) {
    std::string baseDir = "models/obstacles/" + obstacle + "_" + extension + "/";
@@ -110,19 +108,13 @@ void LoadingScreen::loadNext() {
       loadObstacleModel("obstacle2", "red");
       break;
    case 9:
-      ShipManager::instance()->getModel(ship)->getModelRenderer();
-      break;
    case 10:
-         //      game = new InGameState("Mambo5", 174, 4);
-         //      game = new InGameState("BRODYQUEST", 190, 4);
-         if (levelInfo.filename == TUTORIAL_FILENAME) {
-            game = new TutorialState(ship);
-         } else {
-            game = new InGameState(levelInfo.filename,
-                                   levelInfo.bpm,
-                                   ship);
-         }
-      game->start();
+   case 11:
+   case 12:
+   case 13:
+      ShipManager::instance()->getModel(num_loaded - 9)->getModelRenderer();
+      break;
+   case 14:
       break;
    }
 
@@ -130,10 +122,6 @@ void LoadingScreen::loadNext() {
 }
 
 void LoadingScreen::update(float dt) {
-   if (game != nullptr) {
-      game->update(dt);
-   }
-   
    float progress = float(num_loaded) / num_to_load;
    if (progress == 1) {
       fading_time += dt;
@@ -145,7 +133,7 @@ void LoadingScreen::update(float dt) {
       renderer->bufferData(Opacities, opacities);
       
       if (fading_time >= 1) {
-         setState(game);
+         setState(new TitleScreen());
       }
    }
    else {
@@ -154,9 +142,5 @@ void LoadingScreen::update(float dt) {
 }
 
 void LoadingScreen::render(float dt) {
-   if (game != nullptr) {
-      //game->render(0);
-   }
-   
    StaticState::render(dt);
 }

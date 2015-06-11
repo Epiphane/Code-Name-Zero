@@ -85,6 +85,9 @@ bool send_score_request(std::vector<ScoreEntry> &scores, std::string level) {
 
 ScoreState::ScoreState(State *game, std::string level) {
    this->level = level;
+   
+   soundtrack = audio_load_music("./audio/RGBZeroScoreScreen.mp3", 115, true);
+   soundtrack->play();
 
    std::string name;
    std::string value;
@@ -213,6 +216,14 @@ void ScoreState::initializeVariables() {
    
    helper->clearAllText();
    input_clear();
+}
+
+void ScoreState::unpause() {
+   soundtrack->play();
+}
+
+void ScoreState::pause() {
+   soundtrack->stop();
 }
 
 void ScoreState::update(float dt) {

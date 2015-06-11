@@ -6,6 +6,7 @@
 //
 
 #include "song_select_state.h"
+#include "tutorial_state.h"
 #include "main.h"
 #include "ship_manager.h"
 #include <fstream>
@@ -166,8 +167,15 @@ void triggerShipLeave() {
    timeDoneSet = glfwGetTime();
 }
 
+#define TUTORIAL_FILENAME "RGB_Tutorial"
 void SongSelect::toNextState() {
-   setState(new LoadingScreen(shipIndex, *currentLevel));
+   if (currentLevel->songTitle == TUTORIAL_FILENAME) {
+      setState(new TutorialState(shipIndex));
+   }
+   else {
+      setState(new InGameState(currentLevel->filename,currentLevel->bpm, shipIndex));
+   }
+
 }
 
 void scrollUp() {

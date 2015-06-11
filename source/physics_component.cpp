@@ -6,6 +6,7 @@
 //
 //
 
+#include <noise.h>
 #include <glm/ext.hpp>
 
 #include "main.h"
@@ -20,7 +21,7 @@ void ObstaclePhysicsComponent::init(float travel_time) {
    sec_left = travel_time; // Milliseconds between spawn and hit
 }
 
-float CALIBRATION = 0.1f;
+float CALIBRATION = -0.045f;
 void ObstaclePhysicsComponent::update(GameObject *obj, State *world, float dt) {
    MovementComponent::update(obj, world, dt);
    
@@ -48,6 +49,10 @@ void MovementComponent::update(GameObject *obj, State *world, float dt) {
    }
 }
 
+#define SHIP_SHAKE_SCALE 0.05f
+noise::module::Perlin ship_shake;
+float ship_shake_t = 0;
+
 void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    if (accel_time > 0) {
       speed += accel * dt * 30;
@@ -61,7 +66,12 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    if (speed > max_speed) speed = max_speed;
 
    glm::vec3 pos = obj->getPosition();
-   pos.x += (lat_destination - pos.x) / 4;
+   ship_shake_t += dt;
+   double freq = speed / 30.0f;
+   ship_shake.SetFrequency(freq);
+   
+   pos.x += (lat_destination - pos.x) / (4 * (1/60.0f / dt));
+   pos.x += ship_shake.GetValue(ship_shake_t, 0, 0) * SHIP_SHAKE_SCALE;
    obj->setPosition(pos);
 
    float lean = -4.0f * (lat_destination - pos.x);

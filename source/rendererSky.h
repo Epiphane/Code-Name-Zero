@@ -23,12 +23,13 @@ class SkyRenderer{
 private:
    GLuint program;
    GLuint uInvProjMatrix, uInvViewMatrix, uLightDir, uViewport, uFramebufferResolution, uBrightness;
+   GLuint uMusicSamples;
    
 public:
    SkyRenderer();
    virtual ~SkyRenderer();
    
-   void render(glm::vec3 lightDirection, float brightness);
+   void render(glm::vec3 lightDirection, float brightness, float *samples);
 };
 
 

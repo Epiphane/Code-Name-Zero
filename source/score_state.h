@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 
+#include "audio_manager.h"
 #include "rendererText.h"
 #include "renderer2D.h"
 #include "state.h"
@@ -34,6 +35,8 @@ private:
    Renderer2D *icons;
    State *game_state;
    std::string level;
+   
+   Music *soundtrack;
 
    std::vector<ScoreEntry> scores;
    
@@ -45,6 +48,8 @@ public:
    
    void update(float dt);
    void render(float dt);
+   void unpause();
+   void pause();
 };
 
 #endif /* defined(__RGBZero__score_state__) */
