@@ -57,8 +57,8 @@ HUD::HUD() {
    // Combo Digits
    combo_digit_ndx = posBuf.size();
    for (int i = 0; i < MAX_COMBO_DIGITS; i++) {
-	   posBuf.push_back(glm::vec2(combo_marker_x + combo_marker_w * i, combo_marker_w + combo_marker_y));
-	   posBuf.push_back(glm::vec2(combo_marker_x + combo_marker_w * i + combo_marker_h, combo_marker_y));
+	   posBuf.push_back(glm::vec2(combo_marker_x + combo_marker_w * (i % NUM_COMBO_IN_ROW), combo_marker_h + combo_marker_y - (i / NUM_COMBO_IN_ROW) * combo_marker_h));
+	   posBuf.push_back(glm::vec2(combo_marker_x + combo_marker_w * (i % NUM_COMBO_IN_ROW) + combo_marker_w, combo_marker_y - (i / NUM_COMBO_IN_ROW) * combo_marker_h));
 	   uvBuf.push_back(glm::vec2(combo_marker_tx, combo_marker_ty));
 	   uvBuf.push_back(glm::vec2(combo_marker_tx + combo_marker_tw, combo_marker_ty + combo_marker_th));
    }

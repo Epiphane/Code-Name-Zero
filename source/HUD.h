@@ -77,8 +77,10 @@ private:
    const int MAX_SPEED_DIGITS = 4;
    const int MAX_SPEED = 10000;
    const int MAX_SCORE_DIGITS = 7;
-   const int MAX_COMBO_DIGITS = 10;
    const int MAX_SCORE = 10000000;
+
+   const int MAX_COMBO_DIGITS = 50;
+   const int NUM_COMBO_IN_ROW = 6;
    
    static unsigned int mph_bar_ndx, mph_digit_ndx, score_digit_ndx, combo_digit_ndx;
    static float progress_bar_height;
