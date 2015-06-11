@@ -19,10 +19,11 @@
 
 class PauseState : public State {
 private:
-   RendererText *helper;
+   Renderer2D *helper;
    State *game_state;
    
    void initializeVariables();
+   void renderPauseScreen();
    
 public:
    PauseState(State *game);

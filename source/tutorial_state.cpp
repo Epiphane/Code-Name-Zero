@@ -127,5 +127,6 @@ void TutorialState::update(float dt) {
 void TutorialState::render(float dt) {
    InGameState::render(dt);
 
+   if (!PAUSED)
    helper->render();
 }
