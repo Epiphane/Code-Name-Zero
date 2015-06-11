@@ -18,8 +18,24 @@
 using namespace std;
 
 class ShipModel {
+private:
+   std::string fileName;
+   std::vector<glm::vec3> exhaustPositions;
+   
+   // Spot in the icon sheet
+   int icon_ndx;
+
+   //fun misc. facts
+   std::string makerName;
+   std::string engineName;
+   std::string boost;
+   int weight;
+   int streakNumber;
+
+   float accFactor;
+
 public:
-   ShipModel(std::string name) { fileName = name; }
+   ShipModel(std::string name, int icon_ndx) : fileName(name), icon_ndx(icon_ndx) {};
    
    void addExhuast(glm::vec3 pos);
    std::pair<std::vector<glm::vec3>::iterator, std::vector<glm::vec3>::iterator> getExhaustIterator();
@@ -40,19 +56,8 @@ public:
    int getWeight() { return weight; }
    int getStreakNumber() { return streakNumber; }
    std::string getBoostEffect() { return boost; }
-   
-private:
-   std::string fileName;
-   std::vector<glm::vec3> exhaustPositions;
-   
-   //fun misc. facts
-   std::string makerName;
-   std::string engineName;
-   std::string boost;
-   int weight;
-   int streakNumber;
-   
-   float accFactor;
+
+   std::string getFontString();
 };
 
 #endif /* defined(__RGBZero__ship_model__) */

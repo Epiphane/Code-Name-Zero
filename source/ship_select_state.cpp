@@ -48,8 +48,8 @@ ShipSelect::ShipSelect() : StaticState("ship_select_background") {
 
 void ShipSelect::renderBox() {
    std::vector<glm::vec2> positions, uvs;
-   positions.push_back(glm::vec2(0.30, 0.7));
-   positions.push_back(glm::vec2(0.93, 0.0));
+   positions.push_back(glm::vec2(0.20, 0.7));
+   positions.push_back(glm::vec2(0.97, 0.0));
    uvs.push_back(glm::vec2(0));
    uvs.push_back(glm::vec2(1));
    
@@ -85,15 +85,15 @@ void ShipSelect::update(float dt) {
    helper->clearAllText();
    ratingsRenderer->clearAllRatings();
    
-   helper->addText(glm::vec2(0.6, 0.55), currentShipModel->getFileName(), glm::vec2(0.075), 1.0f);
-   helper->addText(glm::vec2(0.6, 0.40), "Maker- " + currentShipModel->getMakerName(), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.6, 0.35), "Engine- " + currentShipModel->getEngineName(), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.55, 0.30), "Weight- " , glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.55, 0.55), currentShipModel->getFontString() + currentShipModel->getFileName(), glm::vec2(0.075), 1.0f);
+   helper->addText(glm::vec2(0.55, 0.40), "Maker- " + currentShipModel->getMakerName(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.55, 0.35), "Engine- " + currentShipModel->getEngineName(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.5, 0.30), "Weight- " , glm::vec2(0.04), 1.0f);
    rateShipWeight(currentShipModel->getWeight(), glm::vec2(0.67, 0.28));
-   helper->addText(glm::vec2(0.52, 0.25), "Acceleration- ", glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.47, 0.25), "Acceleration- ", glm::vec2(0.04), 1.0f);
    rateShipAcc(currentShipModel->getAccFactor(), glm::vec2(0.67, 0.23));
-   helper->addText(glm::vec2(0.6, 0.20), "Boost Streak- " + std::to_string(currentShipModel->getStreakNumber()), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.6, 0.15), "Boost- " + currentShipModel->getBoostEffect(), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.55, 0.20), "Boost Streak- " + std::to_string(currentShipModel->getStreakNumber()), glm::vec2(0.04), 1.0f);
+   helper->addText(glm::vec2(0.55, 0.15), "Boost- " + currentShipModel->getBoostEffect(), glm::vec2(0.04), 1.0f);
    
    helper->updateBuffers();
    ratingsRenderer->updateBuffers();
