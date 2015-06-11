@@ -26,7 +26,7 @@ void goToMainMenu() {
 }
 
 PauseState::PauseState(State *game) {
-   helper = RendererText::instance();
+   helper = new RendererText();//RendererText::instance();
    
    //Save any current text in the screen
    helper->saveBuffers();
