@@ -247,6 +247,7 @@ void InGameState::render(float dt) {
    // Render non-blurred elements
 
    hud->render(dt);
+//   printf("ComboStreak: %d\n", player_movement->getComboStreak());
    //visualizer->render();
    
    COMPUTE_BENCHMARK(25, "HUD time: ", true)

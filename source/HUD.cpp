@@ -11,7 +11,7 @@
 #include "HUD.h"
 #include "texture.h"
 
-unsigned int HUD::mph_bar_ndx, HUD::mph_digit_ndx, HUD::score_digit_ndx;
+unsigned int HUD::mph_bar_ndx, HUD::mph_digit_ndx, HUD::score_digit_ndx, HUD::combo_digit_ndx;
 float HUD::progress_bar_height;
 
 HUD::HUD() {
@@ -53,7 +53,16 @@ HUD::HUD() {
    posBuf.push_back(glm::vec2(score_marker_w + score_marker_x, score_marker_y));
    uvBuf.push_back(glm::vec2(score_marker_tx, score_marker_ty));
    uvBuf.push_back(glm::vec2(score_marker_tx + score_marker_tw, score_marker_ty + score_marker_th));
-   
+
+   // Combo Digits
+   combo_digit_ndx = posBuf.size();
+   for (int i = 0; i < MAX_COMBO_DIGITS; i++) {
+	   posBuf.push_back(glm::vec2(combo_marker_x + combo_marker_w * i, combo_marker_w + combo_marker_y));
+	   posBuf.push_back(glm::vec2(combo_marker_x + combo_marker_w * i + combo_marker_h, combo_marker_y));
+	   uvBuf.push_back(glm::vec2(combo_marker_tx, combo_marker_ty));
+	   uvBuf.push_back(glm::vec2(combo_marker_tx + combo_marker_tw, combo_marker_ty + combo_marker_th));
+   }
+  
    renderer = new Renderer2D("./textures/HUD.png");
    
    renderer->setNumElements(posBuf.size());
@@ -137,6 +146,18 @@ void HUD::update(float dt, InGameState *state) {
       score = score % digit_factor;
       digit_factor /= 10;
    }
+
+   //Update boost counter
+   PlayerPhysicsComponent *playerPhysics = (PlayerPhysicsComponent *)state->getPlayer()->getPhysics();
+   for (int i = 0; i < playerPhysics->getComboStreak(); i++) {
+	   uvBuf[combo_digit_ndx + 2 * i] = (glm::vec2(combo_marker_tx, combo_marker_ty));
+	   uvBuf[combo_digit_ndx + 2 * i + 1] = (glm::vec2(combo_marker_tx + combo_marker_tw, combo_marker_ty + combo_marker_th));
+   }
+   for (int i = playerPhysics->getComboStreak(); i < MAX_COMBO_DIGITS; i++) {
+	   uvBuf[combo_digit_ndx + 2 * i] = (glm::vec2(combo_marker_tx + combo_marker_tw, combo_marker_ty));
+	   uvBuf[combo_digit_ndx + 2 * i + 1] = (glm::vec2(combo_marker_tx + combo_marker_tw + combo_marker_tw, combo_marker_ty + combo_marker_th));
+   }
+
    
    renderer->bufferData(Vertices, posBuf);
    renderer->bufferData(UVs, uvBuf);

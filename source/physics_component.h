@@ -35,6 +35,7 @@ private:
    float lat_destination = 0;
    float accel, accel_time;
    float speed = 100;
+   int comboStreak = 0;
 
 public:
    static const int min_speed = 100, max_speed = 1400;
@@ -48,6 +49,9 @@ public:
 
    float getSpeed() { return speed; }
    float getAccel() { return accel; }
+
+   int getComboStreak() { return comboStreak; }
+   void resetComboStreak() { comboStreak = 0; }
 };
 
 class TrackPhysicsComponent : public PhysicsComponent {
