@@ -194,6 +194,8 @@ void ShipSelect::start() {
    input_set_callback(GLFW_KEY_SPACE, startLevel);
    input_set_callback(GLFW_KEY_A, modelCarouselLeft);
    input_set_callback(GLFW_KEY_D, modelCarouselRight);
+   input_set_callback(GLFW_KEY_LEFT, modelCarouselLeft);
+   input_set_callback(GLFW_KEY_RIGHT, modelCarouselRight);
    
 }
 
