@@ -117,13 +117,8 @@ void main() {
 
    vec3 tint = uShipTint;
    if (uPowerup != 0) {
-      if (mod(uPowerup, 0.2) > 0.1) {
-         if (uPowerup > 0) {
-            tint = 2 * tint + vec3(0.1);
-         }
-         if (uPowerup < 0) {
-            tint = tint / 2 - vec3(0.1);
-         }
+      if (mod(uPowerup, 0.2) > 0.1 && uPowerup < 0) {
+         tint = tint / 2 - vec3(0.1);
       }
    }
    fragColor += vec4(tint, 1);

@@ -89,6 +89,8 @@ ScoreState::ScoreState(State *game, std::string level) {
    std::string name;
    std::string value;
    int count = 0;
+
+   icons = new Renderer2D("./textures/ships.png");
    
    helper = RendererText::instance();
    
@@ -112,7 +114,10 @@ ScoreState::ScoreState(State *game, std::string level) {
    std::vector<ScoreEntry>::iterator it = scores.begin();
    while (it < scores.end()) {
       ScoreEntry se = *it;
-      helper->addText(glm::vec2(0.0, 0.6f - (count / 10.0f) * 1.3), entry_place[count] + se.name + " " + se.value, glm::vec2(0.14 - count / 100.0f));
+      ShipModel *ship = ShipManager::instance()->getModel(se.ship);
+
+      std::string entry = ship->getFontString() +entry_place[count] + se.name + " " + se.value;
+      helper->addText(glm::vec2(0.0, 0.6f - (count / 10.0f) * 1.3), entry, glm::vec2(0.14 - count / 100.0f));
       count++;
 
       long entry_value = std::atol(se.value.c_str());

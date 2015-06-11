@@ -26,6 +26,7 @@ public:
    ShipManager();
    
    ShipModel* getModel(int index) { return models[index]; }
+   ShipModel* getModel(std::string name);
    
 private:
    ShipModel* models[MAX_SHIPS];

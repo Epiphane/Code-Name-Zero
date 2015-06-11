@@ -13,6 +13,7 @@
 #include <string>
 
 #include "rendererText.h"
+#include "renderer2D.h"
 #include "state.h"
 #include "input_manager.h"
 #include "in_game_state.h"
@@ -30,6 +31,7 @@ struct ScoreEntry {
 class ScoreState : public State {
 private:
    RendererText *helper;
+   Renderer2D *icons;
    State *game_state;
    std::string level;
 
