@@ -94,7 +94,7 @@ void PlayerPhysicsComponent::accelerate(ShipModel *playerShip, float time, float
             hit = 1;
          }
 
-         audio_play_sound("./audio/sfx/hit" + std::to_string(hit) + ".mp3");
+         //audio_play_sound("./audio/sfx/hit" + std::to_string(hit) + ".mp3");
       }
 	}
 	else {

@@ -120,6 +120,7 @@ set(RESOURCES
    "textures"
    "audio"
    "beatmaps"
+   "songs.txt"
 )
 
 set(SHADERS

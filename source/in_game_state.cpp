@@ -214,9 +214,9 @@ void InGameState::render(float dt) {
    track_manager->render();
    State::render(dt);
    visualizer->render();
-   COMPUTE_BENCHMARK(25, "Render elements time: ", true)
-   
-   //glDisable(GL_DEPTH_TEST);
+   COMPUTE_BENCHMARK(25, "Render elements time: ", true);
+
+   glDisable(GL_DEPTH_TEST);
    for (int i = 0; i < NUM_TRACKS; i++) {
       std::vector<std::shared_ptr<GameObject>>::iterator it = obstacleLists[i].begin();
       while (it < obstacleLists[i].end()) {
@@ -224,7 +224,7 @@ void InGameState::render(float dt) {
          it ++;
       }
    }
-   //glEnable(GL_DEPTH_TEST);
+   glEnable(GL_DEPTH_TEST);
    COMPUTE_BENCHMARK(25, "Render outlines time: ", true);
    
    if (!PAUSED) {
