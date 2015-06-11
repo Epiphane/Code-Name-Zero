@@ -29,6 +29,10 @@ private:
    RendererText *helper;
    void initializeList();
    RendererRatings *ratingsRenderer;
+   void updateShipModel(float dt);
+   void updateRatings();
+   
+   void toNextState();
 };
 
 
