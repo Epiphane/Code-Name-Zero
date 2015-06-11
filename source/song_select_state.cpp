@@ -136,7 +136,7 @@ void nextState() {
       setState(new TutorialState(shipIndex));
    }
    else {
-      setState(new InGameState(currentLevel->songTitle, currentLevel->bpm, shipIndex));
+      setState(new InGameState(currentLevel->filename, currentLevel->bpm, shipIndex));
    }
 }
 
