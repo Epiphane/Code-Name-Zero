@@ -70,7 +70,7 @@ void PlayerPhysicsComponent::update(GameObject *obj, State *world, float dt) {
    double freq = speed / 30.0f;
    ship_shake.SetFrequency(freq);
    
-   pos.x += (lat_destination - pos.x) / 4;
+   pos.x += (lat_destination - pos.x) / (4 * (1/60.0f / dt));
    pos.x += ship_shake.GetValue(ship_shake_t, 0, 0) * SHIP_SHAKE_SCALE;
    obj->setPosition(pos);
 
