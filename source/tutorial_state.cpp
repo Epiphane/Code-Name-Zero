@@ -51,7 +51,7 @@ void TutorialState::TextEvent::update(float current_beat, TutorialState *state) 
       state->helper->opacities[i] = opacity;
 }
 
-TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, playership) {
+TutorialState::TutorialState(int playership, LevelInfo *levelinfo) : InGameState("RGB_Tutorial", 200, playership, levelinfo) {
    helper = new RendererText();
 
    events.clear();

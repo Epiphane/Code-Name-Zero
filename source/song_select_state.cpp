@@ -168,17 +168,17 @@ void triggerShipLeave() {
    timeDoneSet = glfwGetTime();
 }
 
-#define TUTORIAL_FILENAME "RGB_Tutorial"
+
 void SongSelect::toNextState() {
    input_set_callback(GLFW_KEY_SPACE, nullptr);
    send_score_request(currentLevel->filename);
    RendererText::instance()->clearAllText();
    RendererText::instance()->updateBuffers();
    if (currentLevel->filename == TUTORIAL_FILENAME) {
-      setState(new TutorialState(shipIndex));
+      setState(new TutorialState(shipIndex, currentLevel));
    }
    else {
-      setState(new InGameState(currentLevel->filename,currentLevel->bpm, shipIndex));
+      setState(new InGameState(currentLevel->filename,currentLevel->bpm, shipIndex, currentLevel));
    }
 
 }

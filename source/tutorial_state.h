@@ -11,6 +11,7 @@
 
 #include "rendererText.h"
 #include "in_game_state.h"
+#include "level_info.h"
 
 class TutorialState : public InGameState {
 private:
@@ -36,8 +37,9 @@ private:
    RendererText *helper;
    void addTextEvent(TextEvent *e, glm::vec2 topLeft, std::string message);
 
+   LevelInfo *levelInfo;
 public:
-   TutorialState(int playership);
+   TutorialState(int playership, LevelInfo *levelinfo);
 
    void update(float dt);
    void render(float dt);

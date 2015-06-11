@@ -20,6 +20,7 @@
 #include "track_enum.h"
 #include "particle_system.h"
 #include "ship_manager.h"
+#include "level_info.h"
 
 #define NUM_TRACKS 3
 
@@ -57,8 +58,10 @@ private:
 
    HUD *hud;
    std::vector<std::vector<std::shared_ptr<GameObject>>> obstacleLists;
+   
+   LevelInfo *levelInfo;
 public:
-   InGameState(std::string levelname, Beat bpm, int playership);
+   InGameState(std::string levelname, Beat bpm, int playership, LevelInfo *levelinfo);
    ~InGameState();
    
    void start();

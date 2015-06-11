@@ -10,12 +10,16 @@
 #include "tutorial_state.h"
 #include "main.h"
 #include "ship_select_state.h"
+#include "level_info.h"
 
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <curl/curl.h>
+
+
+LevelInfo *levelInfo;
 
 const char *entry_place[] = { "1st: ", "2nd: ", "3rd: ", "4th: ", "5th: " };
 ScoreEntry new_entry;
@@ -78,8 +82,9 @@ bool parse_score_request(std::vector<ScoreEntry> &scores) {
    }
 }
 
-ScoreState::ScoreState(State *game, std::string level) {
+ScoreState::ScoreState(State *game, std::string level, LevelInfo *levelinfo) {
    this->level = level;
+   levelInfo = levelinfo;
    
    soundtrack = audio_load_music("./audio/RGBZeroScoreScreen.mp3", 115, true);
    soundtrack->play();
@@ -249,7 +254,12 @@ void ScoreState::update(float dt) {
    } else if (retryLevel) {
       //TODO: set state to appropriate "level" it won't aways be tutorial
       initializeVariables();
-      setState(new TutorialState(playerShipIndex));
+      if (levelInfo->filename == TUTORIAL_FILENAME) {
+         setState(new TutorialState(playerShipIndex, levelInfo));
+      }
+      else {
+         setState(new InGameState(levelInfo->filename,levelInfo->bpm, playerShipIndex, levelInfo));
+      }
    } else if (madeHighScore) {
       for (int i = 0; i < lastRenderedName.length(); i++) helper->clearLastChar();
       
