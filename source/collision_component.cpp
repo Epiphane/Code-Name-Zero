@@ -26,10 +26,10 @@ void PlayerCollisionComponent::collide(GameObject *player, GameObject *other) {
    ShipModel* playerShip = ShipManager::instance()->getModel(this->shipIndex);
    
    if (occ->shouldAcceleratePlayer(getTrackFromLatPos(playerMovement->getLatPos()))) {
-      playerMovement->accelerate(ACCELERATION_AMT * playerShip->getAccFactor());
+      playerMovement->accelerate(playerShip, ACCELERATION_AMT * playerShip->getAccFactor());
    }
    else {
-      playerMovement->decelerate(DECELERATION_AMT * playerShip->getAccFactor());
+      playerMovement->decelerate(playerShip, DECELERATION_AMT * playerShip->getAccFactor());
    }
 }
 

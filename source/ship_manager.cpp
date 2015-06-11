@@ -37,7 +37,7 @@ ShipManager::ShipManager() {
    one->setWeight(1330);
    one->setAccFactor(1.05f);
    one->setStreakNumber(7);
-   one->setBoost("1.1x acceleration");
+   one->setBoost(5.25f);
    
    models[0] = one;
    
@@ -47,8 +47,8 @@ ShipManager::ShipManager() {
    two->setMakerName("Abinus Company");
    two->setWeight(1010);
    two->setAccFactor(1.20f);
-   two->setStreakNumber(50);
-   two->setBoost("Travels at light speed");
+   two->setStreakNumber(10);
+   two->setBoost(7.5f);
    
    models[1] = two;
    
@@ -60,7 +60,7 @@ ShipManager::ShipManager() {
    three->setWeight(2110);
    three->setAccFactor(0.90f);
    three->setStreakNumber(4);
-   three->setBoost("Doubles current speed");
+   three->setBoost(2.25f);
    
    models[2] = three;
    
@@ -72,8 +72,8 @@ ShipManager::ShipManager() {
    four->setMakerName("Milk Do Shamshu");
    four->setWeight(1330);
    four->setAccFactor(1.10f);
-   four->setStreakNumber(40);
-   four->setBoost("Doubles current score");
+   four->setStreakNumber(8);
+   four->setBoost(6.0f);
    
    models[3] = four;
    
@@ -85,7 +85,7 @@ ShipManager::ShipManager() {
    five->setWeight(1400);
    five->setAccFactor(1.00f);
    five->setStreakNumber(6);
-   five->setBoost("2x speed for 100 beats");
+   five->setBoost(4.5f);
    
    models[4] = five;
 }
