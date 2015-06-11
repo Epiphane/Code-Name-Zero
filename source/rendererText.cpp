@@ -7,8 +7,6 @@ std::vector<glm::vec2> saved_positions, saved_uvs;
 std::vector<float> saved_opacities;
 
 void RendererText::init() {
-   helper = new Renderer2D("./textures/speed_font.png", true, 0.0f);
-   
    GLenum error = glGetError();
    assert(error == 0);
    
@@ -18,6 +16,8 @@ void RendererText::init() {
 RendererText::RendererText() {
    if (!initialized)
       init();
+   
+   helper = new Renderer2D("./textures/speed_font.png", true, 0.0f);
    
    clearAllText();
 };

@@ -52,7 +52,7 @@ void TutorialState::TextEvent::update(float current_beat, TutorialState *state) 
 }
 
 TutorialState::TutorialState(int playership) : InGameState("RGB_Tutorial", 200, playership) {
-   helper = RendererText::instance();
+   helper = new RendererText();
 
    events.clear();
    helper->clearAllText();

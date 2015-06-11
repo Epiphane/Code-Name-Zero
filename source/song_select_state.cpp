@@ -50,7 +50,7 @@ SongSelect::SongSelect(int shipndx) : StaticState("level_select_screen", audio_l
    
    done = false;
    
-   helper = RendererText::instance();
+   helper = new RendererText();
    helper->clearAllText();
    ratingsRenderer = RendererRatings::instance();
    ratingsRenderer->clearAllRatings();
@@ -172,6 +172,8 @@ void triggerShipLeave() {
 void SongSelect::toNextState() {
    input_set_callback(GLFW_KEY_SPACE, nullptr);
    send_score_request(currentLevel->filename);
+   RendererText::instance()->clearAllText();
+   RendererText::instance()->updateBuffers();
    if (currentLevel->filename == TUTORIAL_FILENAME) {
       setState(new TutorialState(shipIndex));
    }

@@ -26,11 +26,10 @@ private:
    static bool initialized;
    void init();
    
-   RendererText();
-   
 public:
    static RendererText *instance();
    
+   RendererText();
    
    std::vector<glm::vec2> positions, uvs;
    std::vector<float> opacities;
