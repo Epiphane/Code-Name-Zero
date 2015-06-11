@@ -203,12 +203,15 @@ void InGameState::render(float dt) {
    }
    
    // Render DA SKY!
+   float samples[64];
+   soundtrack->getSamples(samples, 64);
+
    glm::vec4 sunLowAngle(-0.3f, 0.0f, -1.2f, 1.0f);
    float percent_done = (powf(soundtrack->getProgress() - 0.5f, 3.0f) + 0.125f) / 0.25f;
    float angle = 270.0f * percent_done - 45.0f;
    sun_rotation += (angle - sun_rotation) / 16;
    glm::vec3 sunAngle = glm::vec3(glm::rotate(sun_rotation, 0.0f, 0.0f, -1.0f) * sunLowAngle);
-   skyRender->render(sunAngle, brightness / 10);
+   skyRender->render(sunAngle, brightness / 10, samples);
 
    // Render scene
    track_manager->render();
