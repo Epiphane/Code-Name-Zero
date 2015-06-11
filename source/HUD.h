@@ -65,21 +65,22 @@ private:
    const float score_digit_x = score_marker_x + 2 * 318.0f / w_width;
    const float score_digit_y = score_marker_y + 2 * 10.0f / w_height;
 
-   const float combo_marker_th = 100.0f * 512.0f / HUD_TEXTURE_HEIGHT;
-   const float combo_marker_tw = 100.0f * 2048.0f / HUD_TEXTURE_WIDTH;
-   const float combo_marker_tx = 0.0f / HUD_TEXTURE_WIDTH;
-   const float combo_marker_ty = 128.0f / HUD_TEXTURE_HEIGHT;
+   const float combo_marker_th = 100.0f / HUD_TEXTURE_HEIGHT;
+   const float combo_marker_tw = 100.0f / HUD_TEXTURE_WIDTH;
+   const float combo_marker_tx = 854.0f / HUD_TEXTURE_WIDTH;
+   const float combo_marker_ty = 20.0f / HUD_TEXTURE_HEIGHT;
    const float combo_marker_w = 2 * combo_marker_tw * HUD_TEXTURE_WIDTH / w_width;
    const float combo_marker_h = combo_marker_w * (combo_marker_th * HUD_TEXTURE_HEIGHT) / (combo_marker_tw * HUD_TEXTURE_WIDTH);
-   const float combo_marker_x = 0.0f;
-   const float combo_marker_y = 0.0f;
+   const float combo_marker_x = -1.0f;
+   const float combo_marker_y = 1.0f - combo_marker_h;
 
    const int MAX_SPEED_DIGITS = 4;
    const int MAX_SPEED = 10000;
    const int MAX_SCORE_DIGITS = 7;
+   const int MAX_COMBO_DIGITS = 7;
    const int MAX_SCORE = 10000000;
    
-   static unsigned int mph_bar_ndx, mph_digit_ndx, score_digit_ndx;
+   static unsigned int mph_bar_ndx, mph_digit_ndx, score_digit_ndx, combo_digit_ndx;
    static float progress_bar_height;
    
    Renderer2D *renderer;
