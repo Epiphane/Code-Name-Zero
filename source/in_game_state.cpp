@@ -52,7 +52,8 @@ InGameState::InGameState(std::string levelname, Beat bpm, int player_ship) : lev
    player = std::make_shared<GameObject>(playerShip->getModelRenderer(),
                       player_movement,
                       new PlayerInputComponent,
-                      new PlayerCollisionComponent);
+                      new PlayerCollisionComponent(player_ship));
+   
    addObject(player);
    
    camera_follow(player, glm::vec3(0, 1, 7));

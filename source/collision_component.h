@@ -21,9 +21,9 @@ public:
 
 class PlayerCollisionComponent : public CollisionComponent {
 public:
-   PlayerCollisionComponent() : score(0) {};
+   PlayerCollisionComponent(int shipIndex) : score(0) { this->shipIndex = shipIndex; }
    
-   int score;
+   int score, shipIndex;
    void collide(GameObject *thisObj, GameObject *other);
 };
 
