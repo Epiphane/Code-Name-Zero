@@ -11,7 +11,9 @@ uniform vec4 uViewport;
 uniform vec2 uFramebufferResolution;
 uniform float uBrightness;
 
-out vec4 color;
+uniform float[64] uMusicSamples;
+
+out vec4 fragColor;
 
 const float intensity = 1.8;
 const float surfaceHeight = 0.99;
@@ -25,6 +27,11 @@ const float rayleighStrength = 0.139;
 const float rayleighCollectionPower = 0.81;
 const float mieCollectionPower = 0.39;
 const vec3 Kr = vec3(0.18867780436772762, 0.4978442963618773, 0.6616065586417131);
+
+float rand(vec2 co)
+{
+   return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
+}
 
 // Removes the translation component of a matrix
 mat4 removeTranslation(mat4 matrix) {
@@ -101,7 +108,7 @@ vec3 absorb(float dist, vec3 color, float factor) {
 void main() {
    vec3 eyeDir = getWorldNormal();
    float alpha = dot(eyeDir, uLightDir);
-//   float mieBrightness = uBrightness;
+   //   float mieBrightness = uBrightness;
    float mieStrength = uBrightness;
 
    float rayleighFactor = phase(alpha, RAYLEIGH_CONSTANT) * rayleighBrightness;
@@ -133,16 +140,49 @@ void main() {
       rayleighCollected *
       eyeExtinction *
       pow(eyeDepth, rayleighCollectionPower)
-   ) / float(stepCount);
+      ) / float(stepCount);
    mieCollected = (
       mieCollected *
-      eyeExtinction * 
+      eyeExtinction *
       pow(eyeDepth, mieCollectionPower)
-   ) / float(stepCount);
+      ) / float(stepCount);
 
-   color = vec4(
+   fragColor = vec4(
       spot * mieCollected +
       mieFactor * mieCollected +
       rayleighFactor * rayleighCollected
       , 1.0);
+
+   float size = 30.0;
+   float prob = 0.95;
+
+   vec2 fragCoord = (gl_FragCoord.xy - uViewport.xy) / uFramebufferResolution;
+   vec2 pos = floor(1.0 / size * fragCoord.xy);
+
+   float color = 0.0;
+   float starValue = rand(pos);
+   float xSample = 48 * fragCoord.x + 4;
+   int left = int(floor(xSample));
+   int right = left + 1;
+   if (right >= 64) {
+      right = 63;
+   }
+   
+   float mSample = mix(uMusicSamples[right], uMusicSamples[left], xSample - left) * 5;
+   if (starValue > prob)
+   {
+      vec2 center = size * pos + vec2(size, size) * 0.5;
+
+      float t = 0.9 + 0.2 * sin(mSample + (starValue - prob) / (1.0 - prob) * 45.0);
+
+      color = 1.0 - distance(fragCoord.xy, center) / (0.5 * size);
+      color = color * t / (abs(fragCoord.y - center.y)) * t / (abs(fragCoord.x - center.x));
+   }
+   else if (rand(fragCoord.xy) > 0.99)
+   {
+      float r = rand(fragCoord.xy);
+      color = mSample * r;
+   }
+
+   fragColor += vec4(vec3(color), 1.0);
 }

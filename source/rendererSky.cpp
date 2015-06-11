@@ -31,6 +31,7 @@ SkyRenderer::SkyRenderer() {
    uViewport = glGetUniformLocation(program, "uViewport");
    uFramebufferResolution = glGetUniformLocation(program, "uFramebufferResolution");
    uBrightness = glGetUniformLocation(program, "uBrightness");
+   uMusicSamples = glGetUniformLocation(program, "uMusicSamples");
    
    glGenBuffers(1, &vbo_verticies);
    glBindBuffer(GL_ARRAY_BUFFER, vbo_verticies);
@@ -49,7 +50,7 @@ SkyRenderer::~SkyRenderer() {
    glDeleteBuffers(1, &vbo_indices);
 }
 
-void SkyRenderer::render(glm::vec3 lightDirection, float brightness) {
+void SkyRenderer::render(glm::vec3 lightDirection, float brightness, float *samples) {
    glUseProgram(program);
    
    glm::mat4 InvView = glm::inverse(camera_getMatrix());
@@ -69,6 +70,8 @@ void SkyRenderer::render(glm::vec3 lightDirection, float brightness) {
    glUniform4fv(uViewport, 1, glm::value_ptr(ViewPort));
    glUniform3fv(uLightDir, 1, glm::value_ptr(normLightDirection));
    glUniform1f(uBrightness, brightness);
+
+   glUniform1fv(uMusicSamples, 64, samples);
    
    glBindBuffer(GL_ARRAY_BUFFER, vbo_verticies);
    glEnableVertexAttribArray(LOCATION_POSITION);
