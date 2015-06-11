@@ -48,6 +48,50 @@ void RendererText::addText(glm::vec2 topLeft, std::string message, glm::vec2 fon
    }
 }
 
+void RendererText::addLeftAlignedText(glm::vec2 topLeft, std::string message, glm::vec2 font_size, float start_opacity) {
+   const float font_spacing = font_size.x / 2.0f;
+   
+//   topLeft.x -= float(message.length()) * font_spacing;
+//   topLeft.y -= font_size.y;
+
+   
+   for (int i = 0; i < message.length(); i++) {
+      // Space out capital letters a bit more
+      if (message[i] >= 'A' && message[i] <= 'Z' && i > 0)
+         topLeft.x += 0.01f;
+      
+      positions.push_back(topLeft + glm::vec2(0, font_size.y));
+      positions.push_back(topLeft + glm::vec2(font_size.x, 0));
+      uvs.push_back(characterUV(message[i]));
+      uvs.push_back(characterUV(message[i]) + glm::vec2(1.0f / 16.0f));
+      opacities.push_back(start_opacity);
+      opacities.push_back(start_opacity);
+      
+      topLeft.x += font_spacing;
+   }
+}
+
+void RendererText::addRightAlignedText(glm::vec2 topLeft, std::string message, glm::vec2 font_size, float start_opacity) {
+   const float font_spacing = font_size.x / 2.0f;
+   
+   topLeft.x -= float(message.length()) * font_spacing;
+   
+   for (int i = 0; i < message.length(); i++) {
+      // Space out capital letters a bit more
+      if (message[i] >= 'A' && message[i] <= 'Z' && i > 0)
+         topLeft.x += 0.01f;
+      
+      positions.push_back(topLeft + glm::vec2(0, font_size.y));
+      positions.push_back(topLeft + glm::vec2(font_size.x, 0));
+      uvs.push_back(characterUV(message[i]));
+      uvs.push_back(characterUV(message[i]) + glm::vec2(1.0f / 16.0f));
+      opacities.push_back(start_opacity);
+      opacities.push_back(start_opacity);
+      
+      topLeft.x += font_spacing;
+   }
+}
+
 void RendererText::clearAllText() {
    positions.clear();
    uvs.clear();

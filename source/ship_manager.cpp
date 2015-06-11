@@ -32,7 +32,7 @@ ShipModel *ShipManager::getModel(std::string name) {
 ShipManager::ShipManager() {
    ShipModel *one = new ShipModel("Red Razelle", 0);
    one->addExhuast(glm::vec3(0.05, -1.6, -0.5));
-   one->setEngineName(" CY96-Z1x1");
+   one->setEngineName("CY96-Z1x1");
    one->setMakerName("Cyber Stick, Inc.");
    one->setWeight(1330);
    one->setAccFactor(1.05f);

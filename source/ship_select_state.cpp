@@ -96,14 +96,21 @@ void ShipSelect::update(float dt) {
    ratingsRenderer->clearAllRatings();
    
    helper->addText(glm::vec2(0.55, 0.55), currentShipModel->getFontString() + currentShipModel->getFileName(), glm::vec2(0.075), 1.0f);
-   helper->addText(glm::vec2(0.55, 0.40), "Maker- " + currentShipModel->getMakerName(), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.55, 0.35), "Engine- " + currentShipModel->getEngineName(), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.5, 0.30), "Weight- " , glm::vec2(0.04), 1.0f);
-   rateShipWeight(currentShipModel->getWeight(), glm::vec2(0.67, 0.28));
-   helper->addText(glm::vec2(0.47, 0.25), "Acceleration- ", glm::vec2(0.04), 1.0f);
-   rateShipAcc(currentShipModel->getAccFactor(), glm::vec2(0.67, 0.23));
-   helper->addText(glm::vec2(0.55, 0.20), "Boost Streak- " + std::to_string(currentShipModel->getStreakNumber()), glm::vec2(0.04), 1.0f);
-   helper->addText(glm::vec2(0.55, 0.15), "Boost- " + to_string_with_precision(currentShipModel->getBoostEffect(), 3) + "x", glm::vec2(0.04), 1.0f);
+   helper->addLeftAlignedText(glm::vec2(0.30, 0.40), "Maker- ", glm::vec2(0.04), 1.0f);
+   helper->addLeftAlignedText(glm::vec2(0.30, 0.35), "Engine- ", glm::vec2(0.04), 1.0f);
+   helper->addLeftAlignedText(glm::vec2(0.30, 0.30), "Weight- " , glm::vec2(0.04), 1.0f);
+   helper->addLeftAlignedText(glm::vec2(0.30, 0.25), "Acceleration- ", glm::vec2(0.04), 1.0f);
+   helper->addLeftAlignedText(glm::vec2(0.30, 0.20), "Boost Streak- ", glm::vec2(0.04), 1.0f);
+   helper->addLeftAlignedText(glm::vec2(0.30, 0.15), "Acceleration Boost- ", glm::vec2(0.04), 1.0f);
+   
+   rateShipWeight(currentShipModel->getWeight(), glm::vec2(0.70, 0.30));
+   rateShipAcc(currentShipModel->getAccFactor(), glm::vec2(0.70, 0.25));
+   
+   helper->addRightAlignedText(glm::vec2(0.83, 0.40), currentShipModel->getMakerName(), glm::vec2(0.04), 1.0f);
+   helper->addRightAlignedText(glm::vec2(0.83, 0.35), currentShipModel->getEngineName(), glm::vec2(0.04), 1.0f);
+   helper->addRightAlignedText(glm::vec2(0.83, 0.20), std::to_string(currentShipModel->getStreakNumber()), glm::vec2(0.04), 1.0f);
+   helper->addRightAlignedText(glm::vec2(0.83, 0.15), to_string_with_precision(currentShipModel->getBoostEffect(), 3) + "x", glm::vec2(0.04), 1.0f);
+   
    
    helper->updateBuffers();
    ratingsRenderer->updateBuffers();

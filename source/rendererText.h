@@ -36,6 +36,8 @@ public:
    std::vector<float> opacities;
    
    void addText(glm::vec2 topLeft, std::string message, glm::vec2 font_size = glm::vec2(0.16f), float start_opacity = 1.0f);
+   void addLeftAlignedText(glm::vec2 topLeft, std::string message, glm::vec2 font_size = glm::vec2(0.16f), float start_opacity = 1.0f);
+   void addRightAlignedText(glm::vec2 topLeft, std::string message, glm::vec2 font_size = glm::vec2(0.16f), float start_opacity = 1.0f);
    void clearAllText();
    void clearLastChar();
    void updateBuffers();
