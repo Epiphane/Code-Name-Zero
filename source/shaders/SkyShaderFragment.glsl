@@ -161,7 +161,7 @@ void main() {
 
    float color = 0.0;
    float starValue = rand(pos);
-   float sample = uMusicSamples[int(floor(32 * fragCoord.x) + 3)];
+   float sample = uMusicSamples[int(floor(32 * fragCoord.x) + 3)] * 6;
    if (starValue > prob)
    {
       vec2 center = size * pos + vec2(size, size) * 0.5;
@@ -170,13 +170,12 @@ void main() {
 
       color = 1.0 - distance(fragCoord.xy, center) / (0.5 * size);
       color = color * t / (abs(fragCoord.y - center.y)) * t / (abs(fragCoord.x - center.x));
-      color = 0;
    }
    else if (rand(fragCoord.xy) > 0.996)
    {
       float r = rand(fragCoord.xy);
-      color = r * (0.25 * sin(sample * (r * 5.0) + 720.0 * r) + 0.75);
+      color = sample * r * (0.25 * sin(sample * (r * 5.0) + 720.0 * r) + 0.75);
    }
 
-   fragColor = mix(fragColor, vec4(vec3(sample * 3), 1.0), 0.5);
+   fragColor = mix(fragColor, vec4(vec3(color), 1.0), 0.5);
 }

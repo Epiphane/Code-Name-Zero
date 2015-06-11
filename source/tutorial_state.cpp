@@ -82,7 +82,7 @@ void TutorialState::send(std::string message, void *data) {
       }
       else if (current_beat == 80) {
          // Check speed, make sure they did it right
-         if (getPlayerSpeed() - playerStartSpeed < 20) {
+         if (getPlayerSpeed() - playerStartSpeed < 5) {
             getSoundtrack()->rewind(48);
             addTextEvent(new TextEvent(44, 72, 2, 4), glm::vec2(0, 0.5f), "Lets try that again");
             addTextEvent(new TextEvent(44, 72, 2, 4), glm::vec2(0, 0.25f), "Press \5");
