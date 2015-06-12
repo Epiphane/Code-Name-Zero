@@ -18,11 +18,14 @@
          body {
             width: 100%;
             margin: 0px !important;
-            background-color: #aaa;
+            background: url('hq.jpg');
+            background-attachment: fixed;
             font-family: sans-serif;
             min-width: 600px;
          }
          .rgbzero-header { 
+            position: fixed;
+            top: 0;
             width: 100%;
 
             height: 40px;
@@ -81,6 +84,8 @@
             width: 75%;
          }
 
+         .box { background-color: rgba(255, 255, 255, 0.5); }
+
       </style>
    </head>
    <body>
@@ -112,51 +117,73 @@
       <h2 class="speed-font not-navbar" id="basic-description-header">
          Description
       </h2>
+      <div class="box">
       <div id="basic-description" class="not-navbar">
 
-         <span class="speed-font">
+         <p><span class="speed-font">
          RGB Zero
-         </span> immerses the user in a fast-paced racing environment where the goal is simply to go fast. Taking initial influence from games like Thumper and F-Zero, RGB Zero shows off its seamless gameplay integration with the beats of seven different songs. During the duration of the song, obstacles of three different colors (Red, Green, and Blue) will spawn on the track. Moving the ship to the same colored track as the obstacle will slightly increase the ship's speed. Users are also presented with five different F-Zero models, each with their own unique stats and boosting abilities adding further replay value. If that's not enticing enough, we've also included a global high score for you to practice songs you want to master.
+         </span> immerses the user in a fast-paced racing environment where the goal is simply to go fast. Taking initial influence from games like Thumper and F-Zero, RGB Zero shows off its seamless gameplay integration with the beats of seven different songs. During the duration of the song, obstacles of three different colors (Red, Green, and Blue) will spawn on the track. Moving the ship to the same colored track as the obstacle will slightly increase the ship's speed. Users are also presented with five different F-Zero models, each with their own unique stats and boosting abilities adding further replay value. If that's not enticing enough, we've also included a global high score for you to practice songs you want to master.</p>
 
-         We should put screenshots in this part.
+         <img width=45% src="title.png">
+         <img width=45% src="menu.png">
+         <img width=45% src="turn.png">
+         <img width=45% src="score.png">
+         <img width=45% src="blurAndBoost.jpg">
+         <img width=45% src="hq.jpg">
+         <br>
+
       </div>
       <h2 class="speed-font not-navbar" id="group-members-header">
          The Group
       </h2>
       <div id="group-members" class="not-navbar">
          <div class="member-bio">
-            Thomas's Bio/Technologies
+            <span class="speed-font">Thomas Steinke</span><br>
+            Info and contributions here
+            <hr>
          </div>
          <div class="member-bio">
-            Cary Dobeck is a 4th year Computer Engineering major.
-			Cary worked on the radial blur system, implemented the cook-torrance shading model, and developed the combo boost streak game mechanic.
+            <span class="speed-font">Cary Dobeck</span><br>
+            Cary is a 4th year Computer Engineering major.
+			   He worked on the radial blur system, implemented the cook-torrance shading model, and developed the combo boost streak game mechanic.
+            <hr>
          </div>
          <div class="member-bio">
-            David Ellison is a 3rd year Computer Science major.
-            David worked on designs for the obstacle collision system and helped integrate our music system with it, in addition to the ship select and song select screens.
+            <span class="speed-font">David Ellison</span><br> 
+            David is a 3rd year Computer Science major.
+            He worked on designs for the obstacle collision system and helped integrate our music system with it, in addition to the ship select and song select screens.
+            <hr>
          </div>
          <div class="member-bio">
-            Jonathan's Bio/Technologies
+            <span class="speed-font">Jonathan Pae</span><br>
+            Info and contributions here
+            <hr>
          </div>
          <div class="member-bio">
-            Max Linsenbard is a 4th (going on 5th) year Computer Science major and Muisc Minor.<br>
-            Max worked on shadow mapping, object spawning and beat synchinng, the sky renderer, and an ASCII file based level system. He also created all non-ship models, music, and SFX.
+            <span class="speed-font">Max Linsenbard</span><br> 
+            Max is a 4th (going on 5th) year Computer Science major and Muisc Minor.
+            He worked on shadow mapping, object spawning and beat synchinng, the sky renderer, and an ASCII file based level system. He also created all non-ship models, music, and SFX.
+            <hr>
          </div>
          <div class="member-bio">
-            Ryan's Bio/Technologies
+            <span class="speed-font">Ryan Flatland</span><br>
+            Ryan Flatland is a 5th year Mechanical Engineering major and Computer Science minor.
+            He worked with building the track and making its curves flow in concert with the difficulty of the music and obstacles.
+            <hr>
          </div>
       </div>
       <h2 class="speed-font not-navbar" id="gameplay-video-header">
          Gameplay
       </h2>
       <div class="not-navbar">
-         Embed a YouTube video here
+         <iframe width="420" height="315" src="https://www.youtube.com/embed/cwyV186nf3Y" frameborder="0" allowfullscreen></iframe>
       </div>
       <h2 class="speed-font not-navbar" id="download-link-header">
          Download
       </h2>
       <div id="download-link" class="not-navbar">
-         How to Download
+         A .zip of a Mac build of the game is available <a href="http://thomassteinke.com/RGBZero/RGBZeroApp.zip">by clicking here.</a>. As of now, an external Windows build does not exist, but can be compiled and run from our code.
       </div>
+   </div>
    </body>
 </html>
