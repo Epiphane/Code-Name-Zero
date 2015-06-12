@@ -60,7 +60,7 @@ void send_score_request(std::string level) {
    CURLcode success = curl_easy_perform(handle);
 }
 
-bool parse_score_request(std::vector<ScoreEntry> &scores) {
+void parse_score_request(std::vector<ScoreEntry> &scores) {
    // Expect 5 score spaces in entries
    std::stringstream stream(std::string(response_buffer), std::ios_base::in);
 

@@ -91,6 +91,7 @@ void BeatEventListener::init(std::string filename, State *world) {
       
       std::string songName = "";
       int bpm = 0;
+      int songLength = 0;
 
       float percentDelay = 0;
       float mag1, mag2, mag3, mag4, mag5, mag6, mag7 = 0;
@@ -101,6 +102,9 @@ void BeatEventListener::init(std::string filename, State *world) {
       
       // Get the BPM
       infile >> bpm;
+      
+      // Get the length
+      infile >> songLength;
 
       // Percentage into the song that the curves start
       infile >> percentDelay;
